@@ -1,0 +1,13 @@
+Package: redux
+Title: redux
+Version: 0.0.1
+Author: Rich FitzJohn
+Maintainer: Rich FitzJohn <rich.fitzjohn@gmail.com>
+Description: A hiredis wrapper that includes support for transactions,
+  pipelining, blocking subscription, serialisation of all keys and
+  values, Redis error handling with R errors.
+License: GPL-2
+LazyData: true
+URL: https://github.com/richfitz/redux
+BugReports: https://github.com/richfitz/redux/issues
+Suggests: testthat

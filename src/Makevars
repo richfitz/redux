@@ -1,0 +1,3 @@
+## -*- makefile -*-
+PKG_CFLAGS += -I/usr/local/include/hiredis -Wall -Wextra -pedantic
+PKG_LIBS += -L/usr/local/lib -lhiredis
