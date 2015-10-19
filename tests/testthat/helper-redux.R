@@ -54,3 +54,7 @@ PSKILL_SUCCESS <- tools::pskill(Sys.getpid(), 0)
 pid_exists <- function(pid) {
   tools::pskill(pid, 0) == PSKILL_SUCCESS
 }
+
+vcapply <- function(X, FUN, ...) {
+  vapply(X, FUN, character(1), ...)
+}

@@ -34,17 +34,30 @@ SEXP redis_check_command(SEXP cmd) {
     if (LENGTH(cmd) == 0) {
       error("argument list cannot be empty");
     }
+    int np = 0;
+
+    // First, flatten the list:
+    SEXP el;
+    for (int i = 0; i < LENGTH(cmd); ++i) {
+      if (TYPEOF(VECTOR_ELT(cmd, i)) == VECSXP) {
+        cmd = PROTECT(redis_flatten_command(cmd));
+        np++;
+        break;
+      }
+    }
+
     // Special checking for the first element:
-    SEXP el1 = VECTOR_ELT(cmd, 0);
-    if (TYPEOF(el1) != STRSXP || LENGTH(el1) == 0) {
+    el = VECTOR_ELT(cmd, 0);
+    if (TYPEOF(el) != STRSXP || LENGTH(el) == 0) {
       error("Redis command must be a non-empty character");
     }
-    int np = 0;
     int dup = 0;
     for (int i = 0; i < LENGTH(cmd); ++i) {
-      SEXP el = VECTOR_ELT(cmd, i);
+      el = VECTOR_ELT(cmd, i);
       // Only STRSXP and RAWSXP will make it out of this look
-      // unscathed.
+      // unscathed (this is unfortunately not true but I'm not totally
+      // sure why as it *does* make it through here but then fails on
+      // a very similar call in the second stage of conversion).
       switch(TYPEOF(el)) {
       case LGLSXP:
         // Coerce logicals to ints, then to string so that TRUE -> "1"
@@ -75,6 +88,8 @@ SEXP redis_check_command(SEXP cmd) {
       case STRSXP:
       case RAWSXP:
         continue;
+      case VECSXP:
+        error("Nested list element");
       default:
         // NOTE: Not recursive!
         error("Incompatible list element (element %d)", i + 1);
@@ -97,6 +112,34 @@ SEXP redis_check_command(SEXP cmd) {
     error("Invalid type");
   }
   return R_NilValue;
+}
+
+SEXP redis_flatten_command(SEXP list) {
+  const int len_in = LENGTH(list);
+  int len_out = 0;
+  SEXP el;
+  for (int i = 0; i < len_in; ++i) {
+    el = VECTOR_ELT(list, i);
+    if (TYPEOF(el) == VECSXP) {
+      len_out += LENGTH(el);
+    } else {
+      len_out++;
+    }
+  }
+  SEXP ret = PROTECT(allocVector(VECSXP, len_out));
+  for (int i = 0, j = 0; i < len_in; ++i) {
+    el = VECTOR_ELT(list, i);
+    if (TYPEOF(el) == VECSXP) {
+      for (int k = 0; k < LENGTH(el); ++k) {
+        SET_VECTOR_ELT(ret, j++, VECTOR_ELT(el, k));
+      }
+    } else {
+      SET_VECTOR_ELT(ret, j++, el);
+    }
+  }
+
+  UNPROTECT(1);
+  return ret;
 }
 
 SEXP redis_check_list(SEXP list) {
@@ -122,15 +165,18 @@ size_t sexp_to_redis(SEXP cmd, const char ***p_argv, size_t **p_argvlen) {
   size_t k = 0;
   for (int i = 0; i < LENGTH(cmd); ++i) {
     SEXP cmd_i = VECTOR_ELT(cmd, i);
-    if (TYPEOF(cmd_i) == STRSXP) {
+    int type_i = TYPEOF(cmd_i);
+    if (type_i == STRSXP) {
       for (int j = 0; j < LENGTH(cmd_i); ++j, ++k) {
         argv[k] = CHAR(STRING_ELT(cmd_i, j));
         argvlen[k] = LENGTH(STRING_ELT(cmd_i, j));
       }
-    } else {
+    } else if (type_i == RAWSXP) {
       argv[k] = (char *)RAW(cmd_i);
       argvlen[k] = LENGTH(cmd_i);
       k++;
+    } else {
+      error("Unexpected type");
     }
   }
 

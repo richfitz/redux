@@ -19,6 +19,7 @@ int is_raw_string(char* str, size_t len);
 
 /* to redis */
 SEXP redis_check_command(SEXP cmd);
+SEXP redis_flatten_command(SEXP list);
 SEXP redis_check_list(SEXP list);
 void sexp_check_types(SEXP cmd);
 size_t sexp_to_redis(SEXP cmd, const char ***p_argv, size_t **p_argvlen);

@@ -1,9 +1,10 @@
 ## These are the low-level commands for interfacing with Redis;
 ## creating pointers and interacting with them directly happens in
 ## this file and this file only.  Nothing here should be directly used
-## from user code; see the functions in redux.R for what to use.
+## from user code; see the functions in connection.R for what to use.
+##' @importFrom RedisAPI redis_config
 redis_connect <- function(...) {
-  config <- redis_config(...)
+  config <- RedisAPI::redis_config(...)
   if (config$scheme == "redis") {
     ptr <<- redis_connect_tcp(config$host, config$port)
   } else {
@@ -19,13 +20,10 @@ redis_connect <- function(...) {
 }
 
 redis_connect_tcp <- function(host, port) {
-  assert_scalar_character(host)
-  assert_scalar_integer(port)
   .Call(Credux_redis_connect, host, as.integer(port), PACKAGE="redux")
 }
 
 redis_connect_unix <- function(path) {
-  assert_file_exists(path)
   .Call(Credux_redis_connect_unix, path, PACKAGE="redux")
 }
 
