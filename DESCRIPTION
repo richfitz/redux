@@ -11,5 +11,5 @@ LazyData: true
 URL: https://github.com/richfitz/redux
 BugReports: https://github.com/richfitz/redux/issues
 SystemRequirements: hiredis
-Imports: RedisAPI (>= 0.2.0)
+Enhances: RedisAPI (>= 0.2.0)
 Suggests: testthat

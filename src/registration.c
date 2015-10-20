@@ -1,4 +1,6 @@
-#include "redux.h"
+#include "connection.h"
+#include "conversions.h"
+#include "subscribe.h"
 #include "conversions.h"
 #include <R_ext/Rdynload.h>
 

@@ -1,3 +1,8 @@
 ## -*- makefile -*-
+##
+## Still need to convert this over to use the same approach as
+## RcppRedis, or to directly include the sources itself, which would
+## make compilation on OSX much easier.
+##
 PKG_CFLAGS += -I/usr/local/include/hiredis -Wall -Wextra -pedantic
 PKG_LIBS += -L/usr/local/lib -lhiredis

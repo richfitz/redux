@@ -54,10 +54,8 @@ SEXP redis_check_command(SEXP cmd) {
     int dup = 0;
     for (int i = 0; i < LENGTH(cmd); ++i) {
       el = VECTOR_ELT(cmd, i);
-      // Only STRSXP and RAWSXP will make it out of this look
-      // unscathed (this is unfortunately not true but I'm not totally
-      // sure why as it *does* make it through here but then fails on
-      // a very similar call in the second stage of conversion).
+      // Only STRSXP, RAWSXP and NILSXP will make it out of this loop
+      // unscathed.
       switch(TYPEOF(el)) {
       case LGLSXP:
         // Coerce logicals to ints, then to string so that TRUE -> "1"
@@ -87,6 +85,7 @@ SEXP redis_check_command(SEXP cmd) {
         break;
       case STRSXP:
       case RAWSXP:
+      case NILSXP:
         continue;
       case VECSXP:
         error("Nested list element");
@@ -120,22 +119,33 @@ SEXP redis_flatten_command(SEXP list) {
   SEXP el;
   for (int i = 0; i < len_in; ++i) {
     el = VECTOR_ELT(list, i);
-    if (TYPEOF(el) == VECSXP) {
+    switch(TYPEOF(el)) {
+    case VECSXP:
       len_out += LENGTH(el);
-    } else {
+      break;
+    case STRSXP:
+    case RAWSXP:
       len_out++;
+      break;
+      // Don't allocate space for NULL values here.  TODO: check that
+      // this is all OK
+    case NILSXP:
+      break;
+    default:
+      error("unexpected type (element %d)", i);
     }
   }
   SEXP ret = PROTECT(allocVector(VECSXP, len_out));
   for (int i = 0, j = 0; i < len_in; ++i) {
     el = VECTOR_ELT(list, i);
-    if (TYPEOF(el) == VECSXP) {
+    const int type_el = TYPEOF(el);
+    if (type_el == VECSXP) {
       for (int k = 0; k < LENGTH(el); ++k) {
         SET_VECTOR_ELT(ret, j++, VECTOR_ELT(el, k));
       }
-    } else {
+    } else if (type_el != NILSXP) { // STRSXP, RAWSXP
       SET_VECTOR_ELT(ret, j++, el);
-    }
+    } // skips over NULL
   }
 
   UNPROTECT(1);
@@ -157,7 +167,8 @@ size_t sexp_to_redis(SEXP cmd, const char ***p_argv, size_t **p_argvlen) {
   size_t argc = 0;
   for (int i = 0; i < LENGTH(cmd); ++i) {
     SEXP el = VECTOR_ELT(cmd, i);
-    argc += TYPEOF(el) == STRSXP ? LENGTH(el) : 1;
+    const int type_el = TYPEOF(el);
+    argc += type_el == STRSXP ? LENGTH(el) : type_el == NILSXP ? 0 : 1;
   }
 
   const char **argv = (const char**) R_alloc(argc, sizeof(const char*));
@@ -175,8 +186,8 @@ size_t sexp_to_redis(SEXP cmd, const char ***p_argv, size_t **p_argvlen) {
       argv[k] = (char *)RAW(cmd_i);
       argvlen[k] = LENGTH(cmd_i);
       k++;
-    } else {
-      error("Unexpected type");
+    } else if (type_i != NILSXP) {
+      error("Unexpected type (2)");
     }
   }
 

@@ -2,9 +2,7 @@
 ## creating pointers and interacting with them directly happens in
 ## this file and this file only.  Nothing here should be directly used
 ## from user code; see the functions in connection.R for what to use.
-##' @importFrom RedisAPI redis_config
-redis_connect <- function(...) {
-  config <- RedisAPI::redis_config(...)
+redis_connect <- function(config) {
   if (config$scheme == "redis") {
     ptr <<- redis_connect_tcp(config$host, config$port)
   } else {
