@@ -33,7 +33,7 @@ redis_pipeline <- function(ptr, list) {
   .Call(Credux_redis_pipeline, ptr, list, PACKAGE="redux")
 }
 
-redis_subscribe <- function(ptr, channel, callback, envir) {
+redis_subscribe <- function(ptr, channel, callback, envir, pattern) {
   ## This actually needs to depend on the sort of error.  Don't
   ## respond based on
   ##   _redis connection errors_
@@ -41,7 +41,18 @@ redis_subscribe <- function(ptr, channel, callback, envir) {
   ## that working I'd need to work out how to raise classed errors
   ## from C, and that's going to require some decent toxiproxy testing
   ## too.
-  on.exit(.Call(Credux_redis_unsubscribe, ptr, channel))
-  .Call(Credux_redis_subscribe, ptr, channel, callback, envir)
+  ##
+  ## Also, while we check all over the show that pattern needs to be a
+  ## scalar logical, we don't want to trigger the on.exit call if the
+  ## failure was due to the pattern being incorrect (this is actually
+  ## slightly worse than failures in general (say callback not a
+  ## function) because incorrect access of a NULL could crash R).
+  ##
+  ## What would be ideal would be to write something into an
+  ## environment (even the one passed in) saying that subscription had
+  ## started and then switching on that.  But that's a big hassle for
+  ## a difficult corner case.
+  on.exit(.Call(Credux_redis_unsubscribe, ptr, channel, pattern))
+  .Call(Credux_redis_subscribe, ptr, channel, callback, envir, pattern)
   invisible()
 }

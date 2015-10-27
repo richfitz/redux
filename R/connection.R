@@ -49,8 +49,8 @@ redis_connection <- function(config) {
     pipeline=function(cmds) {
       redis_pipeline(ptr, cmds)
     },
-    subscribe=function(channel, callback, envir=parent.frame()) {
-      redis_subscribe(ptr, channel, callback, envir)
+    subscribe=function(channel, callback, envir=parent.frame(), pattern=FALSE) {
+      redis_subscribe(ptr, channel, callback, envir, pattern)
     })
 }
 

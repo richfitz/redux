@@ -2,22 +2,26 @@
 #include "conversions.h"
 
 SEXP redux_redis_subscribe(SEXP extPtr, SEXP channel,
-                           SEXP callback, SEXP envir) {
+                           SEXP callback, SEXP envir, SEXP pattern) {
+  if (!isLogical(pattern) || LENGTH(pattern) != 1) {
+    error("'pattern' must be a scalar logical");
+  }
+  const int p = INTEGER(pattern)[0];
   SEXP cmd = PROTECT(allocVector(VECSXP, 2));
-  SET_VECTOR_ELT(cmd, 0, mkString("SUBSCRIBE"));
+  SET_VECTOR_ELT(cmd, 0, mkString(p ? "PSUBSCRIBE" : "SUBSCRIBE"));
   SET_VECTOR_ELT(cmd, 1, channel);
   cmd = PROTECT(redis_check_command(cmd));
   SEXP ret = PROTECT(redux_redis_command(extPtr, cmd));
 
   redux_redis_subscribe_loop(redis_get_context(extPtr, CLOSED_ERROR),
-                             callback, envir);
+                             callback, envir, p);
 
   UNPROTECT(3);
   return ret;
 }
 
 void redux_redis_subscribe_loop(redisContext* context,
-                                SEXP callback, SEXP envir) {
+                                SEXP callback, SEXP envir, int pattern) {
   if (!isFunction(callback)) {
     error("'callback' must be a function");
   }
@@ -28,15 +32,19 @@ void redux_redis_subscribe_loop(redisContext* context,
   redisReply *reply = NULL;
   int keep_going = 1;
   // Nasty:
-  SEXP nms = PROTECT(allocVector(STRSXP, 3));
-  SET_STRING_ELT(nms, 0, mkChar("type"));
-  SET_STRING_ELT(nms, 1, mkChar("channel"));
-  SET_STRING_ELT(nms, 2, mkChar("value"));
+  SEXP nms = PROTECT(allocVector(STRSXP, pattern ? 4 : 3));
+  int i = 0;
+  SET_STRING_ELT(nms, i++, mkChar("type"));
+  if (pattern) {
+    SET_STRING_ELT(nms, i++, mkChar("pattern"));
+  }
+  SET_STRING_ELT(nms, i++, mkChar("channel"));
+  SET_STRING_ELT(nms, i++, mkChar("value"));
 
   // And we're off.  Adding a timeout here seems sensible to me as
-  // that would allow for _some_ sort of interrupt checking.  I can't
-  // remmeber what the timeout did though as I think it might have
-  // killed the client.
+  // that would allow for _some_ sort of interrupt checking, but as it
+  // is, this seems extremely difficult to do without risking killing
+  // the client.
   while (keep_going) {
     R_CheckUserInterrupt();
     redisGetReply(context, (void*)&reply);
@@ -53,11 +61,12 @@ void redux_redis_subscribe_loop(redisContext* context,
   UNPROTECT(2); // nms, call
 }
 
-SEXP redux_redis_unsubscribe(SEXP extPtr, SEXP channel) {
+SEXP redux_redis_unsubscribe(SEXP extPtr, SEXP channel, SEXP pattern) {
   redisContext *context = redis_get_context(extPtr, CLOSED_ERROR);
   // Issue the unsubscribe command:
+  const int p = INTEGER(pattern)[0];
   SEXP cmd = PROTECT(allocVector(VECSXP, 2));
-  SET_VECTOR_ELT(cmd, 0, mkString("UNSUBSCRIBE"));
+  SET_VECTOR_ELT(cmd, 0, mkString(p ? "PUNSUBSCRIBE" : "UNSUBSCRIBE"));
   SET_VECTOR_ELT(cmd, 1, channel);
   cmd = PROTECT(redis_check_command(cmd));
   // Arrange the command:
@@ -81,7 +90,7 @@ SEXP redux_redis_unsubscribe(SEXP extPtr, SEXP channel) {
     if (reply->type == REDIS_REPLY_ARRAY && reply->elements == 3) {
       redisReply *reply0 = reply->element[0];
       if (reply0->type == REDIS_REPLY_STRING &&
-          strcmp(reply0->str, "unsubscribe") == 0) {
+          strcmp(reply0->str, p ? "punsubscribe" : "unsubscribe") == 0) {
         break;
       }
     }

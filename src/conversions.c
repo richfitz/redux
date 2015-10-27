@@ -123,6 +123,9 @@ SEXP redis_flatten_command(SEXP list) {
     case VECSXP:
       len_out += LENGTH(el);
       break;
+    case LGLSXP:
+    case INTSXP:
+    case REALSXP:
     case STRSXP:
     case RAWSXP:
       len_out++;
