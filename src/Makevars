@@ -4,5 +4,5 @@
 ## RcppRedis, or to directly include the sources itself, which would
 ## make compilation on OSX much easier.
 ##
-PKG_CFLAGS += -I/usr/local/include/hiredis -Wall -Wextra -pedantic
-PKG_LIBS += -L/usr/local/lib -lhiredis
+PKG_CFLAGS = -I/usr/local/include/hiredis
+PKG_LIBS = -L/usr/local/lib -lhiredis

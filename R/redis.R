@@ -4,9 +4,9 @@
 ## from user code; see the functions in connection.R for what to use.
 redis_connect <- function(config) {
   if (config$scheme == "redis") {
-    ptr <<- redis_connect_tcp(config$host, config$port)
+    ptr<<- redis_connect_tcp(config$host, config$port)
   } else {
-    ptr <<- redis_connect_unix(config$path)
+    ptr <- redis_connect_unix(config$path)
   }
   if (!is.null(config$password)) {
     redis_command(ptr, c("AUTH", config$password))

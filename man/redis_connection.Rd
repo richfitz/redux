@@ -37,8 +37,34 @@ command will be documented elsewhere.}
 
 \item{pipeline(cmds)}{Run a pipeline of Redis commands.}
 
-\item{subscribe(channel, callback, envir)}{this will change...}
+\item{subscribe(channel, pattern, callback, envir)}{Subscribe to a
+channel or pattern specifying channels.  Here, \code{channel} must
+be a character vector, \code{pattern} a logical indicating if
+\code{channel} should be interpreted as a pattern, \code{callback}
+is a function to apply to each recieved message, returning
+\code{TRUE} when subscription should stop, and \code{envir} is the
+environment in which to evaluate \code{callback}.  See below.}
 
 }
+}
+\section{Subscriptions}{
+
+
+  The callback function must take a single argument; this will be
+  the recieved message with named elements \code{type} (which will
+  be message), \code{channel} (the name of the channel) and
+  \code{value} (the message contents).  If \code{pattern} was
+  \code{TRUE}, then an additional element \code{pattern} will be
+  present (see the Redis docs).  The callback must return
+  \code{TRUE} or \code{FALSE}; this indicates if the client should
+  continue quit (i.e., \code{TRUE} means return control to R,
+  \code{FALSE} means keep going).
+
+  Because the \code{subscribe} function is blocking and returns
+  nothing, so all data collection needs to happen as a side-effect
+  of the callback function.
+
+  There is currently no way of interrupting the client while it is
+  waiting for a message.
 }
 
