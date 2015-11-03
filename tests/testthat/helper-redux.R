@@ -15,3 +15,14 @@ is_OK <- function() {
                 paste0("redis status is OK"))
   }
 }
+
+skip_if_no_redis <- function() {
+  if (redis_available()) {
+    return()
+  }
+  skip("Redis is not available")
+}
+
+vcapply <- function(X, FUN, ...) {
+  vapply(X, FUN, character(1), ...)
+}

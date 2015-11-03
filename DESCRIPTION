@@ -11,5 +11,6 @@ LazyData: true
 URL: https://github.com/richfitz/redux
 BugReports: https://github.com/richfitz/redux/issues
 SystemRequirements: hiredis
-Enhances: RedisAPI (>= 0.2.0)
-Suggests: testthat
+Imports: RedisAPI (>= 0.3.0)
+Suggests: knitr, testthat
+VignetteBuilder: knitr

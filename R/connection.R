@@ -58,7 +58,8 @@
 ##' @useDynLib redux, .registration = TRUE
 ##' @export
 ##'
-redis_connection <- function(config) {
+redis_connection <- function(config=RedisAPI::redis_config()) {
+  config <- RedisAPI::redis_config(config)
   ptr <- redis_connect(config)
   ret <-
     list(
@@ -76,28 +77,9 @@ redis_connection <- function(config) {
         redis_pipeline(ptr, cmds)
       },
       subscribe=function(channel, pattern, callback, envir=parent.frame()) {
-        redis_subscribe(ptr, channel, callback, envir, pattern)
+        redis_subscribe(ptr, channel, pattern, callback, envir)
       })
+  attr(ret, "type") <- "redux"
   class(ret) <- "redis_connection"
   ret
-}
-
-##' @export
-print.redis_connection <- function(x, ...) {
-  cat("<redis_connection>:\n")
-  for (i in names(x)) {
-    cat(sprintf("  - %s", capture_args(x[[i]], i)))
-  }
-  invisible(x)
-}
-
-##' @export
-print.redis_status <- function(x, ...) {
-  cat(sprintf('[Redis: %s]\n', x))
-}
-
-capture_args <- function(f, name) {
-  args <- capture.output(args(f))
-  sub("function ", name,
-      paste0(paste(args[-length(args)], collapse="\n"), "\n"))
 }

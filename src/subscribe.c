@@ -1,8 +1,8 @@
 #include "subscribe.h"
 #include "conversions.h"
 
-SEXP redux_redis_subscribe(SEXP extPtr, SEXP channel,
-                           SEXP callback, SEXP envir, SEXP pattern) {
+SEXP redux_redis_subscribe(SEXP extPtr, SEXP channel, SEXP pattern,
+                           SEXP callback, SEXP envir) {
   if (!isLogical(pattern) || LENGTH(pattern) != 1) {
     error("'pattern' must be a scalar logical");
   }
@@ -14,14 +14,14 @@ SEXP redux_redis_subscribe(SEXP extPtr, SEXP channel,
   SEXP ret = PROTECT(redux_redis_command(extPtr, cmd));
 
   redux_redis_subscribe_loop(redis_get_context(extPtr, CLOSED_ERROR),
-                             callback, envir, p);
+                             p, callback, envir);
 
   UNPROTECT(3);
   return ret;
 }
 
-void redux_redis_subscribe_loop(redisContext* context,
-                                SEXP callback, SEXP envir, int pattern) {
+void redux_redis_subscribe_loop(redisContext* context, int pattern,
+                                SEXP callback, SEXP envir) {
   if (!isFunction(callback)) {
     error("'callback' must be a function");
   }

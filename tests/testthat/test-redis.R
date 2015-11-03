@@ -191,16 +191,3 @@ test_that("pointer commands are safe", {
   expect_that(redis_command(ptr_null, "PING"),
               throws_error("Context is not connected"))
 })
-
-## Test for write safety of coerced elements in all parts of the chain.
-## It's actually pretty easy to test the
-##    - redis_check_command
-##    - redis_flatten_list
-##    - redis_check_list
-## directly because they are SEXP -> SEXP C functions and can be called
-## directly.
-test_that("list conversions", {
-  cc <- function(x) .Call("redis_check_command", x)
-  fl <- function(x) .Call("redis_flatten_list", x)
-  cl <- function(x) .Call("redis_check_list", x)
-})

@@ -33,7 +33,20 @@ check: build
 clean:
 	rm -f src/*.o src/*.so
 
-vignettes: vignettes/plant.Rmd
+vignettes/src/redux.Rmd: vignettes/src/redux.R
+	${RSCRIPT} -e 'library(sowsear); sowsear("$<", output="$@")'
+
+vignettes/redux.Rmd: vignettes/src/redux.Rmd
+	cd vignettes/src && ${RSCRIPT} -e 'knitr::knit("redux.Rmd")'
+	mv vignettes/src/redux.md $@
+	sed -i.bak 's/[[:space:]]*$$//' $@
+	rm -f $@.bak
+
+vignettes_install: vignettes/redux.Rmd
 	${RSCRIPT} -e 'library(methods); devtools::build_vignettes()'
+
+vignettes:
+	rm -f vignettes/redux.Rmd
+	make vignettes_install
 
 .PHONY: all compile_dll doc clean test install vignettes

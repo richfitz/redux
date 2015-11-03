@@ -1,10 +1,7 @@
 context("main entry points")
 
 test_that("redis_connection", {
-  ## Ordinarily this would be done with RedisAPI but that generates a
-  ## circular dependency.  Suggests might be OK here though.
-  config <- list(host="localhost", port=6379L, scheme="redis")
-  con <- redis_connection(config)
+  con <- redis_connection()
   expect_that(setequal(names(con),
                        c("config", "reconnect", "command",
                          "pipeline", "subscribe")),

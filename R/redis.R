@@ -4,7 +4,7 @@
 ## from user code; see the functions in connection.R for what to use.
 redis_connect <- function(config) {
   if (config$scheme == "redis") {
-    ptr<<- redis_connect_tcp(config$host, config$port)
+    ptr <- redis_connect_tcp(config$host, config$port)
   } else {
     ptr <- redis_connect_unix(config$path)
   }
@@ -33,7 +33,7 @@ redis_pipeline <- function(ptr, list) {
   .Call(Credux_redis_pipeline, ptr, list, PACKAGE="redux")
 }
 
-redis_subscribe <- function(ptr, channel, callback, envir, pattern) {
+redis_subscribe <- function(ptr, channel, pattern, callback, envir) {
   ## This actually needs to depend on the sort of error.  Don't
   ## respond based on
   ##   _redis connection errors_
@@ -53,6 +53,6 @@ redis_subscribe <- function(ptr, channel, callback, envir, pattern) {
   ## started and then switching on that.  But that's a big hassle for
   ## a difficult corner case.
   on.exit(.Call(Credux_redis_unsubscribe, ptr, channel, pattern))
-  .Call(Credux_redis_subscribe, ptr, channel, callback, envir, pattern)
+  .Call(Credux_redis_subscribe, ptr, channel, pattern, callback, envir)
   invisible()
 }
