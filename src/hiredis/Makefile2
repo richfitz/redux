@@ -1,0 +1,11 @@
+# -*- makefile -*-
+STLIB=libhiredis.a
+OBJ=net.o hiredis.o sds.o async.o read.o
+
+all: $(STLIB)
+
+$(STLIB): $(OBJ)
+	$(AR) rcs $@ $(OBJ)
+
+clean:
+	rm -f $(OBJ) $(STLIB)

@@ -4,3 +4,6 @@
 ^README.Rmd$
 ^.travis.yml$
 ^appveyor.yml$
+^src/hiredis/.*\.[oa]$
+^update_hiredis$
+^ignore$

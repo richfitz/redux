@@ -1,0 +1,37 @@
+#!/usr/bin/env Rscript
+args <- commandArgs(TRUE)
+if (length(args) != 1L) {
+  stop("Usage: update_hiredis <path_to_hiredis.tar.gz>")
+}
+
+dest <- "src/hiredis"
+bak <- "src/hiredis.bak"
+
+if (file.exists(bak)) {
+  stop("Please remove backup file: ", bak)
+}
+
+path <- args[[1]]
+tmp <- tempdir()
+untar(path, exdir=tmp)
+path <- dir(tmp, full.names=TRUE)
+
+invisible(file.rename(dest, bak))
+
+dir.create(dest)
+invisible(file.copy(c(dir(path, pattern="*.[ch]", full.names=TRUE),
+                      file.path(path, "COPYING"),
+                      file.path(bak, "Makefile2")),
+                    dest))
+
+dir.create("inst", FALSE)
+
+header <-
+  c("The following license applies to code from the hiredis library",
+    "which will be linked into the installed package",
+    "")
+
+writeLines(c(header, readLines(file.path(path, "COPYING"))),
+           file.path("inst", "COPYING.hiredis"))
+
+unlink(bak, recursive=TRUE)

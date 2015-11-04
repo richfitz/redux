@@ -1,16 +1,18 @@
 Package: redux
-Title: redux
+Title: R Bindings to 'hiredis'
 Version: 0.0.1
-Author: Rich FitzJohn
+Authors@R: c(person("Rich", "FitzJohn", role = c("aut", "cre"),
+                    email = "rich.fitzjohn@gmail.com"),
+             person("Salvatore", "Sanfilippo", role = "cph"),
+             person("Pieter", "Noordhuis", role = "cph"))
 Maintainer: Rich FitzJohn <rich.fitzjohn@gmail.com>
-Description: A hiredis wrapper that includes support for transactions,
+Description: A 'hiredis' wrapper that includes support for transactions,
   pipelining, blocking subscription, serialisation of all keys and
-  values, Redis error handling with R errors.
+  values, 'Redis' error handling with R errors.
 License: GPL-2
 LazyData: true
 URL: https://github.com/richfitz/redux
 BugReports: https://github.com/richfitz/redux/issues
-SystemRequirements: hiredis
 Imports: RedisAPI (>= 0.3.0)
 Suggests: knitr, testthat
 VignetteBuilder: knitr

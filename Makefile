@@ -26,12 +26,13 @@ build:
 	R CMD build --no-build-vignettes .
 
 check: build
-	R CMD check --no-build-vignettes --no-manual `ls -1tr ${PACKAGE}*gz | tail -n1`
+	R CMD check --as-cran --no-manual `ls -1tr ${PACKAGE}*gz | tail -n1`
 	@rm -f `ls -1tr ${PACKAGE}*gz | tail -n1`
 	@rm -rf ${PACKAGE}.Rcheck
 
 clean:
 	rm -f src/*.o src/*.so
+	make -C src/hiredis -f Makefile2 clean
 
 vignettes/src/redux.Rmd: vignettes/src/redux.R
 	${RSCRIPT} -e 'library(sowsear); sowsear("$<", output="$@")'

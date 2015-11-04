@@ -1,8 +1,21 @@
-## -*- makefile -*-
-##
-## Still need to convert this over to use the same approach as
-## RcppRedis, or to directly include the sources itself, which would
-## make compilation on OSX much easier.
-##
-PKG_CFLAGS = -I/usr/local/include/hiredis
-PKG_LIBS = -L/usr/local/lib -lhiredis
+# -*- makefile -*-
+
+HIREDIS_DIR = hiredis
+
+# This is what we need.
+LIBHIREDIS = $(HIREDIS_DIR)/libhiredis.a
+
+# So that we can do #include <hiredis.h>
+PKG_CPPFLAGS = -I$(HIREDIS_DIR)
+
+# This forces the compilation to include the static library; no dynaic
+# linking, which is needed as we're not installing this anywhere on
+# the system.
+PKG_LIBS = $(LIBHIREDIS)
+
+# This is straight from R-exts and works really well.
+LIB_CFLAGS = $(CFLAGS)
+$(SHLIB): $(LIBHIREDIS)
+$(LIBHIREDIS):
+	(cd $(HIREDIS_DIR) && $(MAKE) -f Makefile2 libhiredis.a \
+	CC="$(CC)" CFLAGS="$(LIB_CFLAGS) $(CPICFLAGS)" AR="$(AR)" RANLIB="$(RANLIB)")
