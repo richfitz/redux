@@ -1,4 +1,3 @@
-## Some basic tests now tha things are largely working.
 context("hiredis")
 
 test_that("connection", {
@@ -84,7 +83,7 @@ test_that("Errors are converted", {
 ## keeping them protected appropriately.  So for now the automatically
 ## balanced approach is easiest.
 test_that("Pipelining", {
-  ptr <- redis_connect_tcp("localhost", 6379L)
+  ptr <- redis_connect_tcp("127.0.0.1", 6379L)
   key <- rand_str(prefix="redux_")
   cmd <- list(list("SET", key, "1"), list("GET", key))
   on.exit(redis_command(ptr, c("DEL", key)))
@@ -144,35 +143,6 @@ test_that("Lists of binary data", {
   expect_that(
     redis_command(ptr, list("MSET", list(list(key1), data, key2, data))),
     throws_error("Nested list element"))
-})
-
-test_that("socket connection", {
-  redis_server <- Sys.which("redis-server")
-  if (redis_server == "") {
-    skip("didn't find redis server")
-  }
-  logfile <- tempfile("redis_")
-  socket <- tempfile("socket_")
-  system2(redis_server, c("--port", 0, "--unixsocket", socket),
-          wait=FALSE, stdout=logfile, stderr=logfile)
-  Sys.sleep(.1)
-
-  ptr_sock <- redis_connect_unix(socket)
-  ptr_tcp  <- redis_connect_tcp("127.0.0.1", 6379L)
-  cmp <- redis_status("PONG")
-  expect_that(redis_command(ptr_sock, list("PING")), equals(cmp))
-  expect_that(redis_command(ptr_tcp,  list("PING")), equals(cmp))
-
-  expect_that(redis_command(ptr_sock, "SHUTDOWN"),
-              throws_error("Failure communicating with the Redis server"))
-  expect_that(file.exists(socket), is_false())
-
-  ## rr <- new(RcppRedis::Redis)
-  ## microbenchmark::microbenchmark(
-  ##   redis_command(ptr_sock, list("PING")),
-  ##   redis_command(ptr_tcp, list("PING")),
-  ##   rr$execv("PING"),
-  ##   times=1000)
 })
 
 test_that("pointer commands are safe", {

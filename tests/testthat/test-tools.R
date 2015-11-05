@@ -4,6 +4,7 @@ context("tools")
 test_that("parse_info", {
   skip_if_no_redis()
   con <- hiredis()
+  skip_if_no_info(con)
   info <- RedisAPI::redis_info(con)
   expect_that(info, is_a("list"))
   dat <- con$INFO()
@@ -54,7 +55,8 @@ test_that("from_redis_hash", {
   expect_that(all(fields %in% names(res)), is_true())
   expect_that(res[fields], equals(cmp))
 
-  expect_that(from_redis_hash(con, key, f=identity), equals(as.list(cmp)))
+  expect_that(from_redis_hash(con, key, f=identity)[fields],
+              equals(as.list(cmp)))
 
   expect_that(from_redis_hash(con, key, "a"), equals(cmp["a"]))
   expect_that(from_redis_hash(con, key, "a", f=identity),
@@ -70,6 +72,7 @@ test_that("from_redis_hash", {
 test_that("redis_time", {
   skip_if_no_redis()
   con <- hiredis()
+  skip_if_no_time(con)
 
   expect_that(RedisAPI::redis_time(con), is_a("character"))
   expect_that(RedisAPI::redis_time_to_r(RedisAPI::redis_time(con)),

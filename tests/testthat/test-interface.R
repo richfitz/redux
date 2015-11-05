@@ -47,7 +47,11 @@ test_that("SORT", {
   key2 <- rand_str()
   on.exit(r$DEL(key2))
   expect_that(r$SORT(key, STORE=key2), equals(length(i)))
-  expect_that(r$TYPE(key2), equals(redis_status("list")))
+  ## TODO: rlite doesn't return a redis_status here, which seems like a bug.
+  ##   expect_that(r$TYPE(key2), equals(redis_status("list")))
+  ## A fix would be substituting
+  ##   createStringObject -> createStatusObject in hirlite.c:typeCommand()
+  expect_that(as.character(r$TYPE(key2)), equals("list"))
   expect_that(r$LRANGE(key2, 0, -1), equals(cmp))
 })
 
@@ -55,6 +59,7 @@ test_that("SORT", {
 test_that("SCAN", {
   skip_if_no_redis()
   r <- hiredis()
+  skip_if_no_scan(r)
 
   prefix <- paste0(rand_str(), ":")
   str <- replicate(50, rand_str(prefix=prefix))

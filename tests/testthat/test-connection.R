@@ -1,4 +1,4 @@
-context("main entry points")
+context("connection")
 
 test_that("redis_connection", {
   con <- redis_connection()

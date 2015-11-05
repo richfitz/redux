@@ -1,7 +1,6 @@
 #include "connection.h"
 #include "conversions.h"
 #include "subscribe.h"
-#include "conversions.h"
 #include <R_ext/Rdynload.h>
 
 static const R_CallMethodDef callMethods[] = {

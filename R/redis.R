@@ -18,19 +18,19 @@ redis_connect <- function(config) {
 }
 
 redis_connect_tcp <- function(host, port) {
-  .Call(Credux_redis_connect, host, as.integer(port), PACKAGE="redux")
+  .Call(Credux_redis_connect, host, as.integer(port))
 }
 
 redis_connect_unix <- function(path) {
-  .Call(Credux_redis_connect_unix, path, PACKAGE="redux")
+  .Call(Credux_redis_connect_unix, path)
 }
 
 redis_command <- function(ptr, command) {
-  .Call(Credux_redis_command, ptr, command, PACKAGE="redux")
+  .Call(Credux_redis_command, ptr, command)
 }
 
 redis_pipeline <- function(ptr, list) {
-  .Call(Credux_redis_pipeline, ptr, list, PACKAGE="redux")
+  .Call(Credux_redis_pipeline, ptr, list)
 }
 
 redis_subscribe <- function(ptr, channel, pattern, callback, envir) {
