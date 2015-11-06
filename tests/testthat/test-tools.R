@@ -78,3 +78,20 @@ test_that("redis_time", {
   expect_that(RedisAPI::redis_time_to_r(RedisAPI::redis_time(con)),
               is_a("POSIXt"))
 })
+
+## This is just a really simple test that this works at all:
+test_that("scripts", {
+  r <- hiredis()
+  ## A little lua script
+  lua <- '
+  local keyname = KEYS[1]
+  local value = ARGV[1]
+  redis.call("SET", keyname, value)
+  redis.call("INCR", keyname)
+  return redis.call("GET", keyname)'
+
+  obj <- RedisAPI::redis_scripts(r, set_and_incr=lua)
+  r$DEL("foo")
+  res <- obj("set_and_incr", "foo", "10")
+  expect_that(res, equals("11"))
+})
