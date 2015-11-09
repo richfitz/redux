@@ -9,8 +9,12 @@ test_that("socket connection", {
   socket <- tempfile("socket_")
   system2(redis_server, c("--port", 0, "--unixsocket", socket),
           wait=FALSE, stdout=logfile, stderr=logfile)
-  Sys.sleep(.1)
+  Sys.sleep(.5)
 
+  if (!file.exists(socket)) {
+    ## This does leave a redis server running on a socket!
+    skip("Didn't start socket server")
+  }
   ptr_sock <- redis_connect_unix(socket)
   ptr_tcp  <- redis_connect_tcp("127.0.0.1", 6379L)
   cmp <- redis_status("PONG")
