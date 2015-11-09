@@ -13,8 +13,8 @@ before_install:
   - ./pkg-build.sh bootstrap
 
 install:
-  - ./travis-tool.sh install_aptget libhiredis-dev
   - ./pkg-build.sh install_deps
+  - ./pkg.sh install_github ropensci/RedisAPI
 
 script:
   - ./pkg-build.sh run_tests

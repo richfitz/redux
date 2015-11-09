@@ -1,5 +1,7 @@
 # redux
 
+[![Build Status](https://travis-ci.org/richfitz/redux.png?branch=master)](https://travis-ci.org/richfitz/redux)
+
 `redux` provides a low-level interface to Redis, allowing execution of arbitrary Redis commands with almost no interface.  While it can be used standalone, it is designed to be used with [`RedisAPI`](https://github.com/ropensci/RedisAPI) which provides a much friendlier interface to the Redis commands.
 
 As well as supporting Redis commands, `redux` supports:
@@ -11,6 +13,34 @@ As well as supporting Redis commands, `redux` supports:
 * **error handling**: Every Redis error becomes an  R error.
 
 ## Usage
+
+### Recommended use
+
+Create a hiredis object:
+
+```r
+r <- redux::hiredis()
+```
+
+The hiredis object is a hiredis object with many (*many* methods), each corresponding to a different Redis command.
+
+```r
+r
+## <redis_api>
+##   Public:
+##     .command: function
+##     .pipeline: function
+##     .subscribe: function
+##     APPEND: function
+##     ...
+##     ZSCAN: function
+##     ZSCORE: function
+##     ZUNIONSTORE: function
+```
+
+See [RedisAPI](https://github.com/ropensci/RedisAPI) and the vignette for more information.
+
+### Low level
 
 Create a connection:
 
