@@ -7,3 +7,4 @@
 ^src/hiredis/.*\.[oa]$
 ^update_hiredis$
 ^ignore$
+^update_web\.sh$

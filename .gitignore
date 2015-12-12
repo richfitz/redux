@@ -3,3 +3,4 @@
 .RData
 notes.md
 *.a
+inst/web
