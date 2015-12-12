@@ -1,0 +1,174 @@
+---
+title: "Low level implementation details"
+author: "Rich FitzJohn"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Low level implementation details}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+These are the implementation details that straddle awkwardly
+between RedisAPI and redux.  Really, these are the requirements
+that RedisAPI has of connections, rather than being anything
+special to redux.  But redux provides the drivers (and has
+vignettes anyway) so they're going here.
+
+Create a connection:
+``` {r }
+con <- redux::redis_connection(RedisAPI::redis_config())
+con
+```
+
+See `?RedisAPI::redis_config` for details on specifying hosts,
+ports, servers, etc.  Importantly, _socket connections_ can be
+used, which can be considerably faster if you are connecting to a
+local Redis instance and have socket connections enabled.
+
+The connection object provides several functions for interfacing
+with Redis:
+
+* `config`: return the configuration used to create the connection
+* `reconnect`: Reconnect a disconnected client, using the same
+  options as used to create the connection.
+* `command`: Run a redis command.  The format of the argument is
+  given below.
+* `pipeline`: Run a set of redis commands, as described below, in a
+  single roundtrip with the server.  No logic is possible here, but
+  this can be *much* faster especially over slow connections.
+* `subscribe`: Support for becoming a blocking subscribe client.
+
+## Commands
+
+The simplest command is a character vector, starting with a Redis
+command, e.g.:
+``` {r }
+con$command(c("SET", "foo", 1))
+```
+
+However, if we wanted to set `foo` to be an R object (e.g. `1:10`),
+then we need to *serialise* the object.  To do that we use `raw`
+vectors and the command would become:
+``` {r }
+con$command(list("SET", "foo", serialize(1:10, NULL)))
+```
+
+and to retrieve it:
+``` {r }
+unserialize(con$command(c("GET", "foo")))
+```
+
+Elements of a list command can be:
+
+* Character vectors of any length
+* Integer vectors of any length (convered to character)
+* Logical vectors of any length (converted to integer then to character)
+* A list of raw vectors (note this generates a nested list)
+
+`NULL` values in the list will be skipped over.
+
+## Pipelining
+
+See [the redis documentation](http://redis.io/topics/pipelining)
+for background information about pipelining.  In short, evaluating
+``` {r }
+con$command(c("INCR", "X"))
+con$command(c("INCR", "X"))
+```
+
+will result in two round trips:
+
+```
+Client: INCR X
+Server: 1
+Client: INCR X
+Server: 2
+```
+
+These commands can be *pipelined* together into a single request so that the interaction looks like:
+
+```
+Client: INCR X
+Client: INCR X
+Server: 1
+Server: 2
+```
+
+To do this, the `pipeline` function in the redis object accepts multiple Redis commands as a list:
+``` {r }
+con$pipeline(list(
+  c("INCR", "X"),
+  c("INCR", "X")
+))
+```
+
+(if these arguments are named, then the output will have the same
+names).
+
+Note the [warnings about
+pipeline](http://redis.io/topics/pipelining#redis-pipelining) in
+the official Redis documentation - sending so many commands (e.g.,
+>10k) memory use on the server can be negatively affected.
+
+## Subscriptions
+
+Subscriptions, really should be done with the `RedisAPI` wrapper,
+which is exposed by the `subscribe` method of a `redis_api` object
+(e.g, `redux`).  The brave are welcome to use this low-level
+interface should the need arise.  The `subscribe` function takes
+arguments:
+
+* `channel`: a vector of one or more channels to listen on
+* `pattern`: a logical indicating if the `channel` is a pattern
+* `callback`: a function described below
+* `envir`: environment to evaluate the function in, by default the parent frame
+
+The callback function must take a single argument; this will be the
+recieved message with named elements `type` (which will be
+message), `channel` (the name of the channel) and `value` (the
+message contents).  If `pattern` was `TRUE`, then an additional
+element `pattern` will be present (see the Redis docs).  The
+callback must return `TRUE` or `FALSE`; this indicates if the
+client should continue quit (i.e., `TRUE` means return control to
+R, `FALSE` means keep going).
+
+Because the `subscribe` function is blocking and returns nothing,
+so all data collection needs to happen as a side-effect of the
+callback function.
+
+Here's an example that will collect values until it has 10 entries:
+``` {r }
+callback <- local({
+  i <- 1L
+  vals <- numeric(10L)
+  function(x) {
+    vals[[i]] <<- as.numeric(x$value)
+    i <<- i + 1L
+    i > 10L
+  }
+})
+```
+which, given a valid publisher would look like:
+
+```r
+con$subscribe("foo", FALSE, callback)
+
+
+This will sit there forever unless something publishes on channel
+`foo`.  In a second instance you can run:
+
+```r
+con <- redux::redis_connection(RedisAPI::redis_config())
+res <- sapply(1:11, function(i) con$command(c("PUBLISH", "foo", runif(1))))
+```
+
+which will return 10 values of 1 and 1 value of 0 (being the number of clients subscribed to the `foo` channel).
+
+Back in the client R instance, the subscriber has detached, and
+
+```r
+environment(callback)$vals
+```
+
+will be a vector of 10 random numbers!

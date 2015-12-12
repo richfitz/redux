@@ -43,11 +43,20 @@ vignettes/redux.Rmd: vignettes/src/redux.Rmd
 	sed -i.bak 's/[[:space:]]*$$//' $@
 	rm -f $@.bak
 
-vignettes_install: vignettes/redux.Rmd
+vignettes/src/low_level.Rmd: vignettes/src/low_level.R
+	${RSCRIPT} -e 'library(sowsear); sowsear("$<", output="$@")'
+
+vignettes/low_level.Rmd: vignettes/src/low_level.Rmd
+	cd vignettes/src && ${RSCRIPT} -e 'knitr::knit("low_level.Rmd")'
+	mv vignettes/src/low_level.md $@
+	sed -i.bak 's/[[:space:]]*$$//' $@
+	rm -f $@.bak
+
+vignettes_install: vignettes/redux.Rmd vignettes/low_level.Rmd
 	${RSCRIPT} -e 'library(methods); devtools::build_vignettes()'
 
 vignettes:
-	rm -f vignettes/redux.Rmd
+	rm -f vignettes/redux.Rmd vignettes/low_level.Rmd
 	make vignettes_install
 
 staticdocs:

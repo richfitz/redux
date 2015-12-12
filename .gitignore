@@ -4,3 +4,5 @@
 notes.md
 *.a
 inst/web
+inst/doc/low_level.*
+vignettes/low_level.Rmd
