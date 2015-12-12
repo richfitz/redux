@@ -246,7 +246,8 @@ The return value here is the number of subscribers to that channel;
 in our case zero!
 
 The `SUBSCRIBE` method should not be used as the client cannot deal
-with messages directly.
+with messages directly (it is disabled in the interface to prevent
+this).
 
 Instead, use the `subscribe` (lower case) method.  This takes arguments:
 

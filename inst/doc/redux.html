@@ -321,7 +321,7 @@ r$<span class="kw">pipeline</span>(<span class="dt">.commands=</span>cmds)</code
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>, <span class="st">&quot;hello&quot;</span>)</code></pre></div>
 <pre><code>## [1] 0</code></pre>
 <p>The return value here is the number of subscribers to that channel; in our case zero!</p>
-<p>The <code>SUBSCRIBE</code> method should not be used as the client cannot deal with messages directly.</p>
+<p>The <code>SUBSCRIBE</code> method should not be used as the client cannot deal with messages directly (it is disabled in the interface to prevent this).</p>
 <p>Instead, use the <code>subscribe</code> (lower case) method. This takes arguments:</p>
 <ul>
 <li><p><code>channel</code>: name or pattern of the channel/s to subscribe to (scalar or vector).</p></li>
@@ -359,27 +359,27 @@ r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>,
                    <span class="dt">transform=</span>transform,
                    <span class="dt">terminate=</span>function(x) <span class="kw">identical</span>(x, <span class="st">&quot;goodbye&quot;</span>),
                    <span class="dt">n=</span><span class="dv">100</span>)</code></pre></div>
-<pre><code>## 2015-12-12 18:17:21.823: got message: 1120
-## 2015-12-12 18:17:21.879: got message: 1160
-## 2015-12-12 18:17:21.934: got message: 963
-## 2015-12-12 18:17:21.990: got message: 1210
-## 2015-12-12 18:17:22.045: got message: 1160
-## 2015-12-12 18:17:22.100: got message: 1160
-## 2015-12-12 18:17:22.156: got message: 813
-## 2015-12-12 18:17:22.211: got message: 1230
-## 2015-12-12 18:17:22.267: got message: 1370
-## 2015-12-12 18:17:22.322: got message: 1140
-## 2015-12-12 18:17:22.377: got message: 995
-## 2015-12-12 18:17:22.433: got message: 935
-## 2015-12-12 18:17:22.489: got message: 1110
-## 2015-12-12 18:17:22.544: got message: 994
-## 2015-12-12 18:17:22.600: got message: 1020
-## 2015-12-12 18:17:22.655: got message: 960
-## 2015-12-12 18:17:22.711: got message: 1180
-## 2015-12-12 18:17:22.766: got message: 799
-## 2015-12-12 18:17:22.822: got message: 958
-## 2015-12-12 18:17:22.878: got message: 1140
-## 2015-12-12 18:17:22.879: got message: goodbye</code></pre>
+<pre><code>## 2015-12-12 11:32:42.959: got message: 1120
+## 2015-12-12 11:32:43.014: got message: 1160
+## 2015-12-12 11:32:43.068: got message: 963
+## 2015-12-12 11:32:43.123: got message: 1210
+## 2015-12-12 11:32:43.179: got message: 1160
+## 2015-12-12 11:32:43.234: got message: 1160
+## 2015-12-12 11:32:43.290: got message: 813
+## 2015-12-12 11:32:43.345: got message: 1230
+## 2015-12-12 11:32:43.401: got message: 1370
+## 2015-12-12 11:32:43.457: got message: 1140
+## 2015-12-12 11:32:43.508: got message: 995
+## 2015-12-12 11:32:43.563: got message: 935
+## 2015-12-12 11:32:43.619: got message: 1110
+## 2015-12-12 11:32:43.674: got message: 994
+## 2015-12-12 11:32:43.730: got message: 1020
+## 2015-12-12 11:32:43.786: got message: 960
+## 2015-12-12 11:32:43.838: got message: 1180
+## 2015-12-12 11:32:43.894: got message: 799
+## 2015-12-12 11:32:43.949: got message: 958
+## 2015-12-12 11:32:44.004: got message: 1140
+## 2015-12-12 11:32:44.005: got message: goodbye</code></pre>
 <p>The timestamps in the printed output show when the message was recieved (with fractional seconds so that this is more obvious since this only takes ~1s to complete).</p>
 <p>The <code>res</code> object contains all the values, including the “goodbye” that was our end-of-stream message:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlist</span>(res)</code></pre></div>

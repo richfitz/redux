@@ -13,6 +13,6 @@ License: GPL-2
 LazyData: true
 URL: https://github.com/richfitz/redux
 BugReports: https://github.com/richfitz/redux/issues
-Imports: RedisAPI (>= 0.3.0)
+Imports: RedisAPI (>= 0.4.0)
 Suggests: knitr, testthat
 VignetteBuilder: knitr

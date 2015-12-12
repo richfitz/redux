@@ -564,7 +564,8 @@ The return value here is the number of subscribers to that channel;
 in our case zero!
 
 The `SUBSCRIBE` method should not be used as the client cannot deal
-with messages directly.
+with messages directly (it is disabled in the interface to prevent
+this).
 
 Instead, use the `subscribe` (lower case) method.  This takes arguments:
 
@@ -649,27 +650,27 @@ res <- r$subscribe("mychannel",
 ```
 
 ```
-## 2015-12-12 18:17:21.823: got message: 1120
-## 2015-12-12 18:17:21.879: got message: 1160
-## 2015-12-12 18:17:21.934: got message: 963
-## 2015-12-12 18:17:21.990: got message: 1210
-## 2015-12-12 18:17:22.045: got message: 1160
-## 2015-12-12 18:17:22.100: got message: 1160
-## 2015-12-12 18:17:22.156: got message: 813
-## 2015-12-12 18:17:22.211: got message: 1230
-## 2015-12-12 18:17:22.267: got message: 1370
-## 2015-12-12 18:17:22.322: got message: 1140
-## 2015-12-12 18:17:22.377: got message: 995
-## 2015-12-12 18:17:22.433: got message: 935
-## 2015-12-12 18:17:22.489: got message: 1110
-## 2015-12-12 18:17:22.544: got message: 994
-## 2015-12-12 18:17:22.600: got message: 1020
-## 2015-12-12 18:17:22.655: got message: 960
-## 2015-12-12 18:17:22.711: got message: 1180
-## 2015-12-12 18:17:22.766: got message: 799
-## 2015-12-12 18:17:22.822: got message: 958
-## 2015-12-12 18:17:22.878: got message: 1140
-## 2015-12-12 18:17:22.879: got message: goodbye
+## 2015-12-12 11:32:42.959: got message: 1120
+## 2015-12-12 11:32:43.014: got message: 1160
+## 2015-12-12 11:32:43.068: got message: 963
+## 2015-12-12 11:32:43.123: got message: 1210
+## 2015-12-12 11:32:43.179: got message: 1160
+## 2015-12-12 11:32:43.234: got message: 1160
+## 2015-12-12 11:32:43.290: got message: 813
+## 2015-12-12 11:32:43.345: got message: 1230
+## 2015-12-12 11:32:43.401: got message: 1370
+## 2015-12-12 11:32:43.457: got message: 1140
+## 2015-12-12 11:32:43.508: got message: 995
+## 2015-12-12 11:32:43.563: got message: 935
+## 2015-12-12 11:32:43.619: got message: 1110
+## 2015-12-12 11:32:43.674: got message: 994
+## 2015-12-12 11:32:43.730: got message: 1020
+## 2015-12-12 11:32:43.786: got message: 960
+## 2015-12-12 11:32:43.838: got message: 1180
+## 2015-12-12 11:32:43.894: got message: 799
+## 2015-12-12 11:32:43.949: got message: 958
+## 2015-12-12 11:32:44.004: got message: 1140
+## 2015-12-12 11:32:44.005: got message: goodbye
 ```
 
 
