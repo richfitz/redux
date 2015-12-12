@@ -1,7 +1,7 @@
 ---
 title: "Using Redis with redux and RedisAPI"
 author: "Rich FitzJohn"
-date: "2015-11-03"
+date: "2015-12-12"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using Redis with redux and RedisAPI}
@@ -13,7 +13,7 @@ vignette: >
 
 `redux` and `RedisAPI` provide a full interface to the Redis API;
 `redux` does the actual interfacing with Redis and `RedisAPI` uses
-this to expose all 158 Redis
+this to expose all 188 Redis
 commands as a set of user-friendly R functions that do basic error
 checking.
 
@@ -48,15 +48,23 @@ r
 
 ```
 ## <redis_api>
-##   Public:
-##     .command: function
-##     .pipeline: function
-##     .subscribe: function
+##   Redis commands:
 ##     APPEND: function
+##     AUTH: function
+##     BGREWRITEAOF: function
+##     BGSAVE: function
 ##     ...
-##     ZSCAN: function
 ##     ZSCORE: function
 ##     ZUNIONSTORE: function
+##   Other public methods:
+##     clone: function
+##     command: function
+##     config: function
+##     initialize: function
+##     pipeline: function
+##     reconnect: function
+##     subscribe: function
+##     type: function
 ```
 
 For example, `SET` and `GET`:
@@ -191,7 +199,25 @@ everything other than logicals, numbers or strings).  Similarly,
 you are responsible for type coersion/deserialisation when
 retrieving data at the other end.
 
-This is how the `rdb` object is implemented (see below).
+Note that you are not restricted to using serialised R objects as
+values; you can use them as keys; this is perfectly valid:
+
+```r
+r$SET(RedisAPI::object_to_bin(1:10), "mydata")
+```
+
+```
+## [Redis: OK]
+```
+
+```r
+r$GET(RedisAPI::object_to_bin(1:10))
+```
+
+```
+## [1] "mydata"
+```
+
 
 However, depending on what you want to achieve, Redis offers
 potentially better ways of holding lists using its native data
@@ -440,85 +466,230 @@ dat
 ## [1] "3"
 ```
 
-# Example application of an R-object key/value store (`rdb`)
+# Pipelining
 
-As a simple example, the `RedisAPI` package provides a `rdb` object
-showing how one might build an application on top of `RedisAPI` and
-`redux`.  To create an `rdb` object
+Every command set to Redis costs a round trip; even over the
+loopback interface this can be expensive if done a very large
+number of times.  Redis offers two ways of minimising this problem;
+pipelining and lua scripting.  redux/RedisAPI support both.
 
-```r
-db <- RedisAPI::rdb(redux::hiredis)
-```
-
-Newly created databases are empty - they have no keys
+To pipeline, use the `pipeline` method of the `hiredis` object:
 
 ```r
-db$keys()
+redis <- RedisAPI::redis
+r$pipeline(
+  redis$PING(),
+  redis$PING())
 ```
 
 ```
-## [1] "a_function" "mtcars"     "mykey"
+## [[1]]
+## [Redis: PONG]
+##
+## [[2]]
+## [Redis: PONG]
 ```
 
-R objects can be stored against keys, for example:
+Here, `redis` is a special object within RedisAPI that implements
+all the Redis commands but only formats them for use rather than
+sends them.  The `pipeline` method collects these all up and sends
+them to the server in a single batch, with the result returned as a
+list.
 
-```r
-db$set("mykey", 1:10)
-db$keys()
-```
-
-```
-## [1] "a_function" "mtcars"     "mykey"
-```
-
-Retrieve the value of a key with `$get`:
-
-```r
-db$get("mykey")
-```
-
-```
-##  [1]  1  2  3  4  5  6  7  8  9 10
-```
-
-Trying to get a nonexistant key does not throw an error but returns
-`NULL`
+If arguments are named, then the return value is named:
 
 ```r
-db$get("no_such_key")
+r$pipeline(
+  a=redis$INCR("x"),
+  b=redis$INCR("x"),
+  c=redis$DEL("x"))
 ```
 
 ```
-## NULL
-```
-
-That's it.  Arbitrary R objects can be stored in keys, and they
-will be returned intact with few exceptions (the exceptions are
-things like `rdb` itself which includes an "external pointer"
-object which can't be serialised - see `?serialize` for more
-information):
-
-```r
-db$set("mtcars", mtcars)
-identical(db$get("mtcars"), mtcars)
-```
-
-```
-## [1] TRUE
-```
-
-```r
-db$set("a_function", sin)
-db$get("a_function")(pi / 2) # 1
-```
-
-```
+## $a
+## [1] 1
+##
+## $b
+## [1] 2
+##
+## $c
 ## [1] 1
 ```
 
-This seems really silly, but is potentially very useful.  There are
-file-based key/value systems on CRAN, and this would be another but
-backed by a datea source that is distributed.
+here a variable "x" was incremented twice and then deleted.
+
+If you use pipelining you should read the [Redis page on
+it](http://redis.io/topics/pipelining) because there are a few
+restrictions and cautions.
+
+Generating very large numbers (or variable nubmers) of commands
+with the above interface will be difficult because `pipeline` uses
+the dots argument.  Instead, you can pass a list of commands to the
+`.commands` argument of `pipeline`:
+
+```r
+cmds <- lapply(seq_len(4), function(.) redis$PING())
+r$pipeline(.commands=cmds)
+```
+
+```
+## [[1]]
+## [Redis: PONG]
+##
+## [[2]]
+## [Redis: PONG]
+##
+## [[3]]
+## [Redis: PONG]
+##
+## [[4]]
+## [Redis: PONG]
+```
+
+# Subscriptions
+
+On top of the key/value store aspect of Redis, it also offers a
+publisher/subscriber model.  Publishing with `redux` is
+straightforward; use the `PUBLISH` method:
+
+```r
+r$PUBLISH("mychannel", "hello")
+```
+
+```
+## [1] 0
+```
+
+The return value here is the number of subscribers to that channel;
+in our case zero!
+
+The `SUBSCRIBE` method should not be used as the client cannot deal
+with messages directly.
+
+Instead, use the `subscribe` (lower case) method.  This takes arguments:
+
+* `channel`: name or pattern of the channel/s to subscribe to
+  (scalar or vector).
+
+* `transform`: A function that takes each message and processes it.
+  Messages are R lists with elements: `type`, `pattern` (if a
+  pattern was used), `channel` and `value` (see the Redis docs).
+  Your transform function can turn this into anything it wants, and
+  may have side effects such as printing to the screen, writing to
+  a file, etc.
+
+* `terminate`: A termination criterion.  given a *transformed*
+  message (i.e., the result of `transform(x)`) return `TRUE` if
+  we're processing messages.  Optional, but if not used set `n` to
+  a finite number.
+
+* collect: logical indicating if *transformed* messages should be
+  collected and returned on exit.
+
+* n: maximum number of messages to collect; once `n` messages have
+  been collected we will terminate regardless of `terminate`.
+
+* pattern: logical indicating if `channel` should be interpreted as
+ a pattern.
+
+* envir: environment in which to evaluate `transform` and `terminate`.
+
+That all sounds a lot more complicated it really is.  To collect
+all messages on the `"mychannel"` channel, stopping after 100
+messages or a message reading exactly "goodbye" you would write:
+
+```r
+res <- r$subscribe("mychannel",
+                   transform=function(x) x$value,
+                   terminate=function(x) identical(x, "goodbye"),
+                   n=100)
+```
+
+To test this out, we need a second process that will publish to the
+channel (or we'll wait forever).  This function will publish the
+first 20 values out of the Nile data set.
+
+
+```r
+r <- redux::hiredis()
+for (i in Nile[1:20]) {
+  Sys.sleep(.05)
+  r$PUBLISH("mychannel", i)
+}
+r$PUBLISH("mychannel", "goodbye")
+```
+
+This file is at `path_to_publisher` (in R's temporary directory)
+and can be run with:
+
+```r
+system2(file.path(R.home(), "bin", "Rscript"), path_to_publisher,
+        wait=FALSE, stdout=FALSE, stderr=FALSE)
+```
+
+to start the publisher.
+
+Let's add a little debgging information to the transform function,
+and set the subscriber off:
+
+```r
+transform <- function(x) {
+  message(format(Sys.time(), "%Y-%m-%d %H:%M:%OS3"),
+          ": got message: ",
+          x$value)
+  x$value
+}
+```
+
+```r
+res <- r$subscribe("mychannel",
+                   transform=transform,
+                   terminate=function(x) identical(x, "goodbye"),
+                   n=100)
+```
+
+```
+## 2015-12-12 18:17:21.823: got message: 1120
+## 2015-12-12 18:17:21.879: got message: 1160
+## 2015-12-12 18:17:21.934: got message: 963
+## 2015-12-12 18:17:21.990: got message: 1210
+## 2015-12-12 18:17:22.045: got message: 1160
+## 2015-12-12 18:17:22.100: got message: 1160
+## 2015-12-12 18:17:22.156: got message: 813
+## 2015-12-12 18:17:22.211: got message: 1230
+## 2015-12-12 18:17:22.267: got message: 1370
+## 2015-12-12 18:17:22.322: got message: 1140
+## 2015-12-12 18:17:22.377: got message: 995
+## 2015-12-12 18:17:22.433: got message: 935
+## 2015-12-12 18:17:22.489: got message: 1110
+## 2015-12-12 18:17:22.544: got message: 994
+## 2015-12-12 18:17:22.600: got message: 1020
+## 2015-12-12 18:17:22.655: got message: 960
+## 2015-12-12 18:17:22.711: got message: 1180
+## 2015-12-12 18:17:22.766: got message: 799
+## 2015-12-12 18:17:22.822: got message: 958
+## 2015-12-12 18:17:22.878: got message: 1140
+## 2015-12-12 18:17:22.879: got message: goodbye
+```
+
+
+
+The timestamps in the printed output show when the message was
+recieved (with fractional seconds so that this is more obvious
+since this only takes ~1s to complete).
+
+The `res` object contains all the values, including the "goodbye"
+that was our end-of-stream message:
+
+```r
+unlist(res)
+```
+
+```
+##  [1] "1120"    "1160"    "963"     "1210"    "1160"    "1160"    "813"
+##  [8] "1230"    "1370"    "1140"    "995"     "935"     "1110"    "994"
+## [15] "1020"    "960"     "1180"    "799"     "958"     "1140"    "goodbye"
+```
 
 # Potential applications
 
@@ -610,12 +781,13 @@ is a work in progress.
 
 # Getting help
 
-Because `RedisAPI` package is simply a wrapper around the Redis
-API, the main source of documentation is the Redis help itself,
-`http://redis.io` (Unfortunately, the CRAN submission system
-incorrectly complains and thinks that website is a dead link so I
-direct links can't be included).  The Redis documentation is very
-readable, thorough and contains great examples.
+Because `redux` uses the `RedisAPI` package for its interface and
+`RedisAPI` package is simply a wrapper around the Redis API, the
+main source of documentation is the Redis help itself at
+http://redis.io
+
+The Redis documentation is unusually readable, thorough and
+contains great examples.
 
 `RedisAPI` tries to bridge to this help.  Redis' commands are
 "grouped" by data types or operation type; use
@@ -626,10 +798,10 @@ RedisAPI::redis_commands_groups()
 ```
 
 ```
-##  [1] "cluster"      "connection"   "generic"      "geo"
-##  [5] "hash"         "hyperloglog"  "list"         "pubsub"
-##  [9] "scripting"    "server"       "set"          "sorted_set"
-## [13] "string"       "transactions"
+##  [1] "cluster"      "connection"   "generic"      "hash"
+##  [5] "hyperloglog"  "list"         "pubsub"       "scripting"
+##  [9] "server"       "set"          "sorted_set"   "string"
+## [13] "transactions"
 ```
 
 To see command listed within a group, use the `redis_commands`

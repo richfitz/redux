@@ -46,16 +46,6 @@ rand_str <- function(len=8, prefix="") {
          paste(sample(c(LETTERS, letters, 0:9), len), collapse=""))
 }
 
-mixed_fake_data <- function(nr) {
-  str <- sample(rownames(mtcars), nr, replace=TRUE)
-  data.frame(x_logical=(runif(nr) < .3),
-             x_numeric=rnorm(nr),
-             x_integer=as.integer(rpois(nr, 2)),
-             x_character=str,
-             x_factor=factor(str),
-             stringsAsFactors=FALSE)
-}
-
 vcapply <- function(X, FUN, ...) {
   vapply(X, FUN, character(1), ...)
 }

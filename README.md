@@ -88,7 +88,7 @@ Elements of a list command can be:
 
 ## Pipelining
 
-See [the redis documentation](redis.io/topics/pipelining) for background information about pipelining.  In short, evaluating
+See [the redis documentation](http://redis.io/topics/pipelining) for background information about pipelining.  In short, evaluating
 
 ```r
 con$command(c("INCR", "X"))

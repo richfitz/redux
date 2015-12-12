@@ -4,20 +4,20 @@ RSCRIPT = Rscript --no-init-file
 all: compile_dll
 
 compile_dll:
-	Rscript -e 'devtools::compile_dll()'
+	${RSCRIPT} -e 'devtools::compile_dll()'
 
 test:
-	Rscript -e 'library(methods); devtools::test()'
+	${RSCRIPT} -e 'library(methods); devtools::test()'
 
 RcppR6:
-	Rscript -e "library(methods); RcppR6::RcppR6()"
+	${RSCRIPT} -e "library(methods); RcppR6::RcppR6()"
 
 attributes:
-	Rscript -e "Rcpp::compileAttributes()"
+	${RSCRIPT} -e "Rcpp::compileAttributes()"
 
 roxygen:
 	@mkdir -p man
-	Rscript -e "library(methods); devtools::document()"
+	${RSCRIPT} -e "library(methods); devtools::document()"
 
 install:
 	R CMD INSTALL .

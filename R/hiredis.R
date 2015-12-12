@@ -9,10 +9,13 @@
 ##'   \code{redis_available}, arguments are passed through to
 ##'   \code{hiredis}.
 ##'
+##' @param version Version of the interface to generate.  If given as
+##'   a string ot numeric version, then only commands that exist up to
+##'   that version will be included.  If given as \code{TRUE}, then we
+##'   will query the Redis server (with \code{INFO}) and extract the
+##'   version number that way.
+##'
 ##' @export
-##' @importFrom RedisAPI redis_api
-##' @importFrom RedisAPI object_to_bin bin_to_object
-##' @importFrom RedisAPI object_to_string string_to_object
 ##' @examples
 ##' # Only run if a Redis server is running
 ##' if (redis_available()) {
@@ -21,10 +24,10 @@
 ##'   r$SET("foo", "bar")
 ##'   r$GET("foo")
 ##' }
-hiredis <- function(...) {
+hiredis <- function(..., version=NULL) {
   config <- RedisAPI::redis_config(...)
   con <- redis_connection(config)
-  RedisAPI::redis_api(con)
+  RedisAPI::redis_api(con, version)
 }
 
 ##' @export

@@ -10,7 +10,7 @@
 
 <meta name="author" content="Rich FitzJohn" />
 
-<meta name="date" content="2015-11-03" />
+<meta name="date" content="2015-12-12" />
 
 <title>Using Redis with redux and RedisAPI</title>
 
@@ -72,11 +72,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">Using Redis with redux and RedisAPI</h1>
 <h4 class="author"><em>Rich FitzJohn</em></h4>
-<h4 class="date"><em>2015-11-03</em></h4>
+<h4 class="date"><em>2015-12-12</em></h4>
 </div>
 
 
-<p><code>redux</code> and <code>RedisAPI</code> provide a full interface to the Redis API; <code>redux</code> does the actual interfacing with Redis and <code>RedisAPI</code> uses this to expose all 158 Redis commands as a set of user-friendly R functions that do basic error checking.</p>
+<p><code>redux</code> and <code>RedisAPI</code> provide a full interface to the Redis API; <code>redux</code> does the actual interfacing with Redis and <code>RedisAPI</code> uses this to expose all 188 Redis commands as a set of user-friendly R functions that do basic error checking.</p>
 <p>It is possible to build user-friendly applications on top of this, for example, the built in <code>rdb</code> R key-value store, <a href="https://github.com/richfitz/storr"><code>storr</code></a> which provides a content-addressable object store, and <a href="https://github.com/traitecoevo/rrqueue"><code>rrqueue</code></a> which implements a scalable queuing system.</p>
 <p>The main entry point for creating a <code>redis_api</code> object is the <code>hiredis</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span>redux::<span class="kw">hiredis</span>()</code></pre></div>
@@ -84,15 +84,23 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The <code>redis_api</code> object is an <a href="https://github.com/wch/R6"><code>R6</code></a> class with <em>many</em> methods, each corresponding to a different Redis command.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r</code></pre></div>
 <pre><code>## &lt;redis_api&gt;
-##   Public:
-##     .command: function
-##     .pipeline: function
-##     .subscribe: function
+##   Redis commands:
 ##     APPEND: function
+##     AUTH: function
+##     BGREWRITEAOF: function
+##     BGSAVE: function
 ##     ...
-##     ZSCAN: function
 ##     ZSCORE: function
-##     ZUNIONSTORE: function</code></pre>
+##     ZUNIONSTORE: function
+##   Other public methods:
+##     clone: function
+##     command: function
+##     config: function
+##     initialize: function
+##     pipeline: function
+##     reconnect: function
+##     subscribe: function
+##     type: function</code></pre>
 <p>For example, <code>SET</code> and <code>GET</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mykey&quot;</span>, <span class="st">&quot;mydata&quot;</span>) <span class="co"># set the key &quot;mykey&quot; to the value &quot;mydata&quot;</span></code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
@@ -133,7 +141,11 @@ str</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">RedisAPI::<span class="kw">string_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>This gives you all the power of Redis, but you will have to manually serialise/deserialise all complicated R objects (i.e., everything other than logicals, numbers or strings). Similarly, you are responsible for type coersion/deserialisation when retrieving data at the other end.</p>
-<p>This is how the <code>rdb</code> object is implemented (see below).</p>
+<p>Note that you are not restricted to using serialised R objects as values; you can use them as keys; this is perfectly valid:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(RedisAPI::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>), <span class="st">&quot;mydata&quot;</span>)</code></pre></div>
+<pre><code>## [Redis: OK]</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(RedisAPI::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
+<pre><code>## [1] &quot;mydata&quot;</code></pre>
 <p>However, depending on what you want to achieve, Redis offers potentially better ways of holding lists using its native data types. For example;</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">RPUSH</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">1</span>:<span class="dv">10</span>)</code></pre></div>
 <pre><code>## [1] 10</code></pre>
@@ -259,31 +271,121 @@ dat</code></pre></div>
 ## [[3]]
 ## [1] &quot;3&quot;</code></pre>
 </div>
-<div id="example-application-of-an-r-object-keyvalue-store-rdb" class="section level1">
-<h1>Example application of an R-object key/value store (<code>rdb</code>)</h1>
-<p>As a simple example, the <code>RedisAPI</code> package provides a <code>rdb</code> object showing how one might build an application on top of <code>RedisAPI</code> and <code>redux</code>. To create an <code>rdb</code> object</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">db &lt;-<span class="st"> </span>RedisAPI::<span class="kw">rdb</span>(redux::hiredis)</code></pre></div>
-<p>Newly created databases are empty - they have no keys</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">db$<span class="kw">keys</span>()</code></pre></div>
-<pre><code>## [1] &quot;a_function&quot; &quot;mtcars&quot;     &quot;mykey&quot;</code></pre>
-<p>R objects can be stored against keys, for example:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">db$<span class="kw">set</span>(<span class="st">&quot;mykey&quot;</span>, <span class="dv">1</span>:<span class="dv">10</span>)
-db$<span class="kw">keys</span>()</code></pre></div>
-<pre><code>## [1] &quot;a_function&quot; &quot;mtcars&quot;     &quot;mykey&quot;</code></pre>
-<p>Retrieve the value of a key with <code>$get</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">db$<span class="kw">get</span>(<span class="st">&quot;mykey&quot;</span>)</code></pre></div>
-<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
-<p>Trying to get a nonexistant key does not throw an error but returns <code>NULL</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">db$<span class="kw">get</span>(<span class="st">&quot;no_such_key&quot;</span>)</code></pre></div>
-<pre><code>## NULL</code></pre>
-<p>That’s it. Arbitrary R objects can be stored in keys, and they will be returned intact with few exceptions (the exceptions are things like <code>rdb</code> itself which includes an “external pointer” object which can’t be serialised - see <code>?serialize</code> for more information):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">db$<span class="kw">set</span>(<span class="st">&quot;mtcars&quot;</span>, mtcars)
-<span class="kw">identical</span>(db$<span class="kw">get</span>(<span class="st">&quot;mtcars&quot;</span>), mtcars)</code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">db$<span class="kw">set</span>(<span class="st">&quot;a_function&quot;</span>, sin)
-db$<span class="kw">get</span>(<span class="st">&quot;a_function&quot;</span>)(pi /<span class="st"> </span><span class="dv">2</span>) <span class="co"># 1</span></code></pre></div>
-<pre><code>## [1] 1</code></pre>
-<p>This seems really silly, but is potentially very useful. There are file-based key/value systems on CRAN, and this would be another but backed by a datea source that is distributed.</p>
+<div id="pipelining" class="section level1">
+<h1>Pipelining</h1>
+<p>Every command set to Redis costs a round trip; even over the loopback interface this can be expensive if done a very large number of times. Redis offers two ways of minimising this problem; pipelining and lua scripting. redux/RedisAPI support both.</p>
+<p>To pipeline, use the <code>pipeline</code> method of the <code>hiredis</code> object:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redis &lt;-<span class="st"> </span>RedisAPI::redis
+r$<span class="kw">pipeline</span>(
+  redis$<span class="kw">PING</span>(),
+  redis$<span class="kw">PING</span>())</code></pre></div>
+<pre><code>## [[1]]
+## [Redis: PONG]
+##
+## [[2]]
+## [Redis: PONG]</code></pre>
+<p>Here, <code>redis</code> is a special object within RedisAPI that implements all the Redis commands but only formats them for use rather than sends them. The <code>pipeline</code> method collects these all up and sends them to the server in a single batch, with the result returned as a list.</p>
+<p>If arguments are named, then the return value is named:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">pipeline</span>(
+  <span class="dt">a=</span>redis$<span class="kw">INCR</span>(<span class="st">&quot;x&quot;</span>),
+  <span class="dt">b=</span>redis$<span class="kw">INCR</span>(<span class="st">&quot;x&quot;</span>),
+  <span class="dt">c=</span>redis$<span class="kw">DEL</span>(<span class="st">&quot;x&quot;</span>))</code></pre></div>
+<pre><code>## $a
+## [1] 1
+##
+## $b
+## [1] 2
+##
+## $c
+## [1] 1</code></pre>
+<p>here a variable “x” was incremented twice and then deleted.</p>
+<p>If you use pipelining you should read the <a href="http://redis.io/topics/pipelining">Redis page on it</a> because there are a few restrictions and cautions.</p>
+<p>Generating very large numbers (or variable nubmers) of commands with the above interface will be difficult because <code>pipeline</code> uses the dots argument. Instead, you can pass a list of commands to the <code>.commands</code> argument of <code>pipeline</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cmds &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="kw">seq_len</span>(<span class="dv">4</span>), function(.) redis$<span class="kw">PING</span>())
+r$<span class="kw">pipeline</span>(<span class="dt">.commands=</span>cmds)</code></pre></div>
+<pre><code>## [[1]]
+## [Redis: PONG]
+##
+## [[2]]
+## [Redis: PONG]
+##
+## [[3]]
+## [Redis: PONG]
+##
+## [[4]]
+## [Redis: PONG]</code></pre>
+</div>
+<div id="subscriptions" class="section level1">
+<h1>Subscriptions</h1>
+<p>On top of the key/value store aspect of Redis, it also offers a publisher/subscriber model. Publishing with <code>redux</code> is straightforward; use the <code>PUBLISH</code> method:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>, <span class="st">&quot;hello&quot;</span>)</code></pre></div>
+<pre><code>## [1] 0</code></pre>
+<p>The return value here is the number of subscribers to that channel; in our case zero!</p>
+<p>The <code>SUBSCRIBE</code> method should not be used as the client cannot deal with messages directly.</p>
+<p>Instead, use the <code>subscribe</code> (lower case) method. This takes arguments:</p>
+<ul>
+<li><p><code>channel</code>: name or pattern of the channel/s to subscribe to (scalar or vector).</p></li>
+<li><p><code>transform</code>: A function that takes each message and processes it. Messages are R lists with elements: <code>type</code>, <code>pattern</code> (if a pattern was used), <code>channel</code> and <code>value</code> (see the Redis docs). Your transform function can turn this into anything it wants, and may have side effects such as printing to the screen, writing to a file, etc.</p></li>
+<li><p><code>terminate</code>: A termination criterion. given a <em>transformed</em> message (i.e., the result of <code>transform(x)</code>) return <code>TRUE</code> if we’re processing messages. Optional, but if not used set <code>n</code> to a finite number.</p></li>
+<li><p>collect: logical indicating if <em>transformed</em> messages should be collected and returned on exit.</p></li>
+<li><p>n: maximum number of messages to collect; once <code>n</code> messages have been collected we will terminate regardless of <code>terminate</code>.</p></li>
+<li><p>pattern: logical indicating if <code>channel</code> should be interpreted as a pattern.</p></li>
+<li><p>envir: environment in which to evaluate <code>transform</code> and <code>terminate</code>.</p></li>
+</ul>
+<p>That all sounds a lot more complicated it really is. To collect all messages on the <code>&quot;mychannel&quot;</code> channel, stopping after 100 messages or a message reading exactly “goodbye” you would write:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>r$<span class="kw">subscribe</span>(<span class="st">&quot;mychannel&quot;</span>,
+                   <span class="dt">transform=</span>function(x) x$value,
+                   <span class="dt">terminate=</span>function(x) <span class="kw">identical</span>(x, <span class="st">&quot;goodbye&quot;</span>),
+                   <span class="dt">n=</span><span class="dv">100</span>)</code></pre></div>
+<p>To test this out, we need a second process that will publish to the channel (or we’ll wait forever). This function will publish the first 20 values out of the Nile data set.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span>redux::<span class="kw">hiredis</span>()
+for (i in Nile[<span class="dv">1</span>:<span class="dv">20</span>]) {
+  <span class="kw">Sys.sleep</span>(.<span class="dv">05</span>)
+  r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>, i)
+}
+r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>, <span class="st">&quot;goodbye&quot;</span>)</code></pre></div>
+<p>This file is at <code>path_to_publisher</code> (in R’s temporary directory) and can be run with:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system2</span>(<span class="kw">file.path</span>(<span class="kw">R.home</span>(), <span class="st">&quot;bin&quot;</span>, <span class="st">&quot;Rscript&quot;</span>), path_to_publisher,
+        <span class="dt">wait=</span><span class="ot">FALSE</span>, <span class="dt">stdout=</span><span class="ot">FALSE</span>, <span class="dt">stderr=</span><span class="ot">FALSE</span>)</code></pre></div>
+<p>to start the publisher.</p>
+<p>Let’s add a little debgging information to the transform function, and set the subscriber off:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">transform &lt;-<span class="st"> </span>function(x) {
+  <span class="kw">message</span>(<span class="kw">format</span>(<span class="kw">Sys.time</span>(), <span class="st">&quot;%Y-%m-%d %H:%M:%OS3&quot;</span>),
+          <span class="st">&quot;: got message: &quot;</span>,
+          x$value)
+  x$value
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>r$<span class="kw">subscribe</span>(<span class="st">&quot;mychannel&quot;</span>,
+                   <span class="dt">transform=</span>transform,
+                   <span class="dt">terminate=</span>function(x) <span class="kw">identical</span>(x, <span class="st">&quot;goodbye&quot;</span>),
+                   <span class="dt">n=</span><span class="dv">100</span>)</code></pre></div>
+<pre><code>## 2015-12-12 18:17:21.823: got message: 1120
+## 2015-12-12 18:17:21.879: got message: 1160
+## 2015-12-12 18:17:21.934: got message: 963
+## 2015-12-12 18:17:21.990: got message: 1210
+## 2015-12-12 18:17:22.045: got message: 1160
+## 2015-12-12 18:17:22.100: got message: 1160
+## 2015-12-12 18:17:22.156: got message: 813
+## 2015-12-12 18:17:22.211: got message: 1230
+## 2015-12-12 18:17:22.267: got message: 1370
+## 2015-12-12 18:17:22.322: got message: 1140
+## 2015-12-12 18:17:22.377: got message: 995
+## 2015-12-12 18:17:22.433: got message: 935
+## 2015-12-12 18:17:22.489: got message: 1110
+## 2015-12-12 18:17:22.544: got message: 994
+## 2015-12-12 18:17:22.600: got message: 1020
+## 2015-12-12 18:17:22.655: got message: 960
+## 2015-12-12 18:17:22.711: got message: 1180
+## 2015-12-12 18:17:22.766: got message: 799
+## 2015-12-12 18:17:22.822: got message: 958
+## 2015-12-12 18:17:22.878: got message: 1140
+## 2015-12-12 18:17:22.879: got message: goodbye</code></pre>
+<p>The timestamps in the printed output show when the message was recieved (with fractional seconds so that this is more obvious since this only takes ~1s to complete).</p>
+<p>The <code>res</code> object contains all the values, including the “goodbye” that was our end-of-stream message:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlist</span>(res)</code></pre></div>
+<pre><code>##  [1] &quot;1120&quot;    &quot;1160&quot;    &quot;963&quot;     &quot;1210&quot;    &quot;1160&quot;    &quot;1160&quot;    &quot;813&quot;
+##  [8] &quot;1230&quot;    &quot;1370&quot;    &quot;1140&quot;    &quot;995&quot;     &quot;935&quot;     &quot;1110&quot;    &quot;994&quot;
+## [15] &quot;1020&quot;    &quot;960&quot;     &quot;1180&quot;    &quot;799&quot;     &quot;958&quot;     &quot;1140&quot;    &quot;goodbye&quot;</code></pre>
 </div>
 <div id="potential-applications" class="section level1">
 <h1>Potential applications</h1>
@@ -328,13 +430,14 @@ obj[[<span class="dv">2</span>]] ==<span class="st"> </span>obj2[[<span class="d
 </div>
 <div id="getting-help" class="section level1">
 <h1>Getting help</h1>
-<p>Because <code>RedisAPI</code> package is simply a wrapper around the Redis API, the main source of documentation is the Redis help itself, <code>http://redis.io</code> (Unfortunately, the CRAN submission system incorrectly complains and thinks that website is a dead link so I direct links can’t be included). The Redis documentation is very readable, thorough and contains great examples.</p>
+<p>Because <code>redux</code> uses the <code>RedisAPI</code> package for its interface and <code>RedisAPI</code> package is simply a wrapper around the Redis API, the main source of documentation is the Redis help itself at <a href="http://redis.io" class="uri">http://redis.io</a></p>
+<p>The Redis documentation is unusually readable, thorough and contains great examples.</p>
 <p><code>RedisAPI</code> tries to bridge to this help. Redis’ commands are “grouped” by data types or operation type; use  to see these groups:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">RedisAPI::<span class="kw">redis_commands_groups</span>()</code></pre></div>
-<pre><code>##  [1] &quot;cluster&quot;      &quot;connection&quot;   &quot;generic&quot;      &quot;geo&quot;
-##  [5] &quot;hash&quot;         &quot;hyperloglog&quot;  &quot;list&quot;         &quot;pubsub&quot;
-##  [9] &quot;scripting&quot;    &quot;server&quot;       &quot;set&quot;          &quot;sorted_set&quot;
-## [13] &quot;string&quot;       &quot;transactions&quot;</code></pre>
+<pre><code>##  [1] &quot;cluster&quot;      &quot;connection&quot;   &quot;generic&quot;      &quot;hash&quot;
+##  [5] &quot;hyperloglog&quot;  &quot;list&quot;         &quot;pubsub&quot;       &quot;scripting&quot;
+##  [9] &quot;server&quot;       &quot;set&quot;          &quot;sorted_set&quot;   &quot;string&quot;
+## [13] &quot;transactions&quot;</code></pre>
 <p>To see command listed within a group, use the <code>redis_commands</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">RedisAPI::<span class="kw">redis_commands</span>(<span class="st">&quot;string&quot;</span>)</code></pre></div>
 <pre><code>##  [1] &quot;APPEND&quot;      &quot;BITCOUNT&quot;    &quot;BITOP&quot;       &quot;BITPOS&quot;      &quot;DECR&quot;

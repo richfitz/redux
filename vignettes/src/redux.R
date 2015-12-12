@@ -17,8 +17,7 @@ set.seed(1)
 
 ## `redux` and `RedisAPI` provide a full interface to the Redis API;
 ## `redux` does the actual interfacing with Redis and `RedisAPI` uses
-## this to expose all `r length(grep("^[A-Z]",
-## names(RedisAPI:::redis_api_generator$public_methods)))` Redis
+## this to expose all `r length(names(RedisAPI::redis))` Redis
 ## commands as a set of user-friendly R functions that do basic error
 ## checking.
 
@@ -47,7 +46,8 @@ r <- redux::hiredis()
 r
 ##+ echo=FALSE
 res <- capture.output(print(r))
-res <- c(res[1:6], "    ...", res[(length(res) - 3):(length(res) - 1)])
+res <- c(res[1:6], "    ...",
+         res[(max(grep("\\s+[A-Z]", res)) - 2):length(res)])
 writeLines(res)
 
 ## For example, `SET` and `GET`:
@@ -94,7 +94,12 @@ RedisAPI::string_to_object(r$GET("mylist"))
 ## you are responsible for type coersion/deserialisation when
 ## retrieving data at the other end.
 
-## This is how the `rdb` object is implemented (see below).
+## Note that you are not restricted to using serialised R objects as
+## values; you can use them as keys; this is perfectly valid:
+r$SET(RedisAPI::object_to_bin(1:10), "mydata")
+r$GET(RedisAPI::object_to_bin(1:10))
+##+ echo=FALSE, results="hide"
+r$DEL(RedisAPI::object_to_bin(1:10))
 
 ## However, depending on what you want to achieve, Redis offers
 ## potentially better ways of holding lists using its native data
@@ -146,40 +151,140 @@ dat
 dat[[1]] <- RedisAPI::string_to_object(dat[[1]])
 dat
 
-## # Example application of an R-object key/value store (`rdb`)
+## # Pipelining
 
-## As a simple example, the `RedisAPI` package provides a `rdb` object
-## showing how one might build an application on top of `RedisAPI` and
-## `redux`.  To create an `rdb` object
-db <- RedisAPI::rdb(redux::hiredis)
+## Every command set to Redis costs a round trip; even over the
+## loopback interface this can be expensive if done a very large
+## number of times.  Redis offers two ways of minimising this problem;
+## pipelining and lua scripting.  redux/RedisAPI support both.
 
-## Newly created databases are empty - they have no keys
-db$keys()
+## To pipeline, use the `pipeline` method of the `hiredis` object:
+redis <- RedisAPI::redis
+r$pipeline(
+  redis$PING(),
+  redis$PING())
 
-## R objects can be stored against keys, for example:
-db$set("mykey", 1:10)
-db$keys()
+## Here, `redis` is a special object within RedisAPI that implements
+## all the Redis commands but only formats them for use rather than
+## sends them.  The `pipeline` method collects these all up and sends
+## them to the server in a single batch, with the result returned as a
+## list.
 
-## Retrieve the value of a key with `$get`:
-db$get("mykey")
+## If arguments are named, then the return value is named:
+r$pipeline(
+  a=redis$INCR("x"),
+  b=redis$INCR("x"),
+  c=redis$DEL("x"))
 
-## Trying to get a nonexistant key does not throw an error but returns
-## `NULL`
-db$get("no_such_key")
+## here a variable "x" was incremented twice and then deleted.
 
-## That's it.  Arbitrary R objects can be stored in keys, and they
-## will be returned intact with few exceptions (the exceptions are
-## things like `rdb` itself which includes an "external pointer"
-## object which can't be serialised - see `?serialize` for more
-## information):
-db$set("mtcars", mtcars)
-identical(db$get("mtcars"), mtcars)
-db$set("a_function", sin)
-db$get("a_function")(pi / 2) # 1
+## If you use pipelining you should read the [Redis page on
+## it](http://redis.io/topics/pipelining) because there are a few
+## restrictions and cautions.
 
-## This seems really silly, but is potentially very useful.  There are
-## file-based key/value systems on CRAN, and this would be another but
-## backed by a datea source that is distributed.
+## Generating very large numbers (or variable nubmers) of commands
+## with the above interface will be difficult because `pipeline` uses
+## the dots argument.  Instead, you can pass a list of commands to the
+## `.commands` argument of `pipeline`:
+cmds <- lapply(seq_len(4), function(.) redis$PING())
+r$pipeline(.commands=cmds)
+
+## # Subscriptions
+
+## On top of the key/value store aspect of Redis, it also offers a
+## publisher/subscriber model.  Publishing with `redux` is
+## straightforward; use the `PUBLISH` method:
+r$PUBLISH("mychannel", "hello")
+
+## The return value here is the number of subscribers to that channel;
+## in our case zero!
+
+## The `SUBSCRIBE` method should not be used as the client cannot deal
+## with messages directly.
+
+## Instead, use the `subscribe` (lower case) method.  This takes arguments:
+##
+## * `channel`: name or pattern of the channel/s to subscribe to
+##   (scalar or vector).
+##
+## * `transform`: A function that takes each message and processes it.
+##   Messages are R lists with elements: `type`, `pattern` (if a
+##   pattern was used), `channel` and `value` (see the Redis docs).
+##   Your transform function can turn this into anything it wants, and
+##   may have side effects such as printing to the screen, writing to
+##   a file, etc.
+##
+## * `terminate`: A termination criterion.  given a *transformed*
+##   message (i.e., the result of `transform(x)`) return `TRUE` if
+##   we're processing messages.  Optional, but if not used set `n` to
+##   a finite number.
+##
+## * collect: logical indicating if *transformed* messages should be
+##   collected and returned on exit.
+##
+## * n: maximum number of messages to collect; once `n` messages have
+##   been collected we will terminate regardless of `terminate`.
+##
+## * pattern: logical indicating if `channel` should be interpreted as
+##  a pattern.
+##
+## * envir: environment in which to evaluate `transform` and `terminate`.
+
+## That all sounds a lot more complicated it really is.  To collect
+## all messages on the `"mychannel"` channel, stopping after 100
+## messages or a message reading exactly "goodbye" you would write:
+##+ eval=FALSE
+res <- r$subscribe("mychannel",
+                   transform=function(x) x$value,
+                   terminate=function(x) identical(x, "goodbye"),
+                   n=100)
+
+## To test this out, we need a second process that will publish to the
+## channel (or we'll wait forever).  This function will publish the
+## first 20 values out of the Nile data set.
+##+ echo=FALSE
+path_to_publisher <- tempfile()
+writeLines('r <- redux::hiredis()
+for (i in Nile[1:20]) {
+  Sys.sleep(.05)
+  r$PUBLISH("mychannel", i)
+}
+r$PUBLISH("mychannel", "goodbye")', path_to_publisher)
+
+##+ echo=FALSE, results="asis"
+writeLines(c("```r", readLines(path_to_publisher), "```"))
+
+## This file is at `path_to_publisher` (in R's temporary directory)
+## and can be run with:
+system2(file.path(R.home(), "bin", "Rscript"), path_to_publisher,
+        wait=FALSE, stdout=FALSE, stderr=FALSE)
+
+## to start the publisher.
+
+## Let's add a little debgging information to the transform function,
+## and set the subscriber off:
+transform <- function(x) {
+  message(format(Sys.time(), "%Y-%m-%d %H:%M:%OS3"),
+          ": got message: ",
+          x$value)
+  x$value
+}
+##+ subscription
+res <- r$subscribe("mychannel",
+                   transform=transform,
+                   terminate=function(x) identical(x, "goodbye"),
+                   n=100)
+
+##+ echo=FALSE, results="hide"
+file.remove(path_to_publisher)
+
+## The timestamps in the printed output show when the message was
+## recieved (with fractional seconds so that this is more obvious
+## since this only takes ~1s to complete).
+
+## The `res` object contains all the values, including the "goodbye"
+## that was our end-of-stream message:
+unlist(res)
 
 ## # Potential applications
 
@@ -237,12 +342,13 @@ obj[[2]] == obj2[[2]]
 
 ## # Getting help
 
-## Because `RedisAPI` package is simply a wrapper around the Redis
-## API, the main source of documentation is the Redis help itself,
-## `http://redis.io` (Unfortunately, the CRAN submission system
-## incorrectly complains and thinks that website is a dead link so I
-## direct links can't be included).  The Redis documentation is very
-## readable, thorough and contains great examples.
+## Because `redux` uses the `RedisAPI` package for its interface and
+## `RedisAPI` package is simply a wrapper around the Redis API, the
+## main source of documentation is the Redis help itself at
+## http://redis.io
+
+## The Redis documentation is unusually readable, thorough and
+## contains great examples.
 
 ## `RedisAPI` tries to bridge to this help.  Redis' commands are
 ## "grouped" by data types or operation type; use
