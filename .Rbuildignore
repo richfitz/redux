@@ -5,6 +5,8 @@
 ^.travis.yml$
 ^appveyor.yml$
 ^src/hiredis/.*\.[oa]$
-^update_hiredis$
 ^ignore$
 ^update_web\.sh$
+^src/Makevars$
+^redux_.*\.tar\.gz$
+^TODO\.md$

@@ -32,7 +32,6 @@ check: build
 
 clean:
 	rm -f src/*.o src/*.so
-	make -C src/hiredis -f Makefile2 clean
 
 vignettes/src/redux.Rmd: vignettes/src/redux.R
 	${RSCRIPT} -e 'library(sowsear); sowsear("$<", output="$@")'

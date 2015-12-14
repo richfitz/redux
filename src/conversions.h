@@ -1,6 +1,6 @@
 #include <R.h>
 #include <Rinternals.h>
-#include <hiredis.h>
+#include <hiredis/hiredis.h>
 
 #define REPLY_ERROR_OK 0
 #define REPLY_ERROR_THROW 1

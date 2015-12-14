@@ -6,3 +6,5 @@ notes.md
 inst/web
 inst/doc/low_level.*
 vignettes/low_level.Rmd
+src/Makevars
+TODO.md

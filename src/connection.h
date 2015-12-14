@@ -1,6 +1,6 @@
 #include <R.h>
 #include <Rinternals.h>
-#include <hiredis.h>
+#include <hiredis/hiredis.h>
 
 #define CLOSED_PASS 0
 #define CLOSED_WARN 1
