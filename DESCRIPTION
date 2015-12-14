@@ -7,12 +7,17 @@ Authors@R: c(person("Rich", "FitzJohn", role = c("aut", "cre"),
              person("Pieter", "Noordhuis", role = "cph"))
 Maintainer: Rich FitzJohn <rich.fitzjohn@gmail.com>
 Description: A 'hiredis' wrapper that includes support for transactions,
-  pipelining, blocking subscription, serialisation of all keys and
-  values, 'Redis' error handling with R errors.
+    pipelining, blocking subscription, serialisation of all keys and
+    values, 'Redis' error handling with R errors.
+SystemRequirements: hiredis
 License: GPL-2
 LazyData: true
 URL: https://github.com/richfitz/redux
 BugReports: https://github.com/richfitz/redux/issues
-Imports: RedisAPI (>= 0.4.0)
-Suggests: knitr, testthat
+Imports:
+    RedisAPI (>= 0.4.0)
+Suggests:
+    knitr,
+    testthat
 VignetteBuilder: knitr
+RoxygenNote: 5.0.1
