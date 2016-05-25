@@ -33,14 +33,6 @@ redis_status <- function(x) {
   x
 }
 
-is_OK <- function() {
-  function(x) {
-    expectation(identical(x, redis_status("OK")),
-                paste0("redis status is not OK"),
-                paste0("redis status is OK"))
-  }
-}
-
 rand_str <- function(len=8, prefix="") {
   paste0(prefix,
          paste(sample(c(LETTERS, letters, 0:9), len), collapse=""))

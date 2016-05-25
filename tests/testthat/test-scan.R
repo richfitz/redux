@@ -10,17 +10,17 @@ test_that("scan", {
     keys <- c(keys, key)
   }
 
-  expect_that(all(vapply(keys, con$EXISTS, integer(1)) == 1L), is_true())
+  expect_true(all(vapply(keys, con$EXISTS, integer(1)) == 1L))
 
   pat <- paste0(prefix, "*")
   res <- RedisAPI::scan_find(con, pat)
-  expect_that(sort(res), equals(sort(keys)))
+  expect_equal(sort(res), sort(keys))
 
   n <- RedisAPI::scan_del(con, pat)
-  expect_that(n, equals(10))
+  expect_equal(n, 10)
 
-  expect_that(any(vapply(keys, con$EXISTS, integer(1)) == 1L), is_false())
+  expect_false(any(vapply(keys, con$EXISTS, integer(1)) == 1L))
   res <- RedisAPI::scan_find(con, pat)
 
-  expect_that(res, equals(character(0)))
+  expect_equal(res, character(0))
 })

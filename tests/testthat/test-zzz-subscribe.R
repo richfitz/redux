@@ -26,17 +26,17 @@ test_that("low level", {
   env <- environment()
   con$.subscribe(ch, FALSE, callback, env)
 
-  expect_that(length(vals), is_more_than(0))
+  expect_gt(length(vals), 0)
 
-  expect_that(all(vcapply(vals, "[[", 1L) == "message"), is_true())
-  expect_that(all(vcapply(vals, "[[", 2L) == ch), is_true())
+  expect_true(all(vcapply(vals, "[[", 1L) == "message"))
+  expect_true(all(vcapply(vals, "[[", 2L) == ch))
   ## The payload:
   v <- as.numeric(vcapply(vals, "[[", 3L))
-  expect_that(v[[length(v)]] > 0.8, is_true())
-  expect_that(all(v[-length(v)] < 0.8), is_true())
+  expect_true(v[[length(v)]] > 0.8)
+  expect_true(all(v[-length(v)] < 0.8))
 
-  expect_that(names(vals[[1]]), equals(c("type", "channel", "value")))
-  expect_that(length(unique(lapply(vals, names))), equals(1))
+  expect_equal(names(vals[[1]]), c("type", "channel", "value"))
+  expect_equal(length(unique(lapply(vals, names))), 1)
 })
 
 test_that("higher level", {
@@ -55,14 +55,14 @@ test_that("higher level", {
   con <- hiredis()
   options(error=recover)
   vals <- con$subscribe(ch, transform=transform, terminate=terminate)
-  expect_that(length(vals), is_more_than(0))
+  expect_gt(length(vals), 0)
 
-  expect_that(all(vcapply(vals, "[[", 1L) == "message"), is_true())
-  expect_that(all(vcapply(vals, "[[", 2L) == ch), is_true())
+  expect_true(all(vcapply(vals, "[[", 1L) == "message"))
+  expect_true(all(vcapply(vals, "[[", 2L) == ch))
   ## The payload:
   v <- as.numeric(vcapply(vals, "[[", 3L))
-  expect_that(v[[length(v)]] > 0.8, is_true())
-  expect_that(all(v[-length(v)] < 0.8), is_true())
+  expect_true(v[[length(v)]] > 0.8)
+  expect_true(all(v[-length(v)] < 0.8))
 })
 
 test_that("higher level: collect n", {
@@ -73,11 +73,11 @@ test_that("higher level: collect n", {
   con <- hiredis()
   vals <- con$subscribe(ch, collect=TRUE, n=5)
 
-  expect_that(length(vals), equals(5))
+  expect_equal(length(vals), 5)
 
   ## Collect nothing n times:
   val <- con$subscribe(ch, collect=FALSE, n=5)
-  expect_that(val, is_null())
+  expect_null(val)
 })
 
 test_that("pattern", {
@@ -88,18 +88,18 @@ test_that("pattern", {
   con <- hiredis()
   vals <- con$subscribe("foo*", pattern=TRUE, collect=TRUE, n=20)
 
-  expect_that(length(vals), equals(20))
-  expect_that(length(vals[[1]]), equals(4))
-  expect_that(names(vals[[1]]),
-              equals(c("type", "pattern", "channel", "value")))
+  expect_equal(length(vals), 20)
+  expect_equal(length(vals[[1]]), 4)
+  expect_equal(names(vals[[1]]),
+               c("type", "pattern", "channel", "value"))
 
-  expect_that(all(vcapply(vals, "[[", "type") == "pmessage"), is_true())
-  expect_that(all(vcapply(vals, "[[", "pattern") == "foo*"), is_true())
+  expect_true(all(vcapply(vals, "[[", "type") == "pmessage"))
+  expect_true(all(vcapply(vals, "[[", "pattern") == "foo*"))
   chs <- vcapply(vals, "[[", "channel")
-  expect_that(all(chs %in% ch), is_true())
-  expect_that(all(ch %in% chs), is_true())
+  expect_true(all(chs %in% ch))
+  expect_true(all(ch %in% chs))
   v <- as.numeric(vcapply(vals, "[[", "value"))
-  expect_that(all(v >= 0.0 & v <= 1.0), is_true())
+  expect_true(all(v >= 0.0 & v <= 1.0))
 })
 
 ## Flood and recover.  This is a low-level regression test for a a
@@ -145,16 +145,15 @@ test_that("flood and recover", {
               silent=TRUE)
   res2 <- .Call(redux:::Credux_redis_unsubscribe, ptr, ch, pattern)
 
-  expect_that(res1, is_a("try-error"))
-  expect_that(res2, equals(list("unsubscribe", ch, 0L),
-                           check.attributes=FALSE))
-  expect_that(attr(res2, "n_discarded"), is_more_than(0))
+  expect_is(res1, "try-error")
+  expect_equivalent(res2, list("unsubscribe", ch, 0L))
+  expect_gt(attr(res2, "n_discarded"), 0)
 
   ## This one is important:
-  expect_that(con$command("PING"), equals(redis_status("PONG")))
+  expect_equal(con$command("PING"), redis_status("PONG"))
 
   ## Again with the higher level interface:
-  expect_that(res <- con$subscribe(ch, pattern, fn, .GlobalEnv),
-              throws_error("Detected a disturbance in the force"))
-  expect_that(con$command("PING"), equals(redis_status("PONG")))
+  expect_error(res <- con$subscribe(ch, pattern, fn, .GlobalEnv),
+               "Detected a disturbance in the force")
+  expect_equal(con$command("PING"), redis_status("PONG"))
 })

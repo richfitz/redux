@@ -6,10 +6,10 @@ test_that("parse_info", {
   con <- hiredis()
   skip_if_no_info(con)
   info <- RedisAPI::redis_info(con)
-  expect_that(info, is_a("list"))
+  expect_is(info, "list")
   dat <- con$INFO()
-  expect_that(RedisAPI::parse_info(dat), is_a("list"))
-  expect_that(RedisAPI::redis_version(con), equals(info$redis_version))
+  expect_is(RedisAPI::parse_info(dat), "list")
+  expect_equal(RedisAPI::redis_version(con), info$redis_version)
 })
 
 ## TODO: not totally clear how this should interact with pipeline; I
@@ -25,7 +25,7 @@ test_that("redis_multi", {
     con$INCR(id)
     con$INCR(id)
   })
-  expect_that(ok, equals(list(1, 2)))
+  expect_equal(ok, list(1, 2))
 
   ## If we get an error, things do *not* get evaluated:
   err <- try(RedisAPI::redis_multi(con, {
@@ -33,10 +33,10 @@ test_that("redis_multi", {
     con$INCR(id)
     stop("abort")
   }), silent=TRUE)
-  expect_that(con$GET(id), equals("2"))
-  expect_that(err, is_a("try-error"))
+  expect_equal(con$GET(id), "2")
+  expect_is(err, "try-error")
 
-  expect_that(con$EXEC(), throws_error("ERR EXEC without MULTI"))
+  expect_error(con$EXEC(), "ERR EXEC without MULTI")
 })
 
 test_that("from_redis_hash", {
@@ -52,21 +52,21 @@ test_that("from_redis_hash", {
 
   res <- from_redis_hash(con, key)
   cmp <- setNames(as.character(vals), fields)
-  expect_that(all(fields %in% names(res)), is_true())
-  expect_that(res[fields], equals(cmp))
+  expect_true(all(fields %in% names(res)))
+  expect_equal(res[fields], cmp)
 
-  expect_that(from_redis_hash(con, key, f=identity)[fields],
-              equals(as.list(cmp)))
+  expect_equal(from_redis_hash(con, key, f=identity)[fields],
+               as.list(cmp))
 
-  expect_that(from_redis_hash(con, key, "a"), equals(cmp["a"]))
-  expect_that(from_redis_hash(con, key, "a", f=identity),
-              equals(as.list(cmp)["a"]))
+  expect_equal(from_redis_hash(con, key, "a"), cmp["a"])
+  expect_equal(from_redis_hash(con, key, "a", f=identity),
+               as.list(cmp)["a"])
 
-  expect_that(from_redis_hash(con, key, c("a", "xxx")),
-              equals(c(a="1", xxx=NA_character_)))
+  expect_equal(from_redis_hash(con, key, c("a", "xxx")),
+               c(a="1", xxx=NA_character_))
 
-  expect_that(from_redis_hash(con, key, character(0)),
-              equals(setNames(character(0), character(0))))
+  expect_equal(from_redis_hash(con, key, character(0)),
+               setNames(character(0), character(0)))
 })
 
 test_that("redis_time", {
@@ -74,9 +74,8 @@ test_that("redis_time", {
   con <- hiredis()
   skip_if_no_time(con)
 
-  expect_that(RedisAPI::redis_time(con), is_a("character"))
-  expect_that(RedisAPI::redis_time_to_r(RedisAPI::redis_time(con)),
-              is_a("POSIXt"))
+  expect_is(RedisAPI::redis_time(con), "character")
+  expect_is(RedisAPI::redis_time_to_r(RedisAPI::redis_time(con)), "POSIXt")
 })
 
 ## This is just a really simple test that this works at all:
@@ -93,5 +92,5 @@ test_that("scripts", {
   obj <- RedisAPI::redis_scripts(r, set_and_incr=lua)
   r$DEL("foo")
   res <- obj("set_and_incr", "foo", "10")
-  expect_that(res, equals("11"))
+  expect_equal(res, "11")
 })
