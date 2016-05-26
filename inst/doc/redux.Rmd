@@ -1,7 +1,7 @@
 ---
 title: "Using Redis with redux and RedisAPI"
 author: "Rich FitzJohn"
-date: "2015-12-12"
+date: "2016-05-26"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using Redis with redux and RedisAPI}
@@ -99,7 +99,7 @@ obj
 ```
 
 ```
-##  [1] 58 0a 00 00 00 02 00 03 02 01 00 02 03 00 00 00 00 0d 00 00 00 0a 00
+##  [1] 58 0a 00 00 00 02 00 03 02 04 00 02 03 00 00 00 00 0d 00 00 00 0a 00
 ## [24] 00 00 01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06
 ## [47] 00 00 00 07 00 00 00 08 00 00 00 09 00 00 00 0a
 ```
@@ -112,7 +112,7 @@ str
 ```
 
 ```
-## [1] "A\n2\n197121\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
+## [1] "A\n2\n197124\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
 ```
 
 The binary serialisation is faster, smaller, and preserves all the
@@ -154,7 +154,7 @@ r$GET("mylist")
 ```
 
 ```
-##  [1] 58 0a 00 00 00 02 00 03 02 01 00 02 03 00 00 00 00 0d 00 00 00 0a 00
+##  [1] 58 0a 00 00 00 02 00 03 02 04 00 02 03 00 00 00 00 0d 00 00 00 0a 00
 ## [24] 00 00 01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06
 ## [47] 00 00 00 07 00 00 00 08 00 00 00 09 00 00 00 0a
 ```
@@ -182,7 +182,7 @@ r$GET("mylist")
 ```
 
 ```
-## [1] "A\n2\n197121\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
+## [1] "A\n2\n197124\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
 ```
 
 ```r
@@ -233,35 +233,12 @@ r$RPUSH("mylist2", 1:10)
 ```
 
 (the returned value `10` indicates that the list "mylist2" is 10
-elements long).  There are lots of commands for operating on lists:
-
-
-```r
-RedisAPI::redis_commands("list")
-```
-
-```
-##  [1] "BLPOP"      "BRPOP"      "BRPOPLPUSH" "LINDEX"     "LINSERT"
-##  [6] "LLEN"       "LPOP"       "LPUSH"      "LPUSHX"     "LRANGE"
-## [11] "LREM"       "LSET"       "LTRIM"      "RPOP"       "RPOPLPUSH"
-## [16] "RPUSH"      "RPUSHX"
-```
-
+elements long).  There are lots of commands for operating on lists.
 For example, you can do things like;
 
 * get an element by its index (note tht this uses C-style base-0
 indexing for consistency with the `Redis` documentation rather than
 R's semantics)
-
-```r
-RedisAPI::redis_help("LINDEX")
-```
-
-```
-## Get an element from a list by its index
-## Usage: LINDEX(key, index)
-## See: http://redis.io/commands/lindex
-```
 
 ```r
 r$LINDEX("mylist2", 1)
@@ -274,16 +251,6 @@ r$LINDEX("mylist2", 1)
 * set an element by its index
 
 ```r
-RedisAPI::redis_help("LSET")
-```
-
-```
-## Set the value of an element in a list by its index
-## Usage: LSET(key, index, value)
-## See: http://redis.io/commands/lset
-```
-
-```r
 r$LSET("mylist2", 1, "carrot")
 ```
 
@@ -292,16 +259,6 @@ r$LSET("mylist2", 1, "carrot")
 ```
 
 * get all of a list:
-
-```r
-RedisAPI::redis_help("LRANGE")
-```
-
-```
-## Get a range of elements from a list
-## Usage: LRANGE(key, start, stop)
-## See: http://redis.io/commands/lrange
-```
 
 ```r
 r$LRANGE("mylist2", 0, -1)
@@ -359,36 +316,6 @@ r$LRANGE("mylist2", 0, 2)
 * pop elements off the front or back
 
 ```r
-RedisAPI::redis_help("LLEN")
-```
-
-```
-## Get the length of a list
-## Usage: LLEN(key)
-## See: http://redis.io/commands/llen
-```
-
-```r
-RedisAPI::redis_help("LPOP")
-```
-
-```
-## Remove and get the first element in a list
-## Usage: LPOP(key)
-## See: http://redis.io/commands/lpop
-```
-
-```r
-RedisAPI::redis_help("RPOP")
-```
-
-```
-## Remove and get the last element in a list
-## Usage: RPOP(key)
-## See: http://redis.io/commands/rpop
-```
-
-```r
 r$LLEN("mylist2")
 ```
 
@@ -441,7 +368,7 @@ dat
 
 ```
 ## [[1]]
-## [1] "A\n2\n197121\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
+## [1] "A\n2\n197124\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
 ##
 ## [[2]]
 ## [1] "carrot"
@@ -650,27 +577,87 @@ res <- r$subscribe("mychannel",
 ```
 
 ```
-## 2015-12-12 11:32:42.959: got message: 1120
-## 2015-12-12 11:32:43.014: got message: 1160
-## 2015-12-12 11:32:43.068: got message: 963
-## 2015-12-12 11:32:43.123: got message: 1210
-## 2015-12-12 11:32:43.179: got message: 1160
-## 2015-12-12 11:32:43.234: got message: 1160
-## 2015-12-12 11:32:43.290: got message: 813
-## 2015-12-12 11:32:43.345: got message: 1230
-## 2015-12-12 11:32:43.401: got message: 1370
-## 2015-12-12 11:32:43.457: got message: 1140
-## 2015-12-12 11:32:43.508: got message: 995
-## 2015-12-12 11:32:43.563: got message: 935
-## 2015-12-12 11:32:43.619: got message: 1110
-## 2015-12-12 11:32:43.674: got message: 994
-## 2015-12-12 11:32:43.730: got message: 1020
-## 2015-12-12 11:32:43.786: got message: 960
-## 2015-12-12 11:32:43.838: got message: 1180
-## 2015-12-12 11:32:43.894: got message: 799
-## 2015-12-12 11:32:43.949: got message: 958
-## 2015-12-12 11:32:44.004: got message: 1140
-## 2015-12-12 11:32:44.005: got message: goodbye
+## 2016-05-26 08:44:00.870: got message: 1120
+```
+
+```
+## 2016-05-26 08:44:00.924: got message: 1160
+```
+
+```
+## 2016-05-26 08:44:00.980: got message: 963
+```
+
+```
+## 2016-05-26 08:44:01.033: got message: 1210
+```
+
+```
+## 2016-05-26 08:44:01.088: got message: 1160
+```
+
+```
+## 2016-05-26 08:44:01.144: got message: 1160
+```
+
+```
+## 2016-05-26 08:44:01.195: got message: 813
+```
+
+```
+## 2016-05-26 08:44:01.251: got message: 1230
+```
+
+```
+## 2016-05-26 08:44:01.306: got message: 1370
+```
+
+```
+## 2016-05-26 08:44:01.357: got message: 1140
+```
+
+```
+## 2016-05-26 08:44:01.412: got message: 995
+```
+
+```
+## 2016-05-26 08:44:01.468: got message: 935
+```
+
+```
+## 2016-05-26 08:44:01.519: got message: 1110
+```
+
+```
+## 2016-05-26 08:44:01.575: got message: 994
+```
+
+```
+## 2016-05-26 08:44:01.631: got message: 1020
+```
+
+```
+## 2016-05-26 08:44:01.683: got message: 960
+```
+
+```
+## 2016-05-26 08:44:01.738: got message: 1180
+```
+
+```
+## 2016-05-26 08:44:01.791: got message: 799
+```
+
+```
+## 2016-05-26 08:44:01.845: got message: 958
+```
+
+```
+## 2016-05-26 08:44:01.901: got message: 1140
+```
+
+```
+## 2016-05-26 08:44:01.902: got message: goodbye
 ```
 
 
@@ -786,56 +773,3 @@ Because `redux` uses the `RedisAPI` package for its interface and
 `RedisAPI` package is simply a wrapper around the Redis API, the
 main source of documentation is the Redis help itself at
 http://redis.io
-
-The Redis documentation is unusually readable, thorough and
-contains great examples.
-
-`RedisAPI` tries to bridge to this help.  Redis' commands are
-"grouped" by data types or operation type; use
-\code{redis_commands_groups()} to see these groups:
-
-```r
-RedisAPI::redis_commands_groups()
-```
-
-```
-##  [1] "cluster"      "connection"   "generic"      "hash"
-##  [5] "hyperloglog"  "list"         "pubsub"       "scripting"
-##  [9] "server"       "set"          "sorted_set"   "string"
-## [13] "transactions"
-```
-
-To see command listed within a group, use the `redis_commands`
-function:
-
-```r
-RedisAPI::redis_commands("string")
-```
-
-```
-##  [1] "APPEND"      "BITCOUNT"    "BITOP"       "BITPOS"      "DECR"
-##  [6] "DECRBY"      "GET"         "GETBIT"      "GETRANGE"    "GETSET"
-## [11] "INCR"        "INCRBY"      "INCRBYFLOAT" "MGET"        "MSET"
-## [16] "MSETNX"      "PSETEX"      "SET"         "SETBIT"      "SETEX"
-## [21] "SETNX"       "SETRANGE"    "STRLEN"
-```
-
-Then use the function `redis_help` to get help for a particular
-command:
-
-```r
-RedisAPI::redis_help("SET")
-```
-
-```
-## Set the string value of a key
-## Usage: SET(key, value, EX = NULL, PX = NULL, condition = NULL)
-## See: http://redis.io/commands/set
-```
-
-The function definition here is the definition of the method you
-will use within the retuned object (see below).  A default argument
-of `NULL` indicates that a command is optional (`EX`, `PX` and
-`condition` here are all optional).  The sentence is straight from
-the Redis documentation, and the link will take you to the full
-documentation on the Redis site.

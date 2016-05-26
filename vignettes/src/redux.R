@@ -108,33 +108,24 @@ r$DEL(RedisAPI::object_to_bin(1:10))
 r$RPUSH("mylist2", 1:10)
 
 ## (the returned value `10` indicates that the list "mylist2" is 10
-## elements long).  There are lots of commands for operating on lists:
-
-RedisAPI::redis_commands("list")
-
+## elements long).  There are lots of commands for operating on lists.
 ## For example, you can do things like;
 
 ## * get an element by its index (note tht this uses C-style base-0
 ## indexing for consistency with the `Redis` documentation rather than
 ## R's semantics)
-RedisAPI::redis_help("LINDEX")
 r$LINDEX("mylist2", 1)
 
 ## * set an element by its index
-RedisAPI::redis_help("LSET")
 r$LSET("mylist2", 1, "carrot")
 
 ## * get all of a list:
-RedisAPI::redis_help("LRANGE")
 r$LRANGE("mylist2", 0, -1)
 
 ## * or part of it:
 r$LRANGE("mylist2", 0, 2)
 
 ## * pop elements off the front or back
-RedisAPI::redis_help("LLEN")
-RedisAPI::redis_help("LPOP")
-RedisAPI::redis_help("RPOP")
 r$LLEN("mylist2")
 r$LPOP("mylist2")
 r$RPOP("mylist2")
@@ -347,26 +338,3 @@ obj[[2]] == obj2[[2]]
 ## `RedisAPI` package is simply a wrapper around the Redis API, the
 ## main source of documentation is the Redis help itself at
 ## http://redis.io
-
-## The Redis documentation is unusually readable, thorough and
-## contains great examples.
-
-## `RedisAPI` tries to bridge to this help.  Redis' commands are
-## "grouped" by data types or operation type; use
-## \code{redis_commands_groups()} to see these groups:
-RedisAPI::redis_commands_groups()
-
-## To see command listed within a group, use the `redis_commands`
-## function:
-RedisAPI::redis_commands("string")
-
-## Then use the function `redis_help` to get help for a particular
-## command:
-RedisAPI::redis_help("SET")
-
-## The function definition here is the definition of the method you
-## will use within the retuned object (see below).  A default argument
-## of `NULL` indicates that a command is optional (`EX`, `PX` and
-## `condition` here are all optional).  The sentence is straight from
-## the Redis documentation, and the link will take you to the full
-## documentation on the Redis site.
