@@ -13,7 +13,7 @@
 
 <meta name="date" content="2016-05-26" />
 
-<title>Using Redis with redux and RedisAPI</title>
+<title>Using Redis with redux</title>
 
 
 
@@ -68,15 +68,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="fluid-row" id="header">
 
 
-<h1 class="title">Using Redis with redux and RedisAPI</h1>
+<h1 class="title">Using Redis with redux</h1>
 <h4 class="author"><em>Rich FitzJohn</em></h4>
 <h4 class="date"><em>2016-05-26</em></h4>
 
 </div>
 
 
-<p><code>redux</code> and <code>RedisAPI</code> provide a full interface to the Redis API; <code>redux</code> does the actual interfacing with Redis and <code>RedisAPI</code> uses this to expose all 188 Redis commands as a set of user-friendly R functions that do basic error checking.</p>
-<p>It is possible to build user-friendly applications on top of this, for example, the built in <code>rdb</code> R key-value store, <a href="https://github.com/richfitz/storr"><code>storr</code></a> which provides a content-addressable object store, and <a href="https://github.com/traitecoevo/rrqueue"><code>rrqueue</code></a> which implements a scalable queuing system.</p>
+<p><code>redux</code> provides a full interface to the Redis API; it provides a hiredis driver wrapped in R and uses this to expose all <code>r length(names(redux::redis))</code> Redis commands as a set of user-friendly R functions that do basic error checking.</p>
+<p>It is possible to build user-friendly applications on top of this, for example <a href="https://github.com/richfitz/storr"><code>storr</code></a> which provides a content-addressable object store, and <a href="https://github.com/traitecoevo/rrqueue"><code>rrqueue</code></a> which implements a scalable queuing system.</p>
 <p>The main entry point for creating a <code>redis_api</code> object is the <code>hiredis</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span>redux::<span class="kw">hiredis</span>()</code></pre></div>
 <p>By default, it will connect to a database running on the local machine (<code>localhost</code>, or ip <code>127.0.0.1</code>) and port 6379. The two arguments that <code>hiredis</code> accepts are <code>host</code> and <code>port</code> if you need to change these to point at a different location. Alternatively, you can set the <code>REDIS_HOST</code> and <code>REDIS_PORT</code> environment variables to appropriate values and then use <code>hiredis()</code> with no arguments.</p>
@@ -108,42 +108,42 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="serialisation" class="section level1">
 <h1>Serialisation</h1>
 <p>The value for most arguments must be a string or will be coerced into one. So if you want to save an arbitrary R object, you need to convert it to a string. The <code>object_to_bin</code> and <code>object_to_string</code> functions can help here, serialising the objects to binary and string represenations.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">obj &lt;-<span class="st"> </span>RedisAPI::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">obj &lt;-<span class="st"> </span>redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>)
 obj</code></pre></div>
 <pre><code>##  [1] 58 0a 00 00 00 02 00 03 02 04 00 02 03 00 00 00 00 0d 00 00 00 0a 00
 ## [24] 00 00 01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06
 ## [47] 00 00 00 07 00 00 00 08 00 00 00 09 00 00 00 0a</code></pre>
 <p>or</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">str &lt;-<span class="st"> </span>RedisAPI::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">str &lt;-<span class="st"> </span>redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>)
 str</code></pre></div>
 <pre><code>## [1] &quot;A\n2\n197124\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
 <p>The binary serialisation is faster, smaller, and preserves all the bits of floating point numbers. The string version might be preferable where having only strings in the database is wanted. The binary serialisation is compatible with the same approach used in <code>RcppRedis</code>, though it is never done automatically.</p>
 <p>These values can be deserialised:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">RedisAPI::<span class="kw">bin_to_object</span>(obj)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">bin_to_object</span>(obj)</code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">RedisAPI::<span class="kw">string_to_object</span>(str)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">string_to_object</span>(str)</code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>So:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, RedisAPI::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>)</code></pre></div>
 <pre><code>##  [1] 58 0a 00 00 00 02 00 03 02 04 00 02 03 00 00 00 00 0d 00 00 00 0a 00
 ## [24] 00 00 01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06
 ## [47] 00 00 00 07 00 00 00 08 00 00 00 09 00 00 00 0a</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">RedisAPI::<span class="kw">bin_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">bin_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>Or:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, RedisAPI::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>)</code></pre></div>
 <pre><code>## [1] &quot;A\n2\n197124\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">RedisAPI::<span class="kw">string_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">string_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>This gives you all the power of Redis, but you will have to manually serialise/deserialise all complicated R objects (i.e., everything other than logicals, numbers or strings). Similarly, you are responsible for type coersion/deserialisation when retrieving data at the other end.</p>
 <p>Note that you are not restricted to using serialised R objects as values; you can use them as keys; this is perfectly valid:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(RedisAPI::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>), <span class="st">&quot;mydata&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>), <span class="st">&quot;mydata&quot;</span>)</code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(RedisAPI::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
 <pre><code>## [1] &quot;mydata&quot;</code></pre>
 <p>However, depending on what you want to achieve, Redis offers potentially better ways of holding lists using its native data types. For example;</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">RPUSH</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">1</span>:<span class="dv">10</span>)</code></pre></div>
@@ -216,7 +216,7 @@ str</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LLEN</span>(<span class="st">&quot;mylist2&quot;</span>)</code></pre></div>
 <pre><code>## [1] 8</code></pre>
 <p>Of course, each element of the list can be an R object if you run it through <code>object_to_string</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LPUSH</span>(<span class="st">&quot;mylist2&quot;</span>, RedisAPI::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LPUSH</span>(<span class="st">&quot;mylist2&quot;</span>, redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
 <pre><code>## [1] 9</code></pre>
 <p>but you’ll be responsible for converting that back (and detecting / knowing that this needs doing)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dat &lt;-<span class="st"> </span>r$<span class="kw">LRANGE</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">0</span>, <span class="dv">2</span>)
@@ -229,7 +229,7 @@ dat</code></pre></div>
 ##
 ## [[3]]
 ## [1] &quot;3&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dat[[<span class="dv">1</span>]] &lt;-<span class="st"> </span>RedisAPI::<span class="kw">string_to_object</span>(dat[[<span class="dv">1</span>]])
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dat[[<span class="dv">1</span>]] &lt;-<span class="st"> </span>redux::<span class="kw">string_to_object</span>(dat[[<span class="dv">1</span>]])
 dat</code></pre></div>
 <pre><code>## [[1]]
 ##  [1]  1  2  3  4  5  6  7  8  9 10
@@ -242,9 +242,9 @@ dat</code></pre></div>
 </div>
 <div id="pipelining" class="section level1">
 <h1>Pipelining</h1>
-<p>Every command set to Redis costs a round trip; even over the loopback interface this can be expensive if done a very large number of times. Redis offers two ways of minimising this problem; pipelining and lua scripting. redux/RedisAPI support both.</p>
+<p>Every command set to Redis costs a round trip; even over the loopback interface this can be expensive if done a very large number of times. Redis offers two ways of minimising this problem; pipelining and lua scripting. redux supports both.</p>
 <p>To pipeline, use the <code>pipeline</code> method of the <code>hiredis</code> object:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redis &lt;-<span class="st"> </span>RedisAPI::redis
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redis &lt;-<span class="st"> </span>redux::redis
 r$<span class="kw">pipeline</span>(
   redis$<span class="kw">PING</span>(),
   redis$<span class="kw">PING</span>())</code></pre></div>
@@ -253,7 +253,7 @@ r$<span class="kw">pipeline</span>(
 ##
 ## [[2]]
 ## [Redis: PONG]</code></pre>
-<p>Here, <code>redis</code> is a special object within RedisAPI that implements all the Redis commands but only formats them for use rather than sends them. The <code>pipeline</code> method collects these all up and sends them to the server in a single batch, with the result returned as a list.</p>
+<p>Here, <code>redis</code> is a special object within the package that implements all the Redis commands but only formats them for use rather than sends them. The <code>pipeline</code> method collects these all up and sends them to the server in a single batch, with the result returned as a list.</p>
 <p>If arguments are named, then the return value is named:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">pipeline</span>(
   <span class="dt">a=</span>redis$<span class="kw">INCR</span>(<span class="st">&quot;x&quot;</span>),
@@ -328,27 +328,27 @@ r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>,
                    <span class="dt">transform=</span>transform,
                    <span class="dt">terminate=</span>function(x) <span class="kw">identical</span>(x, <span class="st">&quot;goodbye&quot;</span>),
                    <span class="dt">n=</span><span class="dv">100</span>)</code></pre></div>
-<pre><code>## 2016-05-26 08:44:00.870: got message: 1120</code></pre>
-<pre><code>## 2016-05-26 08:44:00.924: got message: 1160</code></pre>
-<pre><code>## 2016-05-26 08:44:00.980: got message: 963</code></pre>
-<pre><code>## 2016-05-26 08:44:01.033: got message: 1210</code></pre>
-<pre><code>## 2016-05-26 08:44:01.088: got message: 1160</code></pre>
-<pre><code>## 2016-05-26 08:44:01.144: got message: 1160</code></pre>
-<pre><code>## 2016-05-26 08:44:01.195: got message: 813</code></pre>
-<pre><code>## 2016-05-26 08:44:01.251: got message: 1230</code></pre>
-<pre><code>## 2016-05-26 08:44:01.306: got message: 1370</code></pre>
-<pre><code>## 2016-05-26 08:44:01.357: got message: 1140</code></pre>
-<pre><code>## 2016-05-26 08:44:01.412: got message: 995</code></pre>
-<pre><code>## 2016-05-26 08:44:01.468: got message: 935</code></pre>
-<pre><code>## 2016-05-26 08:44:01.519: got message: 1110</code></pre>
-<pre><code>## 2016-05-26 08:44:01.575: got message: 994</code></pre>
-<pre><code>## 2016-05-26 08:44:01.631: got message: 1020</code></pre>
-<pre><code>## 2016-05-26 08:44:01.683: got message: 960</code></pre>
-<pre><code>## 2016-05-26 08:44:01.738: got message: 1180</code></pre>
-<pre><code>## 2016-05-26 08:44:01.791: got message: 799</code></pre>
-<pre><code>## 2016-05-26 08:44:01.845: got message: 958</code></pre>
-<pre><code>## 2016-05-26 08:44:01.901: got message: 1140</code></pre>
-<pre><code>## 2016-05-26 08:44:01.902: got message: goodbye</code></pre>
+<pre><code>## 2016-05-26 18:01:16.947: got message: 1120</code></pre>
+<pre><code>## 2016-05-26 18:01:17.003: got message: 1160</code></pre>
+<pre><code>## 2016-05-26 18:01:17.056: got message: 963</code></pre>
+<pre><code>## 2016-05-26 18:01:17.109: got message: 1210</code></pre>
+<pre><code>## 2016-05-26 18:01:17.165: got message: 1160</code></pre>
+<pre><code>## 2016-05-26 18:01:17.220: got message: 1160</code></pre>
+<pre><code>## 2016-05-26 18:01:17.272: got message: 813</code></pre>
+<pre><code>## 2016-05-26 18:01:17.324: got message: 1230</code></pre>
+<pre><code>## 2016-05-26 18:01:17.376: got message: 1370</code></pre>
+<pre><code>## 2016-05-26 18:01:17.431: got message: 1140</code></pre>
+<pre><code>## 2016-05-26 18:01:17.487: got message: 995</code></pre>
+<pre><code>## 2016-05-26 18:01:17.542: got message: 935</code></pre>
+<pre><code>## 2016-05-26 18:01:17.597: got message: 1110</code></pre>
+<pre><code>## 2016-05-26 18:01:17.652: got message: 994</code></pre>
+<pre><code>## 2016-05-26 18:01:17.708: got message: 1020</code></pre>
+<pre><code>## 2016-05-26 18:01:17.759: got message: 960</code></pre>
+<pre><code>## 2016-05-26 18:01:17.810: got message: 1180</code></pre>
+<pre><code>## 2016-05-26 18:01:17.864: got message: 799</code></pre>
+<pre><code>## 2016-05-26 18:01:17.917: got message: 958</code></pre>
+<pre><code>## 2016-05-26 18:01:17.968: got message: 1140</code></pre>
+<pre><code>## 2016-05-26 18:01:17.969: got message: goodbye</code></pre>
 <p>The timestamps in the printed output show when the message was recieved (with fractional seconds so that this is more obvious since this only takes ~1s to complete).</p>
 <p>The <code>res</code> object contains all the values, including the “goodbye” that was our end-of-stream message:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlist</span>(res)</code></pre></div>
@@ -358,10 +358,10 @@ r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>,
 </div>
 <div id="potential-applications" class="section level1">
 <h1>Potential applications</h1>
-<p>Because <code>RedisAPI</code> exposes all of Redis, you can roll your own data structures.</p>
+<p>Because <code>redux</code> exposes all of Redis, you can roll your own data structures.</p>
 <p>First, a generator object that sets up a new list at <code>key</code> within the database <code>r</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rlist &lt;-<span class="st"> </span>function(..., <span class="dt">key=</span><span class="st">&quot;rlist&quot;</span>, <span class="dt">r=</span>redux::<span class="kw">hiredis</span>()) {
-  dat &lt;-<span class="st"> </span><span class="kw">vapply</span>(<span class="kw">c</span>(...), RedisAPI::object_to_string, <span class="kw">character</span>(<span class="dv">1</span>))
+  dat &lt;-<span class="st"> </span><span class="kw">vapply</span>(<span class="kw">c</span>(...), redux::object_to_string, <span class="kw">character</span>(<span class="dv">1</span>))
   r$<span class="kw">RPUSH</span>(key, dat)
   ret &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">r=</span>r, <span class="dt">key=</span>key)
   <span class="kw">class</span>(ret) &lt;-<span class="st"> &quot;rlist&quot;</span>
@@ -373,11 +373,11 @@ r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>,
 }
 
 <span class="st">`</span><span class="dt">[[.rlist</span><span class="st">`</span> &lt;-<span class="st"> </span>function(x, i, ...) {
-  RedisAPI::<span class="kw">string_to_object</span>(x$r$<span class="kw">LINDEX</span>(x$key, i -<span class="st"> </span>1L))
+  redux::<span class="kw">string_to_object</span>(x$r$<span class="kw">LINDEX</span>(x$key, i -<span class="st"> </span>1L))
 }
 
 <span class="st">`</span><span class="dt">[[&lt;-.rlist</span><span class="st">`</span> &lt;-<span class="st"> </span>function(x, i, value, ...) {
-  x$r$<span class="kw">LSET</span>(x$key, i -<span class="st"> </span>1L, RedisAPI::<span class="kw">object_to_string</span>(value))
+  x$r$<span class="kw">LSET</span>(x$key, i -<span class="st"> </span>1L, redux::<span class="kw">object_to_string</span>(value))
   x
 }</code></pre></div>
 <p>Then we have this weird object we can add things to.</p>
@@ -399,7 +399,7 @@ obj[[<span class="dv">2</span>]] ==<span class="st"> </span>obj2[[<span class="d
 </div>
 <div id="getting-help" class="section level1">
 <h1>Getting help</h1>
-<p>Because <code>redux</code> uses the <code>RedisAPI</code> package for its interface and <code>RedisAPI</code> package is simply a wrapper around the Redis API, the main source of documentation is the Redis help itself at <a href="http://redis.io" class="uri">http://redis.io</a></p>
+<p>Because the interface <code>redux</code> uses is simply a wrapper around the Redis API, the main source of documentation is the Redis help itself at <a href="http://redis.io" class="uri">http://redis.io</a></p>
 </div>
 
 

@@ -1,5 +1,5 @@
 ##' Create an interface to Redis, with a generated interface to all
-##' Redis commands (using \code{RedisAPI}).
+##' Redis commands.
 ##'
 ##' @title Interface to Redis
 ##' @param ... Named configuration options passed to
@@ -25,9 +25,9 @@
 ##'   r$GET("foo")
 ##' }
 hiredis <- function(..., version=NULL) {
-  config <- RedisAPI::redis_config(...)
+  config <- redis_config(...)
   con <- redis_connection(config)
-  RedisAPI::redis_api(con, version)
+  redis_api(con, version)
 }
 
 ##' @export

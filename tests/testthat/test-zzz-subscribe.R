@@ -112,9 +112,6 @@ test_that("pattern", {
 ## manually.  Normally, this is not able to be done explicitly because
 ## the UNSUBSCRIBE is handled in an on.exit call, and because that
 ## leaves the n_discarded attribute non-fetchable.
-##
-## Unfortunately, this also shows the difficulty of the current
-## RedisAPI/redux split.
 test_that("flood and recover", {
   terminate <- function(x) {
     if (as.numeric(x$value) > 0.8) {
@@ -132,8 +129,8 @@ test_that("flood and recover", {
   filename <- start_publisher(ch)
   on.exit(file.remove(filename))
 
-  col <- RedisAPI:::make_collector()
-  fn <- RedisAPI:::make_callback(display, terminate, col$add, Inf)
+  col <- make_collector()
+  fn <- make_callback(display, terminate, col$add, Inf)
 
   con <- redis_connection()
   ptr <- environment(con$command)$ptr

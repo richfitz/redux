@@ -25,7 +25,7 @@ version number that way.}
 }
 \description{
 Create an interface to Redis, with a generated interface to all
-Redis commands (using \code{RedisAPI}).
+Redis commands.
 }
 \examples{
 # Only run if a Redis server is running

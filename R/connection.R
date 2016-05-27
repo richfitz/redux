@@ -1,7 +1,7 @@
 ##' Create a Redis connection.  This function is designed to be used
 ##' in other packages, and not directly by end-users.  However, it is
-##' possible and safe to use.  See the \code{RedisAPI} package for a
-##' complete example.
+##' possible and safe to use.  See the \code{\link{hiredis}} package
+##' for the user friendly interface.
 ##'
 ##' This function creates a list of functions, appropriately bound to
 ##' a pointer to a Redis connection.  This is designed for package
@@ -58,8 +58,8 @@
 ##' @useDynLib redux, .registration = TRUE
 ##' @export
 ##'
-redis_connection <- function(config=RedisAPI::redis_config()) {
-  config <- RedisAPI::redis_config(config)
+redis_connection <- function(config=redis_config()) {
+  config <- redis_config(config)
   ptr <- redis_connect(config)
   ret <-
     list(

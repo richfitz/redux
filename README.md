@@ -2,14 +2,14 @@
 
 [![Build Status](https://travis-ci.org/richfitz/redux.png?branch=master)](https://travis-ci.org/richfitz/redux)
 
-`redux` provides a low-level interface to Redis, allowing execution of arbitrary Redis commands with almost no interface.  While it can be used standalone, it is designed to be used with [`RedisAPI`](https://github.com/ropensci/RedisAPI) which provides a much friendlier interface to the Redis commands.
+`redux` provides an inteface to Redis.  Two interfaces are provided; a low level interface (allowing execution of arbitrary Redis commands with almost no interface) and a high-level interface with an API that matches all of the several hundred Redis commands.
 
 As well as supporting Redis commands, `redux` supports:
 
 * **pipelineing**: execute more than one command in a single Redis roundtrip, which can greatly increase performance, especially over high-latency connections.
 * **socket connections**: can connect to a locally running Redis instance over a unix socket (if Redis is configured to do so) for faster communication.
-* **flexible serialisation**: serialise any part of a Redis command, including keys and fields.  Binary serialisation is supported (see `RedisAPI` for a helper functions).
-* **subscriptions**: create a simple blocking subscribe client, applying a callback function to every message recieved (see `RedisAPI` for a more friendly interface).
+* **flexible serialisation**: serialise any part of a Redis command, including keys and fields.  Binary serialisation is supported via `object_to_bin` / `bin_to_object`.
+* **subscriptions**: create a simple blocking subscribe client, applying a callback function to every message recieved.
 * **error handling**: Every Redis error becomes an  R error.
 
 ## Usage

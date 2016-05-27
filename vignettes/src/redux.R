@@ -1,10 +1,10 @@
 ## ---
-## title: "Using Redis with redux and RedisAPI"
+## title: "Using Redis with redux"
 ## author: "Rich FitzJohn"
 ## date: "`r Sys.Date()`"
 ## output: rmarkdown::html_vignette
 ## vignette: >
-##   %\VignetteIndexEntry{Using Redis with redux and RedisAPI}
+##   %\VignetteIndexEntry{Using Redis with redux}
 ##   %\VignetteEngine{knitr::rmarkdown}
 ##   \usepackage[utf8]{inputenc}
 ## ---
@@ -15,16 +15,14 @@ knitr::opts_chunk$set(error=FALSE)
 redux::hiredis()$DEL(c("mykey", "mylist", "mylist2", "rlist"))
 set.seed(1)
 
-## `redux` and `RedisAPI` provide a full interface to the Redis API;
-## `redux` does the actual interfacing with Redis and `RedisAPI` uses
-## this to expose all `r length(names(RedisAPI::redis))` Redis
-## commands as a set of user-friendly R functions that do basic error
-## checking.
+## `redux` provides a full interface to the Redis API; it provides a
+## hiredis driver wrapped in R and uses this to expose all `r
+## length(names(redux::redis))` Redis commands as a set of
+## user-friendly R functions that do basic error checking.
 
 ## It is possible to build user-friendly applications on top of this,
-## for example, the built in `rdb` R key-value store,
-## [`storr`](https://github.com/richfitz/storr) which provides a
-## content-addressable object store, and
+## for example [`storr`](https://github.com/richfitz/storr) which
+## provides a content-addressable object store, and
 ## [`rrqueue`](https://github.com/traitecoevo/rrqueue) which
 ## implements a scalable queuing system.
 
@@ -61,11 +59,11 @@ r$GET("mykey")
 ## to convert it to a string.  The `object_to_bin` and
 ## `object_to_string` functions can help here, serialising the objects
 ## to binary and string represenations.
-obj <- RedisAPI::object_to_bin(1:10)
+obj <- redux::object_to_bin(1:10)
 obj
 
 ## or
-str <- RedisAPI::object_to_string(1:10)
+str <- redux::object_to_string(1:10)
 str
 
 ## The binary serialisation is faster, smaller, and preserves all the
@@ -75,18 +73,18 @@ str
 ## in `RcppRedis`, though it is never done automatically.
 
 ## These values can be deserialised:
-RedisAPI::bin_to_object(obj)
-RedisAPI::string_to_object(str)
+redux::bin_to_object(obj)
+redux::string_to_object(str)
 
 ## So:
-r$SET("mylist", RedisAPI::object_to_bin(1:10))
+r$SET("mylist", redux::object_to_bin(1:10))
 r$GET("mylist")
-RedisAPI::bin_to_object(r$GET("mylist"))
+redux::bin_to_object(r$GET("mylist"))
 
 ## Or:
-r$SET("mylist", RedisAPI::object_to_string(1:10))
+r$SET("mylist", redux::object_to_string(1:10))
 r$GET("mylist")
-RedisAPI::string_to_object(r$GET("mylist"))
+redux::string_to_object(r$GET("mylist"))
 
 ## This gives you all the power of Redis, but you will have to
 ## manually serialise/deserialise all complicated R objects (i.e.,
@@ -96,10 +94,10 @@ RedisAPI::string_to_object(r$GET("mylist"))
 
 ## Note that you are not restricted to using serialised R objects as
 ## values; you can use them as keys; this is perfectly valid:
-r$SET(RedisAPI::object_to_bin(1:10), "mydata")
-r$GET(RedisAPI::object_to_bin(1:10))
+r$SET(redux::object_to_bin(1:10), "mydata")
+r$GET(redux::object_to_bin(1:10))
 ##+ echo=FALSE, results="hide"
-r$DEL(RedisAPI::object_to_bin(1:10))
+r$DEL(redux::object_to_bin(1:10))
 
 ## However, depending on what you want to achieve, Redis offers
 ## potentially better ways of holding lists using its native data
@@ -133,13 +131,13 @@ r$LLEN("mylist2")
 
 ## Of course, each element of the list can be an R object if you run
 ## it through `object_to_string`:
-r$LPUSH("mylist2", RedisAPI::object_to_string(1:10))
+r$LPUSH("mylist2", redux::object_to_string(1:10))
 
 ## but you'll be responsible for converting that back (and detecting
 ## / knowing that this needs doing)
 dat <- r$LRANGE("mylist2", 0, 2)
 dat
-dat[[1]] <- RedisAPI::string_to_object(dat[[1]])
+dat[[1]] <- redux::string_to_object(dat[[1]])
 dat
 
 ## # Pipelining
@@ -147,19 +145,19 @@ dat
 ## Every command set to Redis costs a round trip; even over the
 ## loopback interface this can be expensive if done a very large
 ## number of times.  Redis offers two ways of minimising this problem;
-## pipelining and lua scripting.  redux/RedisAPI support both.
+## pipelining and lua scripting.  redux supports both.
 
 ## To pipeline, use the `pipeline` method of the `hiredis` object:
-redis <- RedisAPI::redis
+redis <- redux::redis
 r$pipeline(
   redis$PING(),
   redis$PING())
 
-## Here, `redis` is a special object within RedisAPI that implements
-## all the Redis commands but only formats them for use rather than
-## sends them.  The `pipeline` method collects these all up and sends
-## them to the server in a single batch, with the result returned as a
-## list.
+## Here, `redis` is a special object within the package that
+## implements all the Redis commands but only formats them for use
+## rather than sends them.  The `pipeline` method collects these all
+## up and sends them to the server in a single batch, with the result
+## returned as a list.
 
 ## If arguments are named, then the return value is named:
 r$pipeline(
@@ -280,13 +278,13 @@ unlist(res)
 
 ## # Potential applications
 
-## Because `RedisAPI` exposes all of Redis, you can roll your own data
+## Because `redux` exposes all of Redis, you can roll your own data
 ## structures.
 
 ## First, a generator object that sets up a new list at `key` within
 ## the database `r`.
 rlist <- function(..., key="rlist", r=redux::hiredis()) {
-  dat <- vapply(c(...), RedisAPI::object_to_string, character(1))
+  dat <- vapply(c(...), redux::object_to_string, character(1))
   r$RPUSH(key, dat)
   ret <- list(r=r, key=key)
   class(ret) <- "rlist"
@@ -301,11 +299,11 @@ length.rlist <- function(x) {
 }
 
 `[[.rlist` <- function(x, i, ...) {
-  RedisAPI::string_to_object(x$r$LINDEX(x$key, i - 1L))
+  redux::string_to_object(x$r$LINDEX(x$key, i - 1L))
 }
 
 `[[<-.rlist` <- function(x, i, value, ...) {
-  x$r$LSET(x$key, i - 1L, RedisAPI::object_to_string(value))
+  x$r$LSET(x$key, i - 1L, redux::object_to_string(value))
   x
 }
 
@@ -334,7 +332,6 @@ obj[[2]] == obj2[[2]]
 
 ## # Getting help
 
-## Because `redux` uses the `RedisAPI` package for its interface and
-## `RedisAPI` package is simply a wrapper around the Redis API, the
-## main source of documentation is the Redis help itself at
-## http://redis.io
+## Because the interface `redux` uses is simply a wrapper around the
+## Redis API, the main source of documentation is the Redis help
+## itself at http://redis.io

@@ -9,17 +9,14 @@
 ##   \usepackage[utf8]{inputenc}
 ## ---
 
-## These are the implementation details that straddle awkwardly
-## between RedisAPI and redux.  Really, these are the requirements
-## that RedisAPI has of connections, rather than being anything
-## special to redux.  But redux provides the drivers (and has
-## vignettes anyway) so they're going here.
+## These are some implementation details that may be of interest if
+## developing alternative (non-hiredis based) drivers. 
 
 ## Create a connection:
-con <- redux::redis_connection(RedisAPI::redis_config())
+con <- redux::redis_connection(redux::redis_config())
 con
 
-## See `?RedisAPI::redis_config` for details on specifying hosts,
+## See `?redux::redis_config` for details on specifying hosts,
 ## ports, servers, etc.  Importantly, _socket connections_ can be
 ## used, which can be considerably faster if you are connecting to a
 ## local Redis instance and have socket connections enabled.
@@ -101,11 +98,10 @@ con$pipeline(list(
 
 ## ## Subscriptions
 
-## Subscriptions, really should be done with the `RedisAPI` wrapper,
-## which is exposed by the `subscribe` method of a `redis_api` object
-## (e.g, `redux`).  The brave are welcome to use this low-level
-## interface should the need arise.  The `subscribe` function takes
-## arguments:
+## Subscriptions, really should be done with the wrapper, which is
+## exposed by the `subscribe` method of a `redis_api` object (e.g,
+## `redux`).  The brave are welcome to use this low-level interface
+## should the need arise.  The `subscribe` function takes arguments:
 
 ## * `channel`: a vector of one or more channels to listen on
 ## * `pattern`: a logical indicating if the `channel` is a pattern
@@ -145,7 +141,7 @@ callback <- local({
 ## `foo`.  In a second instance you can run:
 
 ## ```r
-## con <- redux::redis_connection(RedisAPI::redis_config())
+## con <- redux::redis_connection(redux::redis_config())
 ## res <- sapply(1:11, function(i) con$command(c("PUBLISH", "foo", runif(1))))
 ## ```
 

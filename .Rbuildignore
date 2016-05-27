@@ -10,3 +10,4 @@
 ^src/Makevars$
 ^redux_.*\.tar\.gz$
 ^TODO\.md$
+^extra$

@@ -95,8 +95,6 @@ test_that("SCAN", {
 
 test_that("serialisation", {
   skip_if_no_redis()
-  object_to_bin <- RedisAPI::object_to_bin
-  bin_to_object <- RedisAPI::bin_to_object
 
   r <- hiredis()
 
