@@ -1,6 +1,7 @@
 context("hiredis")
 
 test_that("connection", {
+  skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
   ## Dangerous raw pointer:
   expect_is(ptr, "externalptr")
@@ -10,6 +11,7 @@ test_that("connection", {
 })
 
 test_that("simple commands", {
+  skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
 
   ans <- redis_command(ptr, list("PING"))
@@ -37,6 +39,7 @@ test_that("simple commands", {
 })
 
 test_that("commands with arguments", {
+  skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
 
   expect_equal(redis_command(ptr, list("SET", "foo", "1")),
@@ -48,6 +51,7 @@ test_that("commands with arguments", {
 })
 
 test_that("commands with NULL arguments", {
+  skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
 
   expect_equal(redis_command(ptr, list("SET", "foo", "1", NULL)),
@@ -59,12 +63,14 @@ test_that("commands with NULL arguments", {
 })
 
 test_that("missing values are NULL", {
+  skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
   key <- rand_str(prefix="redux_")
   expect_null(redis_command(ptr, list("GET", key)))
 })
 
 test_that("Errors are converted", {
+  skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
   key <- rand_str(prefix="redux_")
   on.exit(redis_command(ptr, c("DEL", key)))
@@ -81,6 +87,7 @@ test_that("Errors are converted", {
 ## keeping them protected appropriately.  So for now the automatically
 ## balanced approach is easiest.
 test_that("Pipelining", {
+  skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
   key <- rand_str(prefix="redux_")
   cmd <- list(list("SET", key, "1"), list("GET", key))
@@ -103,6 +110,7 @@ test_that("Pipelining", {
 
 ## Storing binary data:
 test_that("Binary data", {
+  skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
   data <- serialize(1:5, NULL)
   key <- rand_str(prefix="redux_")
@@ -123,6 +131,7 @@ test_that("Binary data", {
 })
 
 test_that("Lists of binary data", {
+  skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
   data <- serialize(1:5, NULL)
   key1 <- rand_str(prefix="redux_")
@@ -144,6 +153,7 @@ test_that("Lists of binary data", {
 })
 
 test_that("pointer commands are safe", {
+  skip_if_no_redis()
   expect_error(redis_command(NULL, "PING"),
                "Expected an external pointer")
   expect_error(redis_command(list(), "PING"),

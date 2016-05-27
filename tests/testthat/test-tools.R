@@ -79,6 +79,7 @@ test_that("redis_time", {
 
 ## This is just a really simple test that this works at all:
 test_that("scripts", {
+  skip_if_no_redis()
   r <- hiredis()
   ## A little lua script
   lua <- '

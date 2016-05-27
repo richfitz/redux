@@ -1,6 +1,7 @@
 context("scan")
 
 test_that("scan", {
+  skip_if_no_redis()
   con <- hiredis()
   prefix <- rand_str(prefix="scan:")
   keys <- character(0)
