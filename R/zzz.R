@@ -1,3 +1,5 @@
+##' @importFrom stats setNames
+##' @importFrom utils URLdecode capture.output modifyList str
 .onLoad <- function(libname, pkgname) {
   C_serializeToRaw <<- getNativeSymbolInfo("serializeToRaw",
                                            "RApiSerialize")

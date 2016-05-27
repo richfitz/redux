@@ -60,7 +60,7 @@ devtools::install_github("richfitz/redux")
 
 ## See also
 
-* [`rredis`](https://cran.r-project.org/web/packages/rredis/index.html), the original R Redis client
+* [`rredis`](https://cran.r-project.org/package=rredis), the original R Redis client
 * [`RcppRedis`](https://github.com/eddelbuettel/rcppredis), Dirk Eddelbuettel's R Redis client, which greatly influenced the design decisions here
 * [`hiredis-rb`](https://github.com/redis/hiredis-rb), the _Ruby_ Redis client that influenced the subscribe and pipeline support here.
 * [`rrlite`](https://github.com/ropensci/rrlite), an almost identical interface to [`rlite`](https://github.com/seppo0010/rlite), a serverless-zero configuration database with an identical interface to Redis.

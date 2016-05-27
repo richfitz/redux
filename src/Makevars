@@ -1,3 +1,0 @@
-# -*- makefile -*-
-PKG_CFLAGS=-I/usr/local/include
-PKG_LIBS=-L/usr/local/lib -lhiredis

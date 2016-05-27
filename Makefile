@@ -23,7 +23,7 @@ install:
 	R CMD INSTALL .
 
 build:
-	R CMD build --no-build-vignettes .
+	R CMD build .
 
 check: build
 	R CMD check --as-cran --no-manual `ls -1tr ${PACKAGE}*gz | tail -n1`

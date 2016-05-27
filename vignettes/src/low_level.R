@@ -6,7 +6,7 @@
 ## vignette: >
 ##   %\VignetteIndexEntry{Low level implementation details}
 ##   %\VignetteEngine{knitr::rmarkdown}
-##   \usepackage[utf8]{inputenc}
+##   %\usepackage[utf8]{inputenc}
 ## ---
 
 ## These are some implementation details that may be of interest if

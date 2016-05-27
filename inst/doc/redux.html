@@ -7,11 +7,10 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <meta name="author" content="Rich FitzJohn" />
 
-<meta name="date" content="2016-05-26" />
+<meta name="date" content="2016-05-27" />
 
 <title>Using Redis with redux</title>
 
@@ -19,45 +18,32 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
 table.sourceCode { width: 100%; line-height: 100%; }
 td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
 td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
 </style>
 
 
-<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+<link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%7D%0Apre%20%7B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -65,23 +51,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<div class="fluid-row" id="header">
-
-
+<div id="header">
 <h1 class="title">Using Redis with redux</h1>
 <h4 class="author"><em>Rich FitzJohn</em></h4>
-<h4 class="date"><em>2016-05-26</em></h4>
-
+<h4 class="date"><em>2016-05-27</em></h4>
 </div>
 
 
 <p><code>redux</code> provides a full interface to the Redis API; it provides a hiredis driver wrapped in R and uses this to expose all <code>r length(names(redux::redis))</code> Redis commands as a set of user-friendly R functions that do basic error checking.</p>
 <p>It is possible to build user-friendly applications on top of this, for example <a href="https://github.com/richfitz/storr"><code>storr</code></a> which provides a content-addressable object store, and <a href="https://github.com/traitecoevo/rrqueue"><code>rrqueue</code></a> which implements a scalable queuing system.</p>
 <p>The main entry point for creating a <code>redis_api</code> object is the <code>hiredis</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span>redux::<span class="kw">hiredis</span>()</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span>redux::<span class="kw">hiredis</span>()</code></pre>
 <p>By default, it will connect to a database running on the local machine (<code>localhost</code>, or ip <code>127.0.0.1</code>) and port 6379. The two arguments that <code>hiredis</code> accepts are <code>host</code> and <code>port</code> if you need to change these to point at a different location. Alternatively, you can set the <code>REDIS_HOST</code> and <code>REDIS_PORT</code> environment variables to appropriate values and then use <code>hiredis()</code> with no arguments.</p>
 <p>The <code>redis_api</code> object is an <a href="https://github.com/wch/R6"><code>R6</code></a> class with <em>many</em> methods, each corresponding to a different Redis command.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r</code></pre>
 <pre><code>## &lt;redis_api&gt;
 ##   Redis commands:
 ##     APPEND: function
@@ -101,68 +84,68 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##     subscribe: function
 ##     type: function</code></pre>
 <p>For example, <code>SET</code> and <code>GET</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mykey&quot;</span>, <span class="st">&quot;mydata&quot;</span>) <span class="co"># set the key &quot;mykey&quot; to the value &quot;mydata&quot;</span></code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mykey&quot;</span>, <span class="st">&quot;mydata&quot;</span>) <span class="co"># set the key &quot;mykey&quot; to the value &quot;mydata&quot;</span></code></pre>
 <pre><code>## [Redis: OK]</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mykey&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mykey&quot;</span>)</code></pre>
 <pre><code>## [1] &quot;mydata&quot;</code></pre>
 <div id="serialisation" class="section level1">
 <h1>Serialisation</h1>
 <p>The value for most arguments must be a string or will be coerced into one. So if you want to save an arbitrary R object, you need to convert it to a string. The <code>object_to_bin</code> and <code>object_to_string</code> functions can help here, serialising the objects to binary and string represenations.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">obj &lt;-<span class="st"> </span>redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>)
-obj</code></pre></div>
-<pre><code>##  [1] 58 0a 00 00 00 02 00 03 02 04 00 02 03 00 00 00 00 0d 00 00 00 0a 00
+<pre class="sourceCode r"><code class="sourceCode r">obj &lt;-<span class="st"> </span>redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>)
+obj</code></pre>
+<pre><code>##  [1] 58 0a 00 00 00 02 00 03 03 00 00 02 03 00 00 00 00 0d 00 00 00 0a 00
 ## [24] 00 00 01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06
 ## [47] 00 00 00 07 00 00 00 08 00 00 00 09 00 00 00 0a</code></pre>
 <p>or</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">str &lt;-<span class="st"> </span>redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>)
-str</code></pre></div>
-<pre><code>## [1] &quot;A\n2\n197124\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">str &lt;-<span class="st"> </span>redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>)
+str</code></pre>
+<pre><code>## [1] &quot;A\n2\n197376\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
 <p>The binary serialisation is faster, smaller, and preserves all the bits of floating point numbers. The string version might be preferable where having only strings in the database is wanted. The binary serialisation is compatible with the same approach used in <code>RcppRedis</code>, though it is never done automatically.</p>
 <p>These values can be deserialised:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">bin_to_object</span>(obj)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">bin_to_object</span>(obj)</code></pre>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">string_to_object</span>(str)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">string_to_object</span>(str)</code></pre>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>So:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre>
 <pre><code>## [Redis: OK]</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>)</code></pre></div>
-<pre><code>##  [1] 58 0a 00 00 00 02 00 03 02 04 00 02 03 00 00 00 00 0d 00 00 00 0a 00
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>)</code></pre>
+<pre><code>##  [1] 58 0a 00 00 00 02 00 03 03 00 00 02 03 00 00 00 00 0d 00 00 00 0a 00
 ## [24] 00 00 01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06
 ## [47] 00 00 00 07 00 00 00 08 00 00 00 09 00 00 00 0a</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">bin_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">bin_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>Or:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre>
 <pre><code>## [Redis: OK]</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;A\n2\n197124\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">string_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>)</code></pre>
+<pre><code>## [1] &quot;A\n2\n197376\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">string_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>This gives you all the power of Redis, but you will have to manually serialise/deserialise all complicated R objects (i.e., everything other than logicals, numbers or strings). Similarly, you are responsible for type coersion/deserialisation when retrieving data at the other end.</p>
 <p>Note that you are not restricted to using serialised R objects as values; you can use them as keys; this is perfectly valid:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>), <span class="st">&quot;mydata&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>), <span class="st">&quot;mydata&quot;</span>)</code></pre>
 <pre><code>## [Redis: OK]</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre>
 <pre><code>## [1] &quot;mydata&quot;</code></pre>
 <p>However, depending on what you want to achieve, Redis offers potentially better ways of holding lists using its native data types. For example;</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">RPUSH</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">1</span>:<span class="dv">10</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">RPUSH</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">1</span>:<span class="dv">10</span>)</code></pre>
 <pre><code>## [1] 10</code></pre>
 <p>(the returned value <code>10</code> indicates that the list “mylist2” is 10 elements long). There are lots of commands for operating on lists. For example, you can do things like;</p>
 <ul>
 <li>get an element by its index (note tht this uses C-style base-0 indexing for consistency with the <code>Redis</code> documentation rather than R’s semantics)</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LINDEX</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">1</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LINDEX</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">1</span>)</code></pre>
 <pre><code>## [1] &quot;2&quot;</code></pre>
 <ul>
 <li>set an element by its index</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LSET</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">1</span>, <span class="st">&quot;carrot&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LSET</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">1</span>, <span class="st">&quot;carrot&quot;</span>)</code></pre>
 <pre><code>## [Redis: OK]</code></pre>
 <ul>
 <li>get all of a list:</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LRANGE</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">0</span>, -<span class="dv">1</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LRANGE</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">0</span>, -<span class="dv">1</span>)</code></pre>
 <pre><code>## [[1]]
 ## [1] &quot;1&quot;
 ##
@@ -195,7 +178,7 @@ str</code></pre></div>
 <ul>
 <li>or part of it:</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LRANGE</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">0</span>, <span class="dv">2</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LRANGE</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">0</span>, <span class="dv">2</span>)</code></pre>
 <pre><code>## [[1]]
 ## [1] &quot;1&quot;
 ##
@@ -207,30 +190,30 @@ str</code></pre></div>
 <ul>
 <li>pop elements off the front or back</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LLEN</span>(<span class="st">&quot;mylist2&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LLEN</span>(<span class="st">&quot;mylist2&quot;</span>)</code></pre>
 <pre><code>## [1] 10</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LPOP</span>(<span class="st">&quot;mylist2&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LPOP</span>(<span class="st">&quot;mylist2&quot;</span>)</code></pre>
 <pre><code>## [1] &quot;1&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">RPOP</span>(<span class="st">&quot;mylist2&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">RPOP</span>(<span class="st">&quot;mylist2&quot;</span>)</code></pre>
 <pre><code>## [1] &quot;10&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LLEN</span>(<span class="st">&quot;mylist2&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LLEN</span>(<span class="st">&quot;mylist2&quot;</span>)</code></pre>
 <pre><code>## [1] 8</code></pre>
 <p>Of course, each element of the list can be an R object if you run it through <code>object_to_string</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LPUSH</span>(<span class="st">&quot;mylist2&quot;</span>, redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">LPUSH</span>(<span class="st">&quot;mylist2&quot;</span>, redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre>
 <pre><code>## [1] 9</code></pre>
 <p>but you’ll be responsible for converting that back (and detecting / knowing that this needs doing)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dat &lt;-<span class="st"> </span>r$<span class="kw">LRANGE</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">0</span>, <span class="dv">2</span>)
-dat</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">dat &lt;-<span class="st"> </span>r$<span class="kw">LRANGE</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">0</span>, <span class="dv">2</span>)
+dat</code></pre>
 <pre><code>## [[1]]
-## [1] &quot;A\n2\n197124\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;
+## [1] &quot;A\n2\n197376\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;
 ##
 ## [[2]]
 ## [1] &quot;carrot&quot;
 ##
 ## [[3]]
 ## [1] &quot;3&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dat[[<span class="dv">1</span>]] &lt;-<span class="st"> </span>redux::<span class="kw">string_to_object</span>(dat[[<span class="dv">1</span>]])
-dat</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">dat[[<span class="dv">1</span>]] &lt;-<span class="st"> </span>redux::<span class="kw">string_to_object</span>(dat[[<span class="dv">1</span>]])
+dat</code></pre>
 <pre><code>## [[1]]
 ##  [1]  1  2  3  4  5  6  7  8  9 10
 ##
@@ -244,10 +227,10 @@ dat</code></pre></div>
 <h1>Pipelining</h1>
 <p>Every command set to Redis costs a round trip; even over the loopback interface this can be expensive if done a very large number of times. Redis offers two ways of minimising this problem; pipelining and lua scripting. redux supports both.</p>
 <p>To pipeline, use the <code>pipeline</code> method of the <code>hiredis</code> object:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redis &lt;-<span class="st"> </span>redux::redis
+<pre class="sourceCode r"><code class="sourceCode r">redis &lt;-<span class="st"> </span>redux::redis
 r$<span class="kw">pipeline</span>(
   redis$<span class="kw">PING</span>(),
-  redis$<span class="kw">PING</span>())</code></pre></div>
+  redis$<span class="kw">PING</span>())</code></pre>
 <pre><code>## [[1]]
 ## [Redis: PONG]
 ##
@@ -255,10 +238,10 @@ r$<span class="kw">pipeline</span>(
 ## [Redis: PONG]</code></pre>
 <p>Here, <code>redis</code> is a special object within the package that implements all the Redis commands but only formats them for use rather than sends them. The <code>pipeline</code> method collects these all up and sends them to the server in a single batch, with the result returned as a list.</p>
 <p>If arguments are named, then the return value is named:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">pipeline</span>(
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">pipeline</span>(
   <span class="dt">a=</span>redis$<span class="kw">INCR</span>(<span class="st">&quot;x&quot;</span>),
   <span class="dt">b=</span>redis$<span class="kw">INCR</span>(<span class="st">&quot;x&quot;</span>),
-  <span class="dt">c=</span>redis$<span class="kw">DEL</span>(<span class="st">&quot;x&quot;</span>))</code></pre></div>
+  <span class="dt">c=</span>redis$<span class="kw">DEL</span>(<span class="st">&quot;x&quot;</span>))</code></pre>
 <pre><code>## $a
 ## [1] 1
 ##
@@ -270,8 +253,8 @@ r$<span class="kw">pipeline</span>(
 <p>here a variable “x” was incremented twice and then deleted.</p>
 <p>If you use pipelining you should read the <a href="http://redis.io/topics/pipelining">Redis page on it</a> because there are a few restrictions and cautions.</p>
 <p>Generating very large numbers (or variable nubmers) of commands with the above interface will be difficult because <code>pipeline</code> uses the dots argument. Instead, you can pass a list of commands to the <code>.commands</code> argument of <code>pipeline</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cmds &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="kw">seq_len</span>(<span class="dv">4</span>), function(.) redis$<span class="kw">PING</span>())
-r$<span class="kw">pipeline</span>(<span class="dt">.commands=</span>cmds)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">cmds &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="kw">seq_len</span>(<span class="dv">4</span>), function(.) redis$<span class="kw">PING</span>())
+r$<span class="kw">pipeline</span>(<span class="dt">.commands=</span>cmds)</code></pre>
 <pre><code>## [[1]]
 ## [Redis: PONG]
 ##
@@ -287,7 +270,7 @@ r$<span class="kw">pipeline</span>(<span class="dt">.commands=</span>cmds)</code
 <div id="subscriptions" class="section level1">
 <h1>Subscriptions</h1>
 <p>On top of the key/value store aspect of Redis, it also offers a publisher/subscriber model. Publishing with <code>redux</code> is straightforward; use the <code>PUBLISH</code> method:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>, <span class="st">&quot;hello&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>, <span class="st">&quot;hello&quot;</span>)</code></pre>
 <pre><code>## [1] 0</code></pre>
 <p>The return value here is the number of subscribers to that channel; in our case zero!</p>
 <p>The <code>SUBSCRIBE</code> method should not be used as the client cannot deal with messages directly (it is disabled in the interface to prevent this).</p>
@@ -302,56 +285,56 @@ r$<span class="kw">pipeline</span>(<span class="dt">.commands=</span>cmds)</code
 <li><p>envir: environment in which to evaluate <code>transform</code> and <code>terminate</code>.</p></li>
 </ul>
 <p>That all sounds a lot more complicated it really is. To collect all messages on the <code>&quot;mychannel&quot;</code> channel, stopping after 100 messages or a message reading exactly “goodbye” you would write:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>r$<span class="kw">subscribe</span>(<span class="st">&quot;mychannel&quot;</span>,
+<pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>r$<span class="kw">subscribe</span>(<span class="st">&quot;mychannel&quot;</span>,
                    <span class="dt">transform=</span>function(x) x$value,
                    <span class="dt">terminate=</span>function(x) <span class="kw">identical</span>(x, <span class="st">&quot;goodbye&quot;</span>),
-                   <span class="dt">n=</span><span class="dv">100</span>)</code></pre></div>
+                   <span class="dt">n=</span><span class="dv">100</span>)</code></pre>
 <p>To test this out, we need a second process that will publish to the channel (or we’ll wait forever). This function will publish the first 20 values out of the Nile data set.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span>redux::<span class="kw">hiredis</span>()
+<pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span>redux::<span class="kw">hiredis</span>()
 for (i in Nile[<span class="dv">1</span>:<span class="dv">20</span>]) {
   <span class="kw">Sys.sleep</span>(.<span class="dv">05</span>)
   r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>, i)
 }
-r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>, <span class="st">&quot;goodbye&quot;</span>)</code></pre></div>
+r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>, <span class="st">&quot;goodbye&quot;</span>)</code></pre>
 <p>This file is at <code>path_to_publisher</code> (in R’s temporary directory) and can be run with:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system2</span>(<span class="kw">file.path</span>(<span class="kw">R.home</span>(), <span class="st">&quot;bin&quot;</span>, <span class="st">&quot;Rscript&quot;</span>), path_to_publisher,
-        <span class="dt">wait=</span><span class="ot">FALSE</span>, <span class="dt">stdout=</span><span class="ot">FALSE</span>, <span class="dt">stderr=</span><span class="ot">FALSE</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system2</span>(<span class="kw">file.path</span>(<span class="kw">R.home</span>(), <span class="st">&quot;bin&quot;</span>, <span class="st">&quot;Rscript&quot;</span>), path_to_publisher,
+        <span class="dt">wait=</span><span class="ot">FALSE</span>, <span class="dt">stdout=</span><span class="ot">FALSE</span>, <span class="dt">stderr=</span><span class="ot">FALSE</span>)</code></pre>
 <p>to start the publisher.</p>
 <p>Let’s add a little debgging information to the transform function, and set the subscriber off:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">transform &lt;-<span class="st"> </span>function(x) {
+<pre class="sourceCode r"><code class="sourceCode r">transform &lt;-<span class="st"> </span>function(x) {
   <span class="kw">message</span>(<span class="kw">format</span>(<span class="kw">Sys.time</span>(), <span class="st">&quot;%Y-%m-%d %H:%M:%OS3&quot;</span>),
           <span class="st">&quot;: got message: &quot;</span>,
           x$value)
   x$value
-}</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>r$<span class="kw">subscribe</span>(<span class="st">&quot;mychannel&quot;</span>,
+}</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>r$<span class="kw">subscribe</span>(<span class="st">&quot;mychannel&quot;</span>,
                    <span class="dt">transform=</span>transform,
                    <span class="dt">terminate=</span>function(x) <span class="kw">identical</span>(x, <span class="st">&quot;goodbye&quot;</span>),
-                   <span class="dt">n=</span><span class="dv">100</span>)</code></pre></div>
-<pre><code>## 2016-05-26 18:01:16.947: got message: 1120</code></pre>
-<pre><code>## 2016-05-26 18:01:17.003: got message: 1160</code></pre>
-<pre><code>## 2016-05-26 18:01:17.056: got message: 963</code></pre>
-<pre><code>## 2016-05-26 18:01:17.109: got message: 1210</code></pre>
-<pre><code>## 2016-05-26 18:01:17.165: got message: 1160</code></pre>
-<pre><code>## 2016-05-26 18:01:17.220: got message: 1160</code></pre>
-<pre><code>## 2016-05-26 18:01:17.272: got message: 813</code></pre>
-<pre><code>## 2016-05-26 18:01:17.324: got message: 1230</code></pre>
-<pre><code>## 2016-05-26 18:01:17.376: got message: 1370</code></pre>
-<pre><code>## 2016-05-26 18:01:17.431: got message: 1140</code></pre>
-<pre><code>## 2016-05-26 18:01:17.487: got message: 995</code></pre>
-<pre><code>## 2016-05-26 18:01:17.542: got message: 935</code></pre>
-<pre><code>## 2016-05-26 18:01:17.597: got message: 1110</code></pre>
-<pre><code>## 2016-05-26 18:01:17.652: got message: 994</code></pre>
-<pre><code>## 2016-05-26 18:01:17.708: got message: 1020</code></pre>
-<pre><code>## 2016-05-26 18:01:17.759: got message: 960</code></pre>
-<pre><code>## 2016-05-26 18:01:17.810: got message: 1180</code></pre>
-<pre><code>## 2016-05-26 18:01:17.864: got message: 799</code></pre>
-<pre><code>## 2016-05-26 18:01:17.917: got message: 958</code></pre>
-<pre><code>## 2016-05-26 18:01:17.968: got message: 1140</code></pre>
-<pre><code>## 2016-05-26 18:01:17.969: got message: goodbye</code></pre>
+                   <span class="dt">n=</span><span class="dv">100</span>)</code></pre>
+<pre><code>## 2016-05-27 12:16:54.388: got message: 1120</code></pre>
+<pre><code>## 2016-05-27 12:16:54.438: got message: 1160</code></pre>
+<pre><code>## 2016-05-27 12:16:54.489: got message: 963</code></pre>
+<pre><code>## 2016-05-27 12:16:54.539: got message: 1210</code></pre>
+<pre><code>## 2016-05-27 12:16:54.589: got message: 1160</code></pre>
+<pre><code>## 2016-05-27 12:16:54.639: got message: 1160</code></pre>
+<pre><code>## 2016-05-27 12:16:54.690: got message: 813</code></pre>
+<pre><code>## 2016-05-27 12:16:54.740: got message: 1230</code></pre>
+<pre><code>## 2016-05-27 12:16:54.790: got message: 1370</code></pre>
+<pre><code>## 2016-05-27 12:16:54.841: got message: 1140</code></pre>
+<pre><code>## 2016-05-27 12:16:54.891: got message: 995</code></pre>
+<pre><code>## 2016-05-27 12:16:54.941: got message: 935</code></pre>
+<pre><code>## 2016-05-27 12:16:54.991: got message: 1110</code></pre>
+<pre><code>## 2016-05-27 12:16:55.042: got message: 994</code></pre>
+<pre><code>## 2016-05-27 12:16:55.092: got message: 1020</code></pre>
+<pre><code>## 2016-05-27 12:16:55.142: got message: 960</code></pre>
+<pre><code>## 2016-05-27 12:16:55.193: got message: 1180</code></pre>
+<pre><code>## 2016-05-27 12:16:55.243: got message: 799</code></pre>
+<pre><code>## 2016-05-27 12:16:55.293: got message: 958</code></pre>
+<pre><code>## 2016-05-27 12:16:55.344: got message: 1140</code></pre>
+<pre><code>## 2016-05-27 12:16:55.344: got message: goodbye</code></pre>
 <p>The timestamps in the printed output show when the message was recieved (with fractional seconds so that this is more obvious since this only takes ~1s to complete).</p>
 <p>The <code>res</code> object contains all the values, including the “goodbye” that was our end-of-stream message:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlist</span>(res)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlist</span>(res)</code></pre>
 <pre><code>##  [1] &quot;1120&quot;    &quot;1160&quot;    &quot;963&quot;     &quot;1210&quot;    &quot;1160&quot;    &quot;1160&quot;    &quot;813&quot;
 ##  [8] &quot;1230&quot;    &quot;1370&quot;    &quot;1140&quot;    &quot;995&quot;     &quot;935&quot;     &quot;1110&quot;    &quot;994&quot;
 ## [15] &quot;1020&quot;    &quot;960&quot;     &quot;1180&quot;    &quot;799&quot;     &quot;958&quot;     &quot;1140&quot;    &quot;goodbye&quot;</code></pre>
@@ -360,15 +343,15 @@ r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>,
 <h1>Potential applications</h1>
 <p>Because <code>redux</code> exposes all of Redis, you can roll your own data structures.</p>
 <p>First, a generator object that sets up a new list at <code>key</code> within the database <code>r</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rlist &lt;-<span class="st"> </span>function(..., <span class="dt">key=</span><span class="st">&quot;rlist&quot;</span>, <span class="dt">r=</span>redux::<span class="kw">hiredis</span>()) {
+<pre class="sourceCode r"><code class="sourceCode r">rlist &lt;-<span class="st"> </span>function(..., <span class="dt">key=</span><span class="st">&quot;rlist&quot;</span>, <span class="dt">r=</span>redux::<span class="kw">hiredis</span>()) {
   dat &lt;-<span class="st"> </span><span class="kw">vapply</span>(<span class="kw">c</span>(...), redux::object_to_string, <span class="kw">character</span>(<span class="dv">1</span>))
   r$<span class="kw">RPUSH</span>(key, dat)
   ret &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">r=</span>r, <span class="dt">key=</span>key)
   <span class="kw">class</span>(ret) &lt;-<span class="st"> &quot;rlist&quot;</span>
   ret
-}</code></pre></div>
+}</code></pre>
 <p>Then some S3 methods that work with this object. I’ve only implemented <code>length</code> and <code>[[</code>, but <code>[</code> would be useful here too as would <code>print</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">length.rlist &lt;-<span class="st"> </span>function(x) {
+<pre class="sourceCode r"><code class="sourceCode r">length.rlist &lt;-<span class="st"> </span>function(x) {
   x$r$<span class="kw">LLEN</span>(x$key)
 }
 
@@ -379,27 +362,27 @@ r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>,
 <span class="st">`</span><span class="dt">[[&lt;-.rlist</span><span class="st">`</span> &lt;-<span class="st"> </span>function(x, i, value, ...) {
   x$r$<span class="kw">LSET</span>(x$key, i -<span class="st"> </span>1L, redux::<span class="kw">object_to_string</span>(value))
   x
-}</code></pre></div>
+}</code></pre>
 <p>Then we have this weird object we can add things to.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">obj &lt;-<span class="st"> </span><span class="kw">rlist</span>(<span class="dv">1</span>:<span class="dv">10</span>)
-<span class="kw">length</span>(obj) <span class="co"># 10</span></code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">obj &lt;-<span class="st"> </span><span class="kw">rlist</span>(<span class="dv">1</span>:<span class="dv">10</span>)
+<span class="kw">length</span>(obj) <span class="co"># 10</span></code></pre>
 <pre><code>## [1] 10</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">obj[[<span class="dv">3</span>]]</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">obj[[<span class="dv">3</span>]]</code></pre>
 <pre><code>## [1] 3</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">obj[[<span class="dv">3</span>]] &lt;-<span class="st"> &quot;an element&quot;</span>
-obj[[<span class="dv">3</span>]]</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">obj[[<span class="dv">3</span>]] &lt;-<span class="st"> &quot;an element&quot;</span>
+obj[[<span class="dv">3</span>]]</code></pre>
 <pre><code>## [1] &quot;an element&quot;</code></pre>
 <p>The object has reference semantics so that assignment does <em>not</em> make a copy:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">obj2 &lt;-<span class="st"> </span>obj
+<pre class="sourceCode r"><code class="sourceCode r">obj2 &lt;-<span class="st"> </span>obj
 obj2[[<span class="dv">2</span>]] &lt;-<span class="st"> </span>obj2[[<span class="dv">2</span>]] *<span class="st"> </span><span class="dv">2</span>
-obj[[<span class="dv">2</span>]] ==<span class="st"> </span>obj2[[<span class="dv">2</span>]]</code></pre></div>
+obj[[<span class="dv">2</span>]] ==<span class="st"> </span>obj2[[<span class="dv">2</span>]]</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <p>For a better version of this, see <a href="https://github.com/richfitz/storr">storr</a> which does similar things to implement “<a href="http://htmlpreview.github.io/?https://raw.githubusercontent.com/richfitz/storr/master/inst/doc/storr.html#lists-and-indexable-serialisation">indexable serialisation</a>”</p>
 <p>What would be nice is a set of tools for working with any R/<code>Redis</code> package that can convert R objects into <code>Redis</code> data structures so that they can be accessed in pieces. Of course, these objects could be read/written by programs <em>other</em> than R if they also support <code>Redis</code>. We have made some approaches towards that with the <a href="https://github.com/ropensci/docdbi">docdbi</a> package, but this is a work in progress.</p>
 </div>
 <div id="getting-help" class="section level1">
 <h1>Getting help</h1>
-<p>Because the interface <code>redux</code> uses is simply a wrapper around the Redis API, the main source of documentation is the Redis help itself at <a href="http://redis.io" class="uri">http://redis.io</a></p>
+<p>Because the interface <code>redux</code> uses is simply a wrapper around the Redis API, the main source of documentation is the Redis help itself at <a href="http://redis.io">http://redis.io</a></p>
 </div>
 
 
