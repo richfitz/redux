@@ -5,6 +5,9 @@ cache: packages
 apt_packages:
   - libhiredis-dev
 
+services:
+  - redis-server
+
 notifications:
   email:
     on_success: change

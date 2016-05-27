@@ -6,7 +6,7 @@
 ## vignette: >
 ##   %\VignetteIndexEntry{Using Redis with redux}
 ##   %\VignetteEngine{knitr::rmarkdown}
-##   %\usepackage[utf8]{inputenc}
+##   \usepackage[utf8]{inputenc}
 ## ---
 
 ##+ echo=FALSE,results="hide"
