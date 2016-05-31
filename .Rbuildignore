@@ -11,3 +11,4 @@
 ^redux_.*\.tar\.gz$
 ^TODO\.md$
 ^extra$
+^appveyor\.yml$
