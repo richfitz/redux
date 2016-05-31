@@ -18,5 +18,11 @@ static const R_CallMethodDef callMethods[] = {
 };
 
 void R_init_redux(DllInfo *info) {
+#ifdef _WIN32
+  // This is needed to ensure that the windows socket library is
+  // correctly initialised, otherwise a socket error will occur.
+  WSADATA wsaData;
+  WSAStartup(MAKEWORD(2, 2), &wsaData);
+#endif
   R_registerRoutines(info, NULL, callMethods, NULL, NULL);
 }
