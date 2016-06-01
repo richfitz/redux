@@ -1,4 +1,13 @@
 # -*- makefile -*-
-# Based on RcppRedis, to work on R windows build machines
-PKG_CPPFLAGS = -I${LIB_HIREDIS}/include -DSTRICT_R_HEADERS
-PKG_LIBS = ${LIB_HIREDIS}/lib/${R_ARCH}/libhiredis.a -lws2_32
+PKG_CPPFLAGS=-I../windows/hiredis-0.9.2/include -DSTRICT_R_HEADERS
+PKG_LIBS=-L../windows/hiredis-0.9.2/lib${R_ARCH} -lhiredis -lws2_32
+
+all: clean winlibs
+
+clean:
+	rm -f $(OBJECTS) $(SHLIB)
+
+winlibs: clean
+	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R"
+
+.PHONY: all winlibs clean
