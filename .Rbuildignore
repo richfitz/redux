@@ -12,3 +12,4 @@
 ^TODO\.md$
 ^extra$
 ^appveyor\.yml$
+^windows$
