@@ -36,6 +36,9 @@ scan_apply <- function(con, callback, pattern=NULL, ...,
   ## NOTE: for HSCAN, pattern acts on the _value_ and the return value
   ## is a (field, value) pair for each item iterated over.  I presume
   ## the same is true for ZSCAN.
+  if (!inherits(con, "redis_api")) {
+    stop("con must be a redis_api object")
+  }
   type <- match.arg(type, c("SCAN", "HSCAN", "SSCAN", "ZSCAN"))
   if (type == "SCAN") {
     scan <- con$SCAN
