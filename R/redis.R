@@ -30,7 +30,7 @@ redis_command <- function(ptr, command) {
 }
 
 redis_pipeline <- function(ptr, list) {
-  .Call(Credux_redis_pipeline, ptr, list)
+  .Call(Credux_redis_pipeline, ptr, drop_null(list))
 }
 
 redis_subscribe <- function(ptr, channel, pattern, callback, envir) {
