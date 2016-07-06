@@ -13,3 +13,4 @@
 ^extra$
 ^appveyor\.yml$
 ^windows$
+^redux_.*\.tar\.gz$

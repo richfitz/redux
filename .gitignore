@@ -9,3 +9,4 @@ vignettes/low_level.Rmd
 src/Makevars
 TODO.md
 windows
+redux_*.tar.gz
