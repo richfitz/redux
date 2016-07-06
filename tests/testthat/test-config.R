@@ -75,7 +75,7 @@ test_that("NULL options do not override", {
   expect_equal(obj$port, 999L)
 })
 
-test_that("environment variable", {
+test_that("url environment variable", {
   Sys.setenv(REDIS_URL="redis://:secr3t@foo.com:999/2")
   on.exit(Sys.unsetenv("REDIS_URL"))
   obj <- redis_config()
@@ -83,6 +83,38 @@ test_that("environment variable", {
   expect_equal(obj$port,     999L)
   expect_equal(obj$db,       2L)
   expect_equal(obj$password, "secr3t")
+})
+
+test_that("host environment variable", {
+  Sys.setenv(REDIS_HOST="myhost")
+  on.exit(Sys.unsetenv("REDIS_HOST"))
+  obj <- redis_config()
+  expect_equal(obj$host, "myhost")
+  expect_equal(obj$port, 6379L)
+
+  obj <- redis_config(host="other")
+  expect_equal(obj$host, "other")
+
+  ## How does this interact with URL?  Looks like URL currently replaces host.
+  Sys.setenv(REDIS_URL="redis://:secr3t@foo.com:999/2")
+  on.exit(Sys.unsetenv("REDIS_URL"), add=TRUE)
+  obj <- redis_config()
+  expect_equal(obj$host, "foo.com")
+})
+
+test_that("port environment variable", {
+  Sys.setenv(REDIS_PORT="9999")
+  on.exit(Sys.unsetenv("REDIS_PORT"))
+  obj <- redis_config()
+  expect_equal(obj$host, "127.0.0.1")
+  expect_equal(obj$port, 9999L)
+
+  ## How does this interact with URL?  Looks like URL currently replaces port.
+  Sys.setenv(REDIS_URL="redis://:secr3t@foo.com:999/2")
+  on.exit(Sys.unsetenv("REDIS_URL"), add=TRUE)
+  obj <- redis_config()
+  expect_equal(obj$host, "foo.com")
+  expect_equal(obj$port, 999L)
 })
 
 test_that("redis_config", {

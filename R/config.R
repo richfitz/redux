@@ -66,8 +66,8 @@ redis_config <- function(..., config=list(...)) {
   defaults <- list(
                 url = Sys_getenv("REDIS_URL", NULL),
                 scheme = "redis",
-                host = "127.0.0.1",
-                port = 6379L,
+                host = Sys_getenv("REDIS_HOST", "127.0.0.1"),
+                port = as.integer(Sys_getenv("REDIS_PORT", 6379L)),
                 path = NULL,
                 password = NULL,
                 db = NULL)
