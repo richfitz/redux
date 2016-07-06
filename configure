@@ -36,7 +36,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
   if [ -f /usr/local/include/hiredis/hiredis.h ]; then
     PKG_CFLAGS=-I/usr/local/include
     PKG_LIBS="-L/usr/local/lib $PKG_LIBS"
-    if [ ! grep /usr/local/lib $DYLD_LIBRARY_PATH ]; then
+    if [ ! $(grep /usr/local/lib $DYLD_LIBRARY_PATH) ]; then
       echo "------------------------- ANTICONF WARNING -------------------------"
       echo "DYLD_LIBRARY_PATH does include /usr/local/lib but hiredis found ther"
       echo "The package load will fail."
