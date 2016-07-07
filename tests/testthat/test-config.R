@@ -38,6 +38,11 @@ test_that("defaults", {
   expect_equal(obj$url, "redis://127.0.0.1:6379")
 })
 
+test_that("NULL config OK", {
+  expect_identical(redis_config(), redis_config(config=NULL))
+  expect_identical(redis_config(), redis_config(config=list()))
+})
+
 test_that("url", {
   obj <- redis_config(url="redis://:secr3t@foo.com:999/2")
   expect_equal(obj$host, "foo.com")

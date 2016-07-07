@@ -86,13 +86,15 @@ redis_config <- function(..., config=list(...)) {
       stop("Invalid configuration")
     }
     config <- config[[1]]
+  } else if (is.null(config)) {
+    config <- list()
   }
 
   if (length(config) > 0L &&
       (is.null(names(config)) || any(names(config) == ""))) {
     stop("All config elements must be named")
   }
-  len <- viapply(config, length)
+  len <- lengths(config)
   is_null <- vlapply(config, is.null)
   err <- !is_null & len != 1L
   if (any(err)) {
