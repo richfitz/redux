@@ -25,10 +25,11 @@ install:
 build:
 	R CMD build .
 
-check: build
-	R CMD check --as-cran --no-manual `ls -1tr ${PACKAGE}*gz | tail -n1`
-	@rm -f `ls -1tr ${PACKAGE}*gz | tail -n1`
-	@rm -rf ${PACKAGE}.Rcheck
+check:
+	_R_CHECK_CRAN_INCOMING_=FALSE make check_all
+
+check_all:
+	${RSCRIPT} -e "rcmdcheck::rcmdcheck(args = c('--as-cran', '--no-manual'))"
 
 clean:
 	rm -f src/*.o src/*.so
