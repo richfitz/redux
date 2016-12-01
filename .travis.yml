@@ -1,9 +1,11 @@
 language: R
-sudo: true
+sudo: false
 cache: packages
 
-apt_packages:
-  - libhiredis-dev
+addons:
+  apt:
+    packages:
+      - libhiredis-dev
 
 services:
   - redis-server
