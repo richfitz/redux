@@ -36,9 +36,9 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
   if [ -f /usr/local/include/hiredis/hiredis.h ]; then
     PKG_CFLAGS=-I/usr/local/include
     PKG_LIBS="-L/usr/local/lib $PKG_LIBS"
-    if [ ! $(grep /usr/local/lib $DYLD_LIBRARY_PATH) ]; then
+    if [ ! $(echo "$DYLD_LIBRARY_PATH" | grep "/usr/local/lib") ]; then
       echo "------------------------- ANTICONF WARNING -------------------------"
-      echo "DYLD_LIBRARY_PATH does include /usr/local/lib but hiredis found ther"
+      echo "DYLD_LIBRARY_PATH does include /usr/local/lib but hiredis found there"
       echo "The package load will fail."
       echo "You need to set DYLD_LIBRARY_PATH=/usr/local/lib (not set by default on Mac)"
       echo "--------------------------------------------------------------------"
