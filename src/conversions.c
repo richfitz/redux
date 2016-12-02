@@ -205,7 +205,7 @@ size_t sexp_to_redis(SEXP cmd, const char ***p_argv, size_t **p_argvlen) {
 // information and strip it off.  For now this will do.
 //
 // I think I'll add my own thing and that allows storing of
-// *arbitrary* binary data.
+// *arbitrary* binary data.  Perhaps add a separate 2 byte header?
 //
 // This idea could be expanded to allow a flag to indicate if the
 // data should be serialised/deserialised automatically.
@@ -213,18 +213,19 @@ size_t sexp_to_redis(SEXP cmd, const char ***p_argv, size_t **p_argvlen) {
 // Another thing worth checking here is for the existence of a null
 // byte.  Empirically this turns up as character three in an R
 // serialised string.
-int is_raw_string(char* str, size_t len) {
-  if (len > 2 && str[0] == 'X' && str[1] == '\n') {
-    for (size_t i = 0; i < len; ++i) {
-      if (str[i] == '\0') {
-        return 1;
+bool is_raw_string(char* str, size_t len) {
+  if (len > 2) {
+    if ((str[0] == 'X' || str[0] == 'B') && str[1] == '\n') {
+      for (size_t i = 0; i < len; ++i) {
+        if (str[i] == '\0') {
+          return true;
+        }
       }
     }
-    return 0;
-  } else {
-    return 0;
   }
+  return false;
 }
+
 SEXP raw_string_to_sexp(char* str, size_t len) {
   SEXP ret = PROTECT(allocVector(RAWSXP, len));
   memcpy(RAW(ret), str, len);

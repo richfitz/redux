@@ -11,7 +11,7 @@ object_to_string(obj)
 
 string_to_object(str)
 
-object_to_bin(obj)
+object_to_bin(obj, xdr = FALSE)
 
 bin_to_object(bin)
 }
@@ -19,6 +19,11 @@ bin_to_object(bin)
 \item{obj}{An R object to convert into a string}
 
 \item{str}{A string to convert into an R object}
+
+\item{xdr}{Use the big-endian representation?  Unlike,
+\code{\link{serialize}} this is disabled here by default as it
+is a bit faster (~ 20%, saving about 1 microsecond of a 5
+microsecond roundtrip for a serialization of 100 doubles)}
 
 \item{bin}{A binary vector to convert back to an R object}
 }

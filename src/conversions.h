@@ -1,6 +1,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <hiredis/hiredis.h>
+#include <stdbool.h>
 
 #define REPLY_ERROR_OK 0
 #define REPLY_ERROR_THROW 1
@@ -15,7 +16,7 @@ SEXP array_to_sexp(redisReply* reply, int error_action);
 SEXP reply_error(redisReply* reply, int error_action);
 
 /* detection */
-int is_raw_string(char* str, size_t len);
+bool is_raw_string(char* str, size_t len);
 
 /* to redis */
 SEXP redis_check_command(SEXP cmd);

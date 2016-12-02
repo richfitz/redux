@@ -21,31 +21,26 @@ string_to_object <- function(str) {
   unserialize(charToRaw(str))
 }
 
-##' @importFrom RApiSerialize serializeToRaw
-C_serializeToRaw <- NULL
-C_unserializeFromRaw <- NULL
 ##' @export
 ##' @rdname object_to_string
-object_to_bin <- function(obj) {
-  .Call(C_serializeToRaw, obj)
+##'
+##' @param xdr Use the big-endian representation?  Unlike,
+##'   \code{\link{serialize}} this is disabled here by default as it
+##'   is a bit faster (~ 20%, saving about 1 microsecond of a 5
+##'   microsecond roundtrip for a serialization of 100 doubles)
+object_to_bin <- function(obj, xdr = FALSE) {
+  serialize(obj, NULL, xdr = xdr)
 }
 ##' @export
 ##' @rdname object_to_string
 ##' @param bin A binary vector to convert back to an R object
 bin_to_object <- function(bin) {
-  .Call(C_unserializeFromRaw, bin)
+  unserialize(bin)
 }
 
-## Vectorised versions:
-lobject_to_string <- function(obj) {
-  vcapply(obj, object_to_string)
+object_to_bin2 <- function(obj) {
+  .Call(Cobject_to_bin, obj)
 }
-string_to_lobject <- function(obj) {
-  lapply(str, string_to_object)
-}
-lobject_to_bin <- function(obj) {
-  lapply(obj, function(x) .Call(C_serializeToRaw, x))
-}
-bin_to_lobject <- function(bin) {
-  lapply(bin, bin_to_object)
+bin_to_object2 <- function(bin) {
+  .Call(Cbin_to_object, bin)
 }
