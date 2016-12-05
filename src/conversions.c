@@ -8,9 +8,7 @@ SEXP redis_reply_to_sexp(redisReply* reply, int error_action) {
   case REDIS_REPLY_STATUS:
     return status_to_sexp(reply->str);
   case REDIS_REPLY_STRING:
-    return (is_raw_string(reply->str, reply->len) ?
-            raw_string_to_sexp(reply->str, reply->len) :
-            mkString(reply->str));
+    return raw_string_to_sexp(reply->str, reply->len);
   case REDIS_REPLY_INTEGER:
     return (reply->integer < INT_MAX ?
             ScalarInteger(reply->integer) :
@@ -213,7 +211,7 @@ size_t sexp_to_redis(SEXP cmd, const char ***p_argv, size_t **p_argvlen) {
 // Another thing worth checking here is for the existence of a null
 // byte.  Empirically this turns up as character three in an R
 // serialised string.
-bool is_raw_string(char* str, size_t len) {
+bool is_raw_string(const char* str, size_t len) {
   if (len > 2) {
     if ((str[0] == 'X' || str[0] == 'B') && str[1] == '\n') {
       for (size_t i = 0; i < len; ++i) {
@@ -226,13 +224,35 @@ bool is_raw_string(char* str, size_t len) {
   return false;
 }
 
-SEXP raw_string_to_sexp(char* str, size_t len) {
-  SEXP ret = PROTECT(allocVector(RAWSXP, len));
-  memcpy(RAW(ret), str, len);
-  UNPROTECT(1);
+SEXP raw_string_to_sexp(const char* str, size_t len) {
+  // There are different approaches here to detecting a raw string; we
+  // can test for presence of a nul byte, but that involves a
+  // traversal of _every_ string.  It really should be corect though
+  // as every serialisation header will contain a nul byte.
+  //
+  // The strategy here is to check for a serialised object, then
+  // assume a string, but fall back on re-encoding as RAW (with an
+  // extra copy) if a nul byte is found
+  bool is_raw = is_raw_string(str, len);
+  SEXP ret;
+  if (is_raw) {
+    ret = PROTECT(allocVector(RAWSXP, len));
+    memcpy(RAW(ret), str, len);
+    UNPROTECT(1);
+  } else {
+    ret = PROTECT(mkString(str));
+    const size_t slen = LENGTH(STRING_ELT(ret, 0));
+    if (slen < len) {
+      ret = PROTECT(allocVector(RAWSXP, len));
+      memcpy(RAW(ret), str, len);
+      UNPROTECT(2);
+    } else {
+      UNPROTECT(1);
+    }
+  }
   return ret;
 }
-SEXP status_to_sexp(char* str) {
+SEXP status_to_sexp(const char* str) {
   SEXP ret = PROTECT(mkString(str));
   setAttrib(ret, R_ClassSymbol, mkString("redis_status"));
   UNPROTECT(1);

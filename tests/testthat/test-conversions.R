@@ -19,3 +19,19 @@ test_that("difficult conversions", {
   expect_equal(redis_flatten_command(x), list("foo", 1:2))
   expect_equal(redis_check_command(x), list("foo", c("1", "2")))
 })
+
+test_that("raw detection", {
+  skip_if_no_redis()
+
+  con <- hiredis()
+
+  d <- as.raw(c(1L, 5L, 127L, 0L, 99L))
+  con$SET("key", d)
+  expect_equal(con$GET("key"), d)
+
+  con$SET("key", d[1:4])
+  expect_equal(con$GET("key"), d[1:4])
+
+  con$SET("key", d[1:3])
+  expect_equal(con$GET("key"), rawToChar(d[1:3]))
+})

@@ -10,14 +10,13 @@
 SEXP redis_reply_to_sexp(redisReply* reply, int error_action);
 
 /* possible bits of a reply */
-SEXP raw_string_to_sexp(char* s, size_t len);
-SEXP status_to_sexp(char* s);
+SEXP raw_string_to_sexp(const char* s, size_t len);
+SEXP status_to_sexp(const char* s);
 SEXP array_to_sexp(redisReply* reply, int error_action);
 SEXP reply_error(redisReply* reply, int error_action);
 
 /* detection */
-bool is_raw_string(char* str, size_t len);
-
+bool is_raw_string(const char* str, size_t len);
 /* to redis */
 SEXP redis_check_command(SEXP cmd);
 SEXP redis_flatten_command(SEXP list);
