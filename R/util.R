@@ -7,9 +7,6 @@ viapply <- function(X, FUN, ...) {
 vlapply <- function(X, FUN, ...) {
   vapply(X, FUN, logical(1), ...)
 }
-vnapply <- function(X, FUN, ...) {
-  vapply(X, FUN, numeric(1), ...)
-}
 
 Sys_getenv <- function(x, unset=NULL) {
   assert_scalar_character(x)

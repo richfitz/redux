@@ -12,12 +12,9 @@ test_that("string serialisation is transitive", {
   f(f, identical=FALSE)
   f(1:10)
 
-  ## Not all floating point numbers are representable in strings
-  ## *exactly*; this is actually a little surprising, though the
-  ## difference is extremely small.
   set.seed(1)
   x <- runif(100)
-  expect_false(identical(string_to_object(object_to_string(x)), x))
+  expect_identical(string_to_object(object_to_string(x)), x)
   f(x, FALSE)
 })
 

@@ -12,7 +12,7 @@
 ##' string_to_object(s)
 ##' identical(string_to_object(s), 1:10)
 object_to_string <- function(obj) {
-  rawToChar(serialize(obj, NULL, TRUE))
+  rawToChar(serialize(obj, NULL, NA))
 }
 ##' @param str A string to convert into an R object
 ##' @export
@@ -36,11 +36,4 @@ object_to_bin <- function(obj, xdr = FALSE) {
 ##' @param bin A binary vector to convert back to an R object
 bin_to_object <- function(bin) {
   unserialize(bin)
-}
-
-object_to_bin2 <- function(obj) {
-  .Call(Cobject_to_bin, obj)
-}
-bin_to_object2 <- function(bin) {
-  .Call(Cbin_to_object, bin)
 }
