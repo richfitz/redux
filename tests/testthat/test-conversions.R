@@ -22,8 +22,8 @@ test_that("difficult conversions", {
 
 test_that("raw detection", {
   skip_if_no_redis()
-
   con <- hiredis()
+  on.exit(con$DEL("key"))
 
   d <- as.raw(c(1L, 5L, 127L, 0L, 99L))
   con$SET("key", d)
@@ -34,4 +34,41 @@ test_that("raw detection", {
 
   con$SET("key", d[1:3])
   expect_equal(con$GET("key"), rawToChar(d[1:3]))
+
+  ## The serialisation header might not be enough:
+  d <- c(serialize(NULL, NULL)[1:2], as.raw(1:5))
+  con$SET("key", d)
+  expect_is(con$GET("key"), "character")
+  d <- c(serialize(NULL, NULL, xdr = FALSE)[1:2], as.raw(1:5))
+  con$SET("key", d)
+  expect_is(con$GET("key"), "character")
+})
+
+## Redis stores integers as strings, so make sure that TRUE/FALSE
+## store as 1 / 0
+test_that("logical", {
+  skip_if_no_redis()
+  con <- hiredis()
+  on.exit(con$DEL("key"))
+
+  con$SET("key", TRUE)
+  expect_equal(con$GET("key"), "1")
+  con$SET("key", FALSE)
+  expect_equal(con$GET("key"), "0")
+
+  con$SET("key", "TRUE")
+  expect_equal(con$GET("key"), "TRUE")
+  con$SET("key", "FALSE")
+  expect_equal(con$GET("key"), "FALSE")
+})
+
+test_that("invalid argument types", {
+  skip_if_no_redis()
+  con <- hiredis()
+  on.exit(con$DEL("key"))
+  ## TODO: this error message is _useless_ as it refers to the
+  ## low-level list used internally to hold arguments and not the
+  ## arguments as passed in by the user.
+  expect_error(con$SET("key", 1+3i),
+               "Incompatible list element")
 })

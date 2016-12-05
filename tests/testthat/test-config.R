@@ -154,3 +154,7 @@ test_that("unknowns", {
 test_that("non-named args", {
   expect_error(redis_config("foo"), "must be named")
 })
+
+test_that("print", {
+  expect_output(print(redis_config(), "Redis config"))
+})

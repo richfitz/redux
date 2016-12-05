@@ -24,7 +24,7 @@ SEXP redis_reply_to_sexp(redisReply* reply, int error_action) {
     // it's also not triggerable.
     error("Unknown type");
   }
-  return R_NilValue; // never get here.
+  return R_NilValue; // # nocov
 }
 
 SEXP redis_check_command(SEXP cmd) {

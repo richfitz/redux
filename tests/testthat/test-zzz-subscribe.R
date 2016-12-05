@@ -55,7 +55,6 @@ test_that("higher level", {
   }
 
   con <- hiredis()
-  options(error=recover)
   vals <- con$subscribe(ch, transform=transform, terminate=terminate)
   expect_gt(length(vals), 0)
 
