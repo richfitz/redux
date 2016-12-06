@@ -45,4 +45,12 @@ test_that("assertions work", {
                "must be named")
   expect_error(assert_named(setNames(1:2, c("a", "a"))),
                "must have unique names")
+
+  expect_error(assert_is(NULL, "function"),
+               "must be a function")
+})
+
+test_that("hiredis_function", {
+  expect_error(hiredis_function("foo", list(a = identity), required = TRUE),
+               "Interface function foo required")
 })

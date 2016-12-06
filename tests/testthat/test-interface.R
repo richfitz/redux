@@ -125,3 +125,15 @@ test_that("serialisation", {
   expect_true(all(vapply(tmp, is.raw, logical(1))))
   expect_equal(lapply(tmp, bin_to_object), as.list(1:10))
 })
+
+test_that("pipeline naming", {
+  skip_if_no_redis()
+  con <- hiredis()
+
+  res <- con$pipeline(
+    a = redis$SET("a", 1),
+    b = redis$GET("a"))
+  expect_equal(names(res), c("a", "b"))
+  expect_equal(res$a, redis_status("OK"))
+  expect_equal(res$b, "1")
+})
