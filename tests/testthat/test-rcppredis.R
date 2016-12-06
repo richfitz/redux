@@ -62,3 +62,16 @@ test_that("simple interface", {
   con <- rcppredis_hiredis(version=TRUE)
   expect_is(con, "redis_api")
 })
+
+test_that("error handling", {
+  skip_if_no_rcppredis()
+  con <- rcppredis_hiredis(version = TRUE)
+
+  expect_error(con$SET("key", serialize(NULL, NULL)),
+               "Binary objects not supported")
+  expect_error(con$MSET(c("key1", "key2"),
+                        list(serialize(NULL, NULL),
+                             serialize(NULL, NULL))),
+               "Binary objects not supported")
+  expect_silent(con$reconnect())
+})

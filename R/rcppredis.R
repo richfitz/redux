@@ -49,6 +49,8 @@
 ##'   scan_find(con, "*")
 ##' }
 rcppredis_connection <- function(config=redis_config()) {
+  ## TODO: why is this even available?  With RedisAPI merged into
+  ## redux it's not hugely useful and could just be dropped
   loadNamespace("methods")
   loadNamespace("RcppRedis")
   connect <- function(config) {

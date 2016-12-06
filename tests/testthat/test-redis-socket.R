@@ -22,6 +22,9 @@ test_that("socket connection", {
   expect_equal(redis_command(ptr_sock, list("PING")), cmp)
   expect_equal(redis_command(ptr_tcp,  list("PING")), cmp)
 
+  tmp <- hiredis(redis_config(path = socket))
+  expect_equal(tmp$PING(), cmp)
+
   expect_error(redis_command(ptr_sock, "SHUTDOWN"),
                "Failure communicating with the Redis server")
   expect_false(file.exists(socket))

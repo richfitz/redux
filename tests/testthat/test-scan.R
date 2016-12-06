@@ -25,3 +25,13 @@ test_that("scan", {
 
   expect_equal(res, character(0))
 })
+
+test_that("error conditions", {
+  expect_error(scan_find(NULL, "foo"),
+               "con must be a redis_api object")
+
+  skip_if_no_redis()
+  con <- hiredis()
+  expect_error(scan_find(con, "foo", type = "HSCAN"),
+               "key must be given when using HSCAN")
+})

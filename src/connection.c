@@ -34,7 +34,7 @@ SEXP redux_redis_connect_unix(SEXP path) {
 }
 
 SEXP redux_redis_command(SEXP extPtr, SEXP cmd) {
-  redisContext *context = redis_get_context(extPtr, CLOSED_ERROR);
+  redisContext *context = redis_get_context(extPtr, true);
 
   cmd = PROTECT(redis_check_command(cmd));
   const char **argv = NULL;
@@ -55,7 +55,7 @@ SEXP redux_redis_pipeline(SEXP extPtr, SEXP list) {
   if (TYPEOF(list) != VECSXP) {
     error("Expected list character argument");
   }
-  redisContext *context = redis_get_context(extPtr, CLOSED_ERROR);
+  redisContext *context = redis_get_context(extPtr, true);
 
   // Now, try and do the basic processing of *all* commands before
   // sending any.
@@ -84,7 +84,7 @@ SEXP redux_redis_pipeline(SEXP extPtr, SEXP list) {
 }
 
 // Internal functions:
-redisContext* redis_get_context(SEXP extPtr, int closed_action) {
+redisContext* redis_get_context(SEXP extPtr, bool closed_error) {
   // It is not possible here to be *generally* typesafe, short of
   // adding (and checking at every command) that we have an external
   // pointer to the correct type.  So cross fingers and hope for the
@@ -96,18 +96,14 @@ redisContext* redis_get_context(SEXP extPtr, int closed_action) {
     error("Expected an external pointer");
   }
   context = (redisContext*) R_ExternalPtrAddr(extPtr);
-  if (!context) {
-    if (closed_action == CLOSED_WARN) {
-      warning("Context is not connected");
-    } else if (closed_action == CLOSED_ERROR) {
-      error("Context is not connected");
-    }
+  if (!context && closed_error) {
+    error("Context is not connected");
   }
   return context;
 }
 
 static void redis_finalize(SEXP extPtr) {
-  redisContext *context = redis_get_context(extPtr, CLOSED_PASS);
+  redisContext *context = redis_get_context(extPtr, false);
   if (context) {
     redisFree(context);
   }

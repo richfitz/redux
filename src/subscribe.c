@@ -13,7 +13,7 @@ SEXP redux_redis_subscribe(SEXP extPtr, SEXP channel, SEXP pattern,
   cmd = PROTECT(redis_check_command(cmd));
   SEXP ret = PROTECT(redux_redis_command(extPtr, cmd));
 
-  redux_redis_subscribe_loop(redis_get_context(extPtr, CLOSED_ERROR),
+  redux_redis_subscribe_loop(redis_get_context(extPtr, true),
                              p, callback, envir);
 
   UNPROTECT(3);
@@ -62,7 +62,7 @@ void redux_redis_subscribe_loop(redisContext* context, int pattern,
 }
 
 SEXP redux_redis_unsubscribe(SEXP extPtr, SEXP channel, SEXP pattern) {
-  redisContext *context = redis_get_context(extPtr, CLOSED_ERROR);
+  redisContext *context = redis_get_context(extPtr, true);
   // Issue the unsubscribe command:
   const int p = INTEGER(pattern)[0];
   SEXP cmd = PROTECT(allocVector(VECSXP, 2));
