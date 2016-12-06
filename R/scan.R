@@ -27,8 +27,8 @@
 ##'   provided.  HSCAN and ZSCAN currently do not work usefully.
 ##' @param key Key to use when running a hash, set or sorted set scan.
 ##' @export
-scan_apply <- function(con, callback, pattern=NULL, ...,
-                       count=NULL, type="SCAN", key=NULL) {
+scan_apply <- function(con, callback, pattern = NULL, ...,
+                       count = NULL, type = "SCAN", key = NULL) {
   ## TODO: need escape hatch here for rlite which does not support
   ## SCAN yet.  According to the issue on rlite, the best thing to do
   ## is KEYS
@@ -62,26 +62,32 @@ scan_apply <- function(con, callback, pattern=NULL, ...,
 
 ##' @export
 ##' @rdname scan_apply
-scan_del <- function(con, pattern, count=NULL, type="SCAN", key=NULL) {
+scan_del <- function(con, pattern, count = NULL, type = "SCAN", key = NULL) {
   n <- 0L
   del <- function(keys) {
     if (length(keys) > 0L) {
       n <<- n + con$DEL(keys)
     }
   }
-  scan_apply(con, del, pattern, count=count, type=type, key=key)
+  scan_apply(con, del, pattern, count = count, type = type, key = key)
   n
 }
 
 ##' @export
 ##' @rdname scan_apply
-scan_find <- function(con, pattern, count=NULL, type="SCAN", key=NULL) {
+scan_find <- function(con, pattern, count = NULL, type = "SCAN", key = NULL) {
   res <- character(0)
   find <- function(keys) {
     if (length(keys) > 0L) {
       res <<- c(res, keys)
     }
   }
-  scan_apply(con, find, pattern, count=count, type=type, key=key)
-  unique(res)
+  scan_apply(con, find, pattern, count = count, type = type, key = key)
+  if (type == "SCAN") {
+    unique(res)
+  } else {
+    res <- unique(matrix(res, ncol = 2L, byrow = TRUE))
+    colnames(res) <- c("field", "value")
+    res
+  }
 }

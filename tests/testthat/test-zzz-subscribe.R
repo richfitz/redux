@@ -161,7 +161,6 @@ test_that("flood and recover", {
 
 test_that("error cases", {
   skip_if_no_redis()
-  skip_on_cran()
   ch <- "foo"
   filename <- start_publisher(ch)
   on.exit(file.remove(filename))
