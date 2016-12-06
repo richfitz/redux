@@ -3,9 +3,6 @@
 
 SEXP redux_redis_subscribe(SEXP extPtr, SEXP channel, SEXP pattern,
                            SEXP callback, SEXP envir) {
-  if (!isLogical(pattern) || LENGTH(pattern) != 1) {
-    error("'pattern' must be a scalar logical");
-  }
   const int p = INTEGER(pattern)[0];
   SEXP cmd = PROTECT(allocVector(VECSXP, 2));
   SET_VECTOR_ELT(cmd, 0, mkString(p ? "PSUBSCRIBE" : "SUBSCRIBE"));
@@ -22,12 +19,6 @@ SEXP redux_redis_subscribe(SEXP extPtr, SEXP channel, SEXP pattern,
 
 void redux_redis_subscribe_loop(redisContext* context, int pattern,
                                 SEXP callback, SEXP envir) {
-  if (!isFunction(callback)) {
-    error("'callback' must be a function");
-  }
-  if (!isEnvironment(envir)) {
-    error("'envir' must be an environment");
-  }
   SEXP call = PROTECT(lang2(callback, R_NilValue));
   redisReply *reply = NULL;
   int keep_going = 1;

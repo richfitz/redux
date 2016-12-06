@@ -158,3 +158,36 @@ test_that("flood and recover", {
                "Detected a disturbance in the force")
   expect_equal(con$command("PING"), redis_status("PONG"))
 })
+
+test_that("error cases", {
+  skip_if_no_redis()
+  skip_on_cran()
+  ch <- "foo"
+  filename <- start_publisher(ch)
+  on.exit(file.remove(filename))
+
+  ## This is the sort of headache that the higher level interface is
+  ## meant to remove:
+  vals <- list()
+  callback <- function(x) {
+    vals <<- c(vals, list(x))
+    if (as.numeric(x[[3]]) > 0.8) {
+      TRUE
+    } else {
+      FALSE
+    }
+  }
+
+  con <- hiredis()
+  env <- environment()
+  expect_error(con$.subscribe(NULL, FALSE, callback, env),
+               "channel must be character")
+  expect_error(con$.subscribe(character(), FALSE, callback, env),
+               "At least one channel must be given")
+  expect_error(con$.subscribe(ch, NULL, callback, env),
+               "pattern must be a scalar")
+  expect_error(con$.subscribe(ch, FALSE, NULL, env),
+               "callback must be a function")
+  expect_error(con$.subscribe(ch, FALSE, callback, NULL),
+               "envir must be a environment")
+})

@@ -52,6 +52,13 @@ redis_subscribe <- function(ptr, channel, pattern, callback, envir) {
   ## environment (even the one passed in) saying that subscription had
   ## started and then switching on that.  But that's a big hassle for
   ## a difficult corner case.
+  assert_character(channel)
+  if (length(channel) == 0L) {
+    stop("At least one channel must be given")
+  }
+  assert_scalar_logical(pattern)
+  assert_is(callback, "function")
+  assert_is(envir, "environment")
   on.exit(.Call(Credux_redis_unsubscribe, ptr, channel, pattern))
   .Call(Credux_redis_subscribe, ptr, channel, pattern, callback, envir)
   invisible()

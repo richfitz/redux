@@ -58,25 +58,29 @@
 ##' @useDynLib redux, .registration = TRUE
 ##' @export
 ##'
-redis_connection <- function(config=redis_config()) {
+redis_connection <- function(config = redis_config()) {
   config <- redis_config(config)
   ptr <- redis_connect(config)
   ret <-
     list(
-      config=function() {
+      config = function() {
         config
       },
-      reconnect=function() {
+
+      reconnect = function() {
         ptr <<- redis_connect(config)
         invisible()
       },
-      command=function(cmd) {
+
+      command = function(cmd) {
         redis_command(ptr, cmd)
       },
-      pipeline=function(cmds) {
+
+      pipeline = function(cmds) {
         redis_pipeline(ptr, cmds)
       },
-      subscribe=function(channel, pattern, callback, envir=parent.frame()) {
+
+      subscribe = function(channel, pattern, callback, envir = parent.frame()) {
         redis_subscribe(ptr, channel, pattern, callback, envir)
       })
   attr(ret, "type") <- "redux"

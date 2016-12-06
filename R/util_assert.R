@@ -34,9 +34,17 @@ assert_character <- function(x, name = deparse(substitute(x))) {
     stop(sprintf("%s must be character", name), call. = FALSE)
   }
 }
+
 assert_logical <- function(x, name = deparse(substitute(x))) {
   if (!is.logical(x)) {
     stop(sprintf("%s must be logical", name), call. = FALSE)
+  }
+}
+
+assert_is <- function(x, class, name = deparse(substitute(x))) {
+  if (!inherits(x, class)) {
+    stop(sprintf("%s must be a %s", name,
+                 paste(class, collapse = "/")), call. = FALSE)
   }
 }
 
