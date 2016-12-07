@@ -7,6 +7,12 @@ skip_if_no_redis <- function() {
   skip("Redis is not available")
 }
 
+skip_if_not_isolated_redis <- function() {
+  ## TODO: set this so that some tests can be skipped unless I flag
+  ## that we're allowed to do destructive things.
+  return()
+}
+
 skip_if_no_scan <- function(r) {
   if (!inherits(try(r$SCAN(1, COUNT=1), silent=TRUE), "try-error")) {
     return()
