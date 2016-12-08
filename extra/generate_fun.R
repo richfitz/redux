@@ -52,6 +52,7 @@ is_field <- function(name, args) {
 hiredis_cmd <- function(x, standalone = FALSE) {
   name <- x$name
   args <- as.data.frame(x$arguments)
+
   is_multiple <- is_field("multiple", args)
 
   is_command <- is_field("command", args)
@@ -107,9 +108,11 @@ hiredis_cmd <- function(x, standalone = FALSE) {
   }
 
   is_optional <- is_field("optional", args)
-
   r_fn_args <- args$name
   r_fn_args[is_optional] <- paste0(r_fn_args[is_optional], " = NULL")
+  if (!identical(is_optional, sort(is_optional))) {
+    r_fn_args <- r_fn_args[order(is_optional)]
+  }
   r_fn_args <- paste(c(character(0), r_fn_args), collapse = ", ")
 
   ## Generate the check string

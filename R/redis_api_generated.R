@@ -777,7 +777,7 @@ redis_cmds <- function(command) {
     WATCH = function(key) {
       command(list("WATCH", key))
     },
-    ZADD = function(key, condition = NULL, change = NULL, increment = NULL, score, member) {
+    ZADD = function(key, score, member, condition = NULL, change = NULL, increment = NULL) {
       assert_scalar2(key)
       assert_match_value_or_null(condition, c("NX", "XX"))
       assert_match_value_or_null(change, c("CH"))
