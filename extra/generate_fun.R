@@ -1,11 +1,11 @@
-indent <- function(x, n=2) {
-  indent <- paste0(rep_len(" ", n), collapse="")
+indent <- function(x, n = 2) {
+  indent <- paste0(rep_len(" ", n), collapse = "")
   paste0(indent, x)
 }
 
 reindent <- function(x, n) {
-  vcapply(strsplit(x, "\n", fixed=TRUE),
-          function(x) paste(indent(x, n), collapse="\n"))
+  vcapply(strsplit(x, "\n", fixed = TRUE),
+          function(x) paste(indent(x, n), collapse = "\n"))
 }
 
 ## duplicated from package
@@ -20,6 +20,8 @@ vcapply <- function(X, FUN, ...) {
 }
 
 dquote <- function(x) {
+  i <- x == '""'
+  x[i] <- '\\"\\"'
   sprintf('"%s"', x)
 }
 
@@ -47,7 +49,7 @@ is_field <- function(name, args) {
   }
 }
 
-hiredis_cmd <- function(x, standalone=FALSE) {
+hiredis_cmd <- function(x, standalone = FALSE) {
   name <- x$name
   args <- as.data.frame(x$arguments)
   is_multiple <- is_field("multiple", args)
@@ -69,7 +71,7 @@ hiredis_cmd <- function(x, standalone=FALSE) {
       stop("multiple paired groups")
     }
     len <- length(args$name[[which(is_paired)]])
-    args1 <- args[!is_paired, , drop=FALSE]
+    args1 <- args[!is_paired, , drop = FALSE]
 
     ## Lots of assumptions here:
     args2 <- args[rep(which(is_paired), len), ]
@@ -107,8 +109,8 @@ hiredis_cmd <- function(x, standalone=FALSE) {
   is_optional <- is_field("optional", args)
 
   r_fn_args <- args$name
-  r_fn_args[is_optional] <- paste0(r_fn_args[is_optional], "=NULL")
-  r_fn_args <- paste(c(character(0), r_fn_args), collapse=", ")
+  r_fn_args[is_optional] <- paste0(r_fn_args[is_optional], " = NULL")
+  r_fn_args <- paste(c(character(0), r_fn_args), collapse = ", ")
 
   ## Generate the check string
   ## TODO: Consider dealing with integer types here?
@@ -126,7 +128,7 @@ hiredis_cmd <- function(x, standalone=FALSE) {
   is_enum <- !vlapply(args$enum, is.null)
   if (any(is_enum)) {
     tmp <- vcapply(args$enum[is_enum],
-                   function(x) paste(dquote(x), collapse=", "))
+                   function(x) paste(dquote(x), collapse = ", "))
     check[is_enum] <- sprintf("assert_match_value%s(%s, c(%s))",
                               ifelse(is_optional[is_enum], "_or_null", ""),
                               args$name[is_enum], tmp)
@@ -156,8 +158,8 @@ hiredis_cmd <- function(x, standalone=FALSE) {
                                 args$command_length[is_command] > 1L)
   }
 
-  args <- paste(c(dquote(strsplit(name, " ", name, fixed=TRUE)[[1]]), vars),
-                collapse=", ")
+  args <- paste(c(dquote(strsplit(name, " ", name, fixed = TRUE)[[1]]), vars),
+                collapse = ", ")
   run <- sprintf("command(list(%s))", args)
 
   if (name == "SUBSCRIBE") {
@@ -167,8 +169,8 @@ hiredis_cmd <- function(x, standalone=FALSE) {
       'stop("Do not use SUBSCRIBE(); see subscribe() instead (lower-case)")'
   }
 
-  fn_body <- paste(indent(c(check, pair, run)), collapse="\n")
-  fmt <- "%s=function(%s) {\n%s\n}"
+  fn_body <- paste(indent(c(check, pair, run)), collapse = "\n")
+  fmt <- "%s = function(%s) {\n%s\n}"
   sprintf(fmt, x$name_r, r_fn_args, fn_body)
 }
 
@@ -186,7 +188,7 @@ read_commands <- function() {
   ## for (i in names(cmds)) {
   ##   p <- sprintf("redis-doc/commands/%s.md", tolower(i))
   ##   if (file.exists(p)) {
-  ##     cmds[[i]]$description <- paste(readLines(p), collapse="\n")
+  ##     cmds[[i]]$description <- paste(readLines(p), collapse = "\n")
   ##   }
   ## }
   cmds
@@ -194,8 +196,8 @@ read_commands <- function() {
 
 generate <- function(cmds) {
   template <- 'redis_cmds <- function(command) {\n  list(\n%s)\n}'
-  dat <- vcapply(cmds, hiredis_cmd, NULL, USE.NAMES=FALSE)
-  str <- paste(reindent(dat, 4), collapse=",\n")
+  dat <- vcapply(cmds, hiredis_cmd, NULL, USE.NAMES = FALSE)
+  str <- paste(reindent(dat, 4), collapse = ",\n")
   sprintf(template, str)
 }
 
@@ -208,5 +210,5 @@ generate_since <- function(cmds) {
   names(vv) <- vcapply(cmds, "[[", "name_r")
   vv <- vv[order(names(vv))]
   sprintf("cmd_since <- numeric_version(c(\n%s))",
-          paste(sprintf('  %s="%s"', names(vv), vv), collapse=",\n"))
+          paste(sprintf('  %s = "%s"', names(vv), vv), collapse = ",\n"))
 }

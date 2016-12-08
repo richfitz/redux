@@ -4,8 +4,7 @@ path_R <- "../R"
 source("generate_fun.R")
 
 if (!file.exists("redis-doc")) {
-  callr::call_system(callr::Sys_which("git"),
-                     c("clone", "https://github.com/antirez/redis-doc"))
+  system2("git", c("clone", "https://github.com/antirez/redis-doc"))
 }
 
 cmds <- read_commands()
