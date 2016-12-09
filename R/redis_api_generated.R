@@ -804,9 +804,8 @@ redis_cmds <- function(command) {
     ZINTERSTORE = function(destination, numkeys, key, WEIGHTS = NULL, AGGREGATE = NULL) {
       assert_scalar2(destination)
       assert_scalar2(numkeys)
-      assert_scalar_or_null2(WEIGHTS)
       assert_match_value_or_null(AGGREGATE, c("SUM", "MIN", "MAX"))
-      command(list("ZINTERSTORE", destination, numkeys, key, cmd_command("WEIGHTS", WEIGHTS, FALSE), cmd_command("AGGREGATE", AGGREGATE, FALSE)))
+      command(list("ZINTERSTORE", destination, numkeys, key, cmd_command("WEIGHTS", WEIGHTS, TRUE), cmd_command("AGGREGATE", AGGREGATE, FALSE)))
     },
     ZLEXCOUNT = function(key, min, max) {
       assert_scalar2(key)
@@ -898,9 +897,8 @@ redis_cmds <- function(command) {
     ZUNIONSTORE = function(destination, numkeys, key, WEIGHTS = NULL, AGGREGATE = NULL) {
       assert_scalar2(destination)
       assert_scalar2(numkeys)
-      assert_scalar_or_null2(WEIGHTS)
       assert_match_value_or_null(AGGREGATE, c("SUM", "MIN", "MAX"))
-      command(list("ZUNIONSTORE", destination, numkeys, key, cmd_command("WEIGHTS", WEIGHTS, FALSE), cmd_command("AGGREGATE", AGGREGATE, FALSE)))
+      command(list("ZUNIONSTORE", destination, numkeys, key, cmd_command("WEIGHTS", WEIGHTS, TRUE), cmd_command("AGGREGATE", AGGREGATE, FALSE)))
     },
     SCAN = function(cursor, MATCH = NULL, COUNT = NULL) {
       assert_scalar2(cursor)

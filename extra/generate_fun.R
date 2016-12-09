@@ -53,6 +53,11 @@ hiredis_cmd <- function(x, standalone = FALSE) {
   name <- x$name
   args <- as.data.frame(x$arguments)
 
+  if (name %in% c("ZINTERSTORE", "ZUNIONSTORE")) {
+    j <- args$command == "WEIGHTS"
+    args$multiple[j] <- TRUE
+  }
+
   is_multiple <- is_field("multiple", args)
 
   is_command <- is_field("command", args)
@@ -64,6 +69,11 @@ hiredis_cmd <- function(x, standalone = FALSE) {
     args$command_length <- viapply(args$name, length)
     args$name[j] <- args$command[j]
     is_paired <- viapply(args$name, length) > 1L
+  }
+
+  if (name %in% c("ZINTERSTORE", "ZUNIONSTORE")) {
+    j <- args$command == "WEIGHTS"
+    args$command_length[j] <- 2
   }
 
   ## need to be same length, share optional status.
@@ -126,6 +136,12 @@ hiredis_cmd <- function(x, standalone = FALSE) {
     check[j] <- sprintf("assert_length%s(%s, %dL)",
                         ifelse(is_optional[j], "_or_null", ""),
                         args$name[j], args$command_length[j])
+  }
+
+
+  if (name %in% c("ZINTERSTORE", "ZUNIONSTORE")) {
+    j <- args$name == "WEIGHTS"
+    check[j] <- sprintf("assert_length2(%s, length(key))", args$name[j])
   }
 
   is_enum <- !vlapply(args$enum, is.null)
