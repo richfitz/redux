@@ -103,3 +103,13 @@ format_redis_time <- function(x) {
 redis_time_to_r <- function(x) {
   as.POSIXct(as.numeric(x), origin="1970-01-01")
 }
+
+parse_client_info <- function(x) {
+  pairs <- strsplit(strsplit(x, "\n")[[1]], "\\s+")
+  f <- function(el) {
+    re <- "^([^=]+)=([^=]*)$"
+    stopifnot(all(grepl(re, el)))
+    setNames(sub(re, "\\2", el), sub(re, "\\1", el))
+  }
+  lapply(pairs, f)
+}
