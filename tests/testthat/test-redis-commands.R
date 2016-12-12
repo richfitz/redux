@@ -17,7 +17,9 @@ test_that("Filter", {
                length(tmp))
   expect_equal(length(filter_redis_commands(tmp, as.character(mv))),
                length(tmp))
+})
 
+test_that("filter -- sanity checking", {
   expect_error(filter_redis_commands(tmp, TRUE),
                "No redis connection to get version from")
 })

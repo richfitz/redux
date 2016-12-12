@@ -75,7 +75,7 @@ SEXP redux_redis_unsubscribe(SEXP extPtr, SEXP channel, SEXP pattern) {
       // with.
       //
       // This needs testing with toxiproxy.
-      error("Redis connection error: client likely in awkward spot");
+      error("Redis connection error: client likely in awkward spot"); // # nocov
     }
     // This is possibly over-cautious, but it doesn't really hurt.
     if (reply->type == REDIS_REPLY_ARRAY && reply->elements == 3) {

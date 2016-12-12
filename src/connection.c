@@ -8,7 +8,7 @@ SEXP redux_redis_connect(SEXP host, SEXP port) {
   redisContext *context = redisConnect(CHAR(STRING_ELT(host, 0)),
                                        INTEGER(port)[0]);
   if (context == NULL) {
-    error("Creating context failed catastrophically");
+    error("Creating context failed catastrophically [tcp]"); // # nocov
   }
   if (context->err != 0) {
     error("Failed to create context: %s", context->errstr);
@@ -22,7 +22,7 @@ SEXP redux_redis_connect(SEXP host, SEXP port) {
 SEXP redux_redis_connect_unix(SEXP path) {
   redisContext *context = redisConnectUnix(CHAR(STRING_ELT(path, 0)));
   if (context == NULL) {
-    error("Creating context failed catastrophically");
+    error("Creating context failed catastrophically [unix]"); // # nocov
   }
   if (context->err != 0) {
     error("Failed to create context: %s", context->errstr);
@@ -52,9 +52,6 @@ SEXP redux_redis_command(SEXP extPtr, SEXP cmd) {
 // too easy to lock the process up.  So focus instead on a "pipline"
 // operation that has some reasonable guarantees about R errors.
 SEXP redux_redis_pipeline(SEXP extPtr, SEXP list) {
-  if (TYPEOF(list) != VECSXP) {
-    error("Expected list character argument");
-  }
   redisContext *context = redis_get_context(extPtr, true);
 
   // Now, try and do the basic processing of *all* commands before

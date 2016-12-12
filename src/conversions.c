@@ -22,7 +22,7 @@ SEXP redis_reply_to_sexp(redisReply* reply, int error_action) {
   default:
     // In theory we should do something based on error action here but
     // it's also not triggerable.
-    error("Unknown type");
+    error("Unknown type [redux bug -- please report]"); // # nocov
   }
   return R_NilValue; // # nocov
 }
@@ -133,7 +133,7 @@ SEXP redis_flatten_command(SEXP list) {
     case NILSXP:
       break;
     default:
-      error("unexpected type (element %d)", i);
+      error("unexpected type (element %d)", i); // # nocov
     }
   }
   SEXP ret = PROTECT(allocVector(VECSXP, len_out));
@@ -188,7 +188,7 @@ size_t sexp_to_redis(SEXP cmd, const char ***p_argv, size_t **p_argvlen) {
       argvlen[k] = LENGTH(cmd_i);
       k++;
     } else if (type_i != NILSXP) {
-      error("Unexpected type (2)");
+      error("Unexpected type (2) [redux bug -- please report]"); // # nocov
     }
   }
 
