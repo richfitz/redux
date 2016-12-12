@@ -465,13 +465,12 @@ redis_cmds <- function(command) {
     MIGRATE = function(host, port, key, destination_db, timeout, copy = NULL, replace = NULL, KEYS = NULL) {
       assert_scalar2(host)
       assert_scalar2(port)
-      assert_match_value(key, c("key", "\"\""))
+      assert_match_value(key, c("key", ""))
       assert_scalar2(destination_db)
       assert_scalar2(timeout)
       assert_match_value_or_null(copy, c("COPY"))
       assert_match_value_or_null(replace, c("REPLACE"))
-      assert_scalar_or_null2(KEYS)
-      command(list("MIGRATE", host, port, key, destination_db, timeout, copy, replace, cmd_command("KEYS", KEYS, FALSE)))
+      command(list("MIGRATE", host, port, key, destination_db, timeout, copy, replace, cmd_command("KEYS", KEYS, TRUE)))
     },
     MONITOR = function() {
       command(list("MONITOR"))

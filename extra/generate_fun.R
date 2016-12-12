@@ -21,7 +21,7 @@ vcapply <- function(X, FUN, ...) {
 
 dquote <- function(x) {
   i <- x == '""'
-  x[i] <- '\\"\\"'
+  x[i] <- ""
   sprintf('"%s"', x)
 }
 
@@ -53,9 +53,9 @@ hiredis_cmd <- function(x, standalone = FALSE) {
   name <- x$name
   args <- as.data.frame(x$arguments)
 
-  if (name %in% c("ZINTERSTORE", "ZUNIONSTORE")) {
-    j <- args$command == "WEIGHTS"
-    args$multiple[j] <- TRUE
+  ## This is literally the variadic set
+  if (any(args$variadic)) {
+    args$multiple[args$variadic] <- TRUE
   }
 
   is_multiple <- is_field("multiple", args)
@@ -71,9 +71,8 @@ hiredis_cmd <- function(x, standalone = FALSE) {
     is_paired <- viapply(args$name, length) > 1L
   }
 
-  if (name %in% c("ZINTERSTORE", "ZUNIONSTORE")) {
-    j <- args$command == "WEIGHTS"
-    args$command_length[j] <- 2
+  if (any(args$variadic)) {
+    args$command_length[args$variadic] <- 2
   }
 
   ## need to be same length, share optional status.
@@ -139,8 +138,8 @@ hiredis_cmd <- function(x, standalone = FALSE) {
   }
 
 
-  if (name %in% c("ZINTERSTORE", "ZUNIONSTORE")) {
-    j <- args$name == "WEIGHTS"
+  if (any(args$variadic)) {
+    j <- which(args$variadic)
     check[j] <- sprintf("assert_length2(%s, length(key))", args$name[j])
   }
 

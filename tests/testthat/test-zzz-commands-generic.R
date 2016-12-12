@@ -238,19 +238,25 @@ test_that("TYPE", {
 })
 
 test_that("WAIT", {
-  skip("not sure if will keep")
   skip_if_no_redis()
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
-
   con$SET(key, "bar")
-  con$WAIT(1, 0)
-  con$WAIT(2, 1000)
+  expect_equal(con$WAIT(2, 10), 0)
 })
 
-## NOTE: not testing MIGRATE
+test_that("MIGRATE", {
+  ip <- "192.168.1.34"
+  port <- 6379
+  db <- 0
+  timeout <- 5000
+  keys <- letters
+  expect_equal(redis_cmds$MIGRATE(ip, port, "", db, timeout,  KEYS = letters),
+               list("MIGRATE", ip, port, "", db, timeout, NULL, NULL,
+                    list("KEYS", keys)))
+})
+
 ## NOTE: not testing SCAN as tested extensively elsewhere
 ## NOTE: not testing SORT as tested elsewhere
 ## NOTE: not testing TOUCH as it's in too recent redis
-## NOTE: not testing WAIT as it locks up R in non-clustered Redis
