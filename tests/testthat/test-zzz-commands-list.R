@@ -24,6 +24,21 @@ test_that("BRPOP", {
   expect_equal(res, list(key1, "c"))
 })
 
+test_that("BRPOPLPUSH", {
+  skip_if_no_redis()
+  con <- hiredis()
+  key1 <- rand_str()
+  key2 <- rand_str()
+  on.exit(con$DEL(c(key1, key2)))
+
+  con$RPUSH(key1, "one")
+  con$RPUSH(key1, "two")
+  con$RPUSH(key1, "three")
+  expect_equal(con$BRPOPLPUSH(key1, key2, 100), "three")
+  expect_equal(con$LRANGE(key1, 0, -1), list("one", "two"))
+  expect_equal(con$LRANGE(key2, 0, -1), list("three"))
+})
+
 test_that("LINDEX", {
   skip_if_no_redis()
   con <- hiredis()

@@ -20,5 +20,9 @@ test_that("PING", {
   ## TODO: recent versions allow an argument
 })
 
+test_that("QUIT", {
+  expect_equal(redis_cmds$QUIT(), list("QUIT"))
+})
+
 ## NOTE: not testing QUIT, but it is tested elsewhere
 ## NOTE: not testing SELECT, but it is tested elsewhere
