@@ -85,6 +85,8 @@ scan_find <- function(con, pattern, count = NULL, type = "SCAN", key = NULL) {
   scan_apply(con, find, pattern, count = count, type = type, key = key)
   if (type == "SCAN") {
     unique(res)
+  } else if (type == "SSCAN") {
+    res
   } else {
     res <- unique(matrix(res, ncol = 2L, byrow = TRUE))
     colnames(res) <- c("field", "value")
