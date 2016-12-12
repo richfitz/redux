@@ -5,3 +5,5 @@ skip_if_no_rcppredis <- function() {
   }
   testthat::skip("Redis is not available")
 }
+
+redis_cmds <- redis_api(list(command = identity))

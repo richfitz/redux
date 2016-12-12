@@ -12,7 +12,7 @@
 ##'   version and generate only commands supported by the server.
 ##' @importFrom R6 R6Class
 ##' @export
-redis_api <- function(x, version=NULL) {
+redis_api <- function(x, version = NULL) {
   R6_redis_api$new(x, version)
 }
 
@@ -30,8 +30,8 @@ R6_redis_api <- R6::R6Class(
     .command = NULL,
     initialize = function(x, version) {
       self$command <- hiredis_function("command", x)
-      self$config     <- hiredis_function("config", x)
-      self$reconnect  <- hiredis_function("reconnect", x)
+      self$config <- hiredis_function("config", x)
+      self$reconnect <- hiredis_function("reconnect", x)
       self$.pipeline <- hiredis_function("pipeline", x)
       self$.subscribe <- hiredis_function("subscribe", x)
       self$type <- function() attr(x, "type", exact = TRUE)

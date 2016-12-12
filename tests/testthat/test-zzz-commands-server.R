@@ -100,11 +100,11 @@ test_that("COMMAND GETKEYS", {
   ##
   ## A nice interface might look like:
   ##
-  ##   con$COMMAND_GETKEYS(redis$MSET(letters[1:3], 1:3))
+  ##   con$COMMAND_GETKEYS(redis_cmds$MSET(letters[1:3], 1:3))
   ##
   ## but need to deal with empty command things:
   ##
-  ##   con$COMMAND_GETKEYS(redis$SET("a", 1))
+  ##   con$COMMAND_GETKEYS(redis_cmds$SET("a", 1))
   ##
   ## this requires filtering out the NULL values from the list, which
   ## requires calling out to the C code that I use, so there's a bit
@@ -195,58 +195,58 @@ test_that("TIME", {
 ## Untested on the server
 
 test_that("BGREWRITEAOF", {
-  expect_equal(redis$BGREWRITEAOF(), list("BGREWRITEAOF"))
+  expect_equal(redis_cmds$BGREWRITEAOF(), list("BGREWRITEAOF"))
 })
 
 test_that("BGSAVE", {
-  expect_equal(redis$BGSAVE(), list("BGSAVE"))
+  expect_equal(redis_cmds$BGSAVE(), list("BGSAVE"))
 })
 
 test_that("CONFIG REWRITE", {
-  expect_equal(redis$CONFIG_REWRITE(), list("CONFIG", "REWRITE"))
+  expect_equal(redis_cmds$CONFIG_REWRITE(), list("CONFIG", "REWRITE"))
 })
 
 test_that("CONFIG SET", {
-  expect_equal(redis$CONFIG_SET("SAVE", "900 1 300 10"),
+  expect_equal(redis_cmds$CONFIG_SET("SAVE", "900 1 300 10"),
                list("CONFIG", "SET", "SAVE", "900 1 300 10"))
 })
 
 test_that("CONFIG RESETSTAT", {
-  expect_equal(redis$CONFIG_RESETSTAT(),
+  expect_equal(redis_cmds$CONFIG_RESETSTAT(),
                list("CONFIG", "RESETSTAT"))
 })
 
 test_that("DEBUG OBJECT", {
   ## TODO: possibly worth excluding this entirely?
-  expect_equal(redis$DEBUG_OBJECT("key"),
+  expect_equal(redis_cmds$DEBUG_OBJECT("key"),
                list("DEBUG", "OBJECT", "key"))
 })
 
 test_that("DEBUG SEGFAULT", {
   ## TODO: possibly worth excluding this entirely?
-  expect_equal(redis$DEBUG_SEGFAULT(),
+  expect_equal(redis_cmds$DEBUG_SEGFAULT(),
                list("DEBUG", "SEGFAULT"))
 })
 
 test_that("MONITOR", {
   ## TODO: possibly worth excluding this entirely?
-  expect_equal(redis$MONITOR(),
+  expect_equal(redis_cmds$MONITOR(),
                list("MONITOR"))
 })
 
 test_that("SAVE", {
-  expect_equal(redis$SAVE(), list("SAVE"))
+  expect_equal(redis_cmds$SAVE(), list("SAVE"))
 })
 
 test_that("SHUTDOWN", {
-  expect_equal(redis$SHUTDOWN("SAVE"), list("SHUTDOWN", "SAVE"))
-  expect_equal(redis$SHUTDOWN("NOSAVE"), list("SHUTDOWN", "NOSAVE"))
+  expect_equal(redis_cmds$SHUTDOWN("SAVE"), list("SHUTDOWN", "SAVE"))
+  expect_equal(redis_cmds$SHUTDOWN("NOSAVE"), list("SHUTDOWN", "NOSAVE"))
 })
 
 test_that("SLAVEOF", {
-  expect_equal(redis$SLAVEOF("NO", "ONE"), list("SLAVEOF", "NO", "ONE"))
+  expect_equal(redis_cmds$SLAVEOF("NO", "ONE"), list("SLAVEOF", "NO", "ONE"))
 })
 
 test_that("SYNC", {
-  expect_equal(redis$SYNC(), list("SYNC"))
+  expect_equal(redis_cmds$SYNC(), list("SYNC"))
 })

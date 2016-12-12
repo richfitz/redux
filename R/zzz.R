@@ -10,8 +10,12 @@
 ##' @examples
 ##' redis$PING()
 redis <- local({
-  x <- list2env(redis_cmds(identity), hash = TRUE)
-  lockEnvironment(x)
-  class(x) <- "redis_commands"
-  x
+  self <- new.env(parent = emptyenv(), hash = TRUE)
+  redis <- redis_cmds(identity)
+  for (el in names(redis)) {
+    self[[el]] <- redis[[el]]
+  }
+  lockEnvironment(self)
+  class(self) <- "redis_commands"
+  self
 })

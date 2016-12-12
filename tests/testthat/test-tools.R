@@ -15,6 +15,17 @@ test_that("parse_info", {
 ## TODO: not totally clear how this should interact with pipeline; I
 ## think that the pipeline interface is much nicer and naturally deals
 ## with errors in a better way.  But it's not atomic of course.
+
+## TODO: of the transaction commands, need to make sure we use all of:
+##
+## * DISCARD
+## * EXEC
+## * MULTI
+## * UNWATCH
+## * WATCH
+##
+## but at this point I don't think all are used.  WATCH in particular
+## might not be possible
 test_that("redis_multi", {
   skip_if_no_redis()
   con <- hiredis()
