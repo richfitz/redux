@@ -1,7 +1,7 @@
 context("commands - sorted set")
 
 test_that("ZADD", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZADD")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -17,7 +17,7 @@ test_that("ZADD", {
 })
 
 test_that("ZCARD", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZCARD")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -28,7 +28,7 @@ test_that("ZCARD", {
 })
 
 test_that("ZCOUNT", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZCOUNT")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -41,7 +41,7 @@ test_that("ZCOUNT", {
 })
 
 test_that("ZINCRBY", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZINCRBY")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -73,7 +73,7 @@ test_that("ZINCRBY", {
 })
 
 test_that("ZINTERSTORE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZINTERSTORE")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -91,7 +91,7 @@ test_that("ZINTERSTORE", {
 })
 
 test_that("ZLEXCOUNT", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZLEXCOUNT")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -105,7 +105,7 @@ test_that("ZLEXCOUNT", {
 })
 
 test_that("ZRANGE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZRANGE")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -120,7 +120,7 @@ test_that("ZRANGE", {
 })
 
 test_that("ZRANGEBYLEX", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZRANGEBYLEX")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -137,7 +137,7 @@ test_that("ZRANGEBYLEX", {
 })
 
 test_that("ZREVRANGEBYLEX", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZREVRANGEBYLEX")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -154,7 +154,7 @@ test_that("ZREVRANGEBYLEX", {
 })
 
 test_that("ZRANGEBYSCORE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZRANGEBYSCORE")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -171,7 +171,7 @@ test_that("ZRANGEBYSCORE", {
 })
 
 test_that("ZRANK", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZRANK")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -184,7 +184,7 @@ test_that("ZRANK", {
 })
 
 test_that("ZREM", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZREM")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -199,7 +199,7 @@ test_that("ZREM", {
 })
 
 test_that("ZREMRANGEBYLEX", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZREMRANGEBYLEX")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -216,7 +216,7 @@ test_that("ZREMRANGEBYLEX", {
 })
 
 test_that("ZREMRANGEBYRANK", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZREMRANGEBYRANK")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -231,7 +231,7 @@ test_that("ZREMRANGEBYRANK", {
 })
 
 test_that("ZREMRANGEBYSCORE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZREMRANGEBYSCORE")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -246,7 +246,7 @@ test_that("ZREMRANGEBYSCORE", {
 })
 
 test_that("ZREVRANGE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZREVRANGE")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -264,7 +264,7 @@ test_that("ZREVRANGE", {
 })
 
 test_that("ZREVRANGEBYSCORE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZREVRANGEBYSCORE")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -287,7 +287,7 @@ test_that("ZREVRANGEBYSCORE", {
 })
 
 test_that("ZREVRANK", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZREVRANK")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -301,7 +301,7 @@ test_that("ZREVRANK", {
 })
 
 test_that("ZSCORE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZSCORE")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -311,7 +311,7 @@ test_that("ZSCORE", {
 })
 
 test_that("ZINTERSTORE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ZINTERSTORE")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()

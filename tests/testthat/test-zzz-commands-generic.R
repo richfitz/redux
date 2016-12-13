@@ -1,7 +1,7 @@
 context("commands - generic")
 
 test_that("DEL", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("DEL")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -12,7 +12,7 @@ test_that("DEL", {
 })
 
 test_that("DUMP", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("DUMP")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -22,7 +22,7 @@ test_that("DUMP", {
 })
 
 test_that("EXISTS", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("EXISTS")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -37,7 +37,7 @@ test_that("EXISTS", {
 })
 
 test_that("EXPIRE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("EXPIRE")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -49,8 +49,8 @@ test_that("EXPIRE", {
   expect_equal(con$TTL(key), -1)
 })
 
-test_that("EXPIRE", {
-  skip_if_no_redis()
+test_that("EXPIREAT", {
+  skip_if_cmd_unsupported("EXPIREAT")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -62,7 +62,7 @@ test_that("EXPIRE", {
 })
 
 test_that("KEYS", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("KEYS")
   skip_if_not_isolated_redis()
   con <- hiredis()
   con$FLUSHDB()
@@ -81,7 +81,7 @@ test_that("KEYS", {
 })
 
 test_that("MOVE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("MOVE")
   con0 <- hiredis()
   con1 <- hiredis(redis_config(db = 1))
   key <- rand_str()
@@ -97,7 +97,7 @@ test_that("MOVE", {
 })
 
 test_that("OBJECT", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("OBJECT")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -109,7 +109,7 @@ test_that("OBJECT", {
 })
 
 test_that("PERSIST", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("PERSIST")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -122,7 +122,7 @@ test_that("PERSIST", {
 })
 
 test_that("PEXPIRE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("PEXPIRE")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -134,7 +134,7 @@ test_that("PEXPIRE", {
 })
 
 test_that("PEXPIREAT", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("PEXPIREAT")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -146,7 +146,7 @@ test_that("PEXPIREAT", {
 })
 
 test_that("PTTL", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("PTTL")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -157,7 +157,7 @@ test_that("PTTL", {
 })
 
 test_that("RANDOMKEY", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("RANDOMKEY")
   skip_if_not_isolated_redis()
   con <- hiredis()
   key <- rand_str()
@@ -171,7 +171,7 @@ test_that("RANDOMKEY", {
 })
 
 test_that("RENAME", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("RENAME")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -183,7 +183,7 @@ test_that("RENAME", {
 })
 
 test_that("RENAMENX", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("RENAMENX")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -196,7 +196,7 @@ test_that("RENAMENX", {
 })
 
 test_that("RESTORE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("RESTORE")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -210,8 +210,20 @@ test_that("RESTORE", {
   expect_equal(con$LRANGE(key, 0, -1), list("1", "2", "3"))
 })
 
+test_that("TOUCH", {
+  skip_if_cmd_unsupported("TOUCH")
+  con <- hiredis()
+  key1 <- rand_str()
+  key2 <- rand_str()
+  on.exit(con$DEL(c(key1, key2)))
+
+  con$SET(key1, "Hello")
+  con$SET(key2, "World")
+  expect_equal(con$TOUCH(c(key1, key2)), 2)
+})
+
 test_that("TTL", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("TTL")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -222,7 +234,7 @@ test_that("TTL", {
 })
 
 test_that("TYPE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("TYPE")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -237,8 +249,21 @@ test_that("TYPE", {
   expect_equal(con$TYPE(key3), redis_status("set"))
 })
 
+test_that("UNLINK", {
+  skip_if_cmd_unsupported("UNLINK")
+  con <- hiredis()
+  key1 <- rand_str()
+  key2 <- rand_str()
+  key3 <- rand_str()
+  on.exit(con$DEL(c(key1, key2)))
+
+  con$SET(key1, "Hello")
+  con$SET(key2, "World")
+  expect_equal(con$UNLINK(c(key1, key2, key3)), 2L)
+})
+
 test_that("WAIT", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("WAIT")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))

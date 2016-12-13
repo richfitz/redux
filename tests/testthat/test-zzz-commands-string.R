@@ -1,7 +1,7 @@
 context("commands - string")
 
 test_that("APPEND", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("APPEND")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -12,7 +12,7 @@ test_that("APPEND", {
 })
 
 test_that("BITCOUNT", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("BITCOUNT")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -23,10 +23,20 @@ test_that("BITCOUNT", {
   expect_equal(con$BITCOUNT(key, 1, 1), 6L)
 })
 
-## BITFIELD comes in for 3.2.0 and not what I have support for
+test_that("BITCOUNT", {
+  skip_if_cmd_unsupported("BITCOUNT")
+  con <- hiredis()
+  key <- rand_str()
+  on.exit(con$DEL(key))
+
+  con$SET(key, "foobar")
+  expect_equal(con$BITCOUNT(key), 26)
+  expect_equal(con$BITCOUNT(key, 0, 0), 4)
+  expect_equal(con$BITCOUNT(key, 1, 1), 6)
+})
 
 test_that("BITOP", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("BITOP")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -41,7 +51,7 @@ test_that("BITOP", {
 })
 
 test_that("BITPOS", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("BITPOS")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -56,7 +66,7 @@ test_that("BITPOS", {
 })
 
 test_that("DECR", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("DECR")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -69,7 +79,7 @@ test_that("DECR", {
 })
 
 test_that("DECRBY", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("DECRBY")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -79,7 +89,7 @@ test_that("DECRBY", {
 })
 
 test_that("GET", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("GET")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -90,7 +100,7 @@ test_that("GET", {
 })
 
 test_that("GETBIT", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("GETBIT")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -102,7 +112,7 @@ test_that("GETBIT", {
 })
 
 test_that("GETRANGE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("GETRANGE")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -115,7 +125,7 @@ test_that("GETRANGE", {
 })
 
 test_that("GETSET", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("GETSET")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -126,7 +136,7 @@ test_that("GETSET", {
 })
 
 test_that("INCR", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("INCR")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -137,7 +147,7 @@ test_that("INCR", {
 })
 
 test_that("INCRBY", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("INCRBY")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -148,7 +158,7 @@ test_that("INCRBY", {
 })
 
 test_that("INCRBYFLOAT", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("INCRBYFLOAT")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -161,7 +171,7 @@ test_that("INCRBYFLOAT", {
 })
 
 test_that("MGET", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("MGET")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -173,7 +183,7 @@ test_that("MGET", {
 })
 
 test_that("MSET", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("MSET")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -185,7 +195,7 @@ test_that("MSET", {
 })
 
 test_that("MSETNX", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("MSETNX")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -198,7 +208,7 @@ test_that("MSETNX", {
 })
 
 test_that("PSETEX", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("PSETEX")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -211,7 +221,7 @@ test_that("PSETEX", {
 ## TODO: there is more complex behaviour here with timeouts that could
 ## be tested.
 test_that("SET", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SET")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -221,7 +231,7 @@ test_that("SET", {
 })
 
 test_that("SETBIT", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SETBIT")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -232,7 +242,7 @@ test_that("SETBIT", {
 })
 
 test_that("SETEX", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SETEX")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -243,7 +253,7 @@ test_that("SETEX", {
 })
 
 test_that("SETNX", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SETNX")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -254,7 +264,7 @@ test_that("SETNX", {
 })
 
 test_that("SETRANGE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SETRANGE")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -270,7 +280,7 @@ test_that("SETRANGE", {
 })
 
 test_that("STRLEN", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("STRLEN")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))

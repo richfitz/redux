@@ -1,8 +1,8 @@
-context("commands - ")
+context("commands - server")
 
 ## Tested on the server
 test_that("CLIENT KILL", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("CLIENT_KILL")
   skip_if_not_isolated_redis()
 
   find_us <- function(con) {
@@ -29,7 +29,7 @@ test_that("CLIENT KILL", {
 })
 
 test_that("CLIENT LIST", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("CLIENT_LIST")
   con <- hiredis()
   x <- con$CLIENT_LIST()
   expect_is(x, "character")
@@ -37,13 +37,13 @@ test_that("CLIENT LIST", {
 })
 
 test_that("CLIENT GETNAME", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("CLIENT_GETNAME")
   con <- hiredis()
   expect_null(con$CLIENT_GETNAME())
 })
 
 test_that("CLIENT PAUSE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("CLIENT_PAUSE")
   skip_if_not_isolated_redis()
   con <- hiredis()
   expect_equal(con$CLIENT_PAUSE(1000), redis_status("OK"))
@@ -59,8 +59,7 @@ test_that("CLIENT PAUSE", {
 })
 
 test_that("CLIENT REPLY", {
-  skip("from the future")
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("CLIENT_REPLY")
   con <- hiredis()
   expect_null(con$CLIENT_REPLY("SKIP"))
   expect_null(con$PING())
@@ -68,7 +67,7 @@ test_that("CLIENT REPLY", {
 })
 
 test_that("CLIENT SETNAME", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("CLIENT_SETNAME")
   con <- hiredis()
   name <- rand_str()
   expect_equal(con$CLIENT_SETNAME(name), redis_status("OK"))
@@ -80,7 +79,7 @@ test_that("CLIENT SETNAME", {
 test_that("COMMAND", {
   ## TODO: we could parse this to do better with determining how to
   ## structure nasry commands a bit better, perhaps.
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("COMMAND")
   con <- hiredis()
   dat <- con$COMMAND()
   expect_is(dat, "list")
@@ -90,7 +89,7 @@ test_that("COMMAND", {
 })
 
 test_that("COMMAND COUNT", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("COMMAND_COUNT")
   con <- hiredis()
   expect_equal(con$COMMAND_COUNT(), length(con$COMMAND()))
 })
@@ -112,7 +111,7 @@ test_that("COMMAND GETKEYS", {
 })
 
 test_that("COMMAND INFO", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("COMMAND_INFO")
   con <- hiredis()
   d <- con$COMMAND_INFO(c("get", "set", "eval"))
   dat <- con$COMMAND()
@@ -121,20 +120,20 @@ test_that("COMMAND INFO", {
 })
 
 test_that("CONFIG GET", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("CONFIG_GET")
   con <- hiredis()
   d <- con$CONFIG_GET("*max-*-entries*")
   expect_is(d, "list")
 })
 
 test_that("DBSIZE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("DBSIZE")
   con <- hiredis()
   expect_is(con$DBSIZE(), "integer")
 })
 
 test_that("FLUSHALL", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("FLUSHALL")
   skip_if_not_isolated_redis()
   con <- hiredis()
   key <- rand_str()
@@ -145,7 +144,7 @@ test_that("FLUSHALL", {
 })
 
 test_that("FLUSHDB", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("FLUSHDB")
   skip_if_not_isolated_redis()
   con <- hiredis()
   key <- rand_str()
@@ -156,13 +155,13 @@ test_that("FLUSHDB", {
 })
 
 test_that("INFO", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("INFO")
   con <- hiredis()
   expect_is(con$INFO(), "character")
 })
 
 test_that("LASTSAVE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("LASTSAVE")
   con <- hiredis()
   ts <- con$LASTSAVE()
   t <- as.numeric(redis_time(con))
@@ -171,21 +170,21 @@ test_that("LASTSAVE", {
 })
 
 test_that("ROLE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("ROLE")
   con <- hiredis()
   r <- con$ROLE()
   expect_is(r, "list")
 })
 
 test_that("SLOWLOG", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SLOWLOG")
   con <- hiredis()
   expect_is(con$SLOWLOG("LEN"), "integer")
   expect_is(con$SLOWLOG("GET", "1"), "list")
 })
 
 test_that("TIME", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("TIME")
   con <- hiredis()
   t <- con$TIME()
   expect_is(t, "list")

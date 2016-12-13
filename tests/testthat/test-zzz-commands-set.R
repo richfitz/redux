@@ -1,7 +1,7 @@
 context("commands - set")
 
 test_that("SADD", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SADD")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -13,7 +13,7 @@ test_that("SADD", {
 })
 
 test_that("SCARD", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SCARD")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -24,7 +24,7 @@ test_that("SCARD", {
 })
 
 test_that("SDIFF", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SDIFF")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -40,7 +40,7 @@ test_that("SDIFF", {
 })
 
 test_that("SDIFFSTORE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SDIFFSTORE")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -58,7 +58,7 @@ test_that("SDIFFSTORE", {
 })
 
 test_that("SINTER", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SINTER")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -74,7 +74,7 @@ test_that("SINTER", {
 })
 
 test_that("SINTERSTORE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SINTERSTORE")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -92,7 +92,7 @@ test_that("SINTERSTORE", {
 })
 
 test_that("SISMEMBER", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SISMEMBER")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -103,7 +103,7 @@ test_that("SISMEMBER", {
 })
 
 test_that("SMEMBERS", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SMEMBERS")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -114,7 +114,7 @@ test_that("SMEMBERS", {
 })
 
 test_that("SMOVE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SMOVE")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -129,7 +129,7 @@ test_that("SMOVE", {
 })
 
 test_that("SPOP", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SPOP")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -150,7 +150,7 @@ test_that("SPOP", {
 })
 
 test_that("SRANDMEMBER", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SRANDMEMBER")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -171,7 +171,7 @@ test_that("SRANDMEMBER", {
 })
 
 test_that("SREM", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SREM")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -186,7 +186,7 @@ test_that("SREM", {
 })
 
 test_that("SUNION", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SUNION")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -203,7 +203,7 @@ test_that("SUNION", {
 })
 
 test_that("SUNIONSTORE", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SUNIONSTORE")
   con <- hiredis()
   key1 <- rand_str()
   key2 <- rand_str()

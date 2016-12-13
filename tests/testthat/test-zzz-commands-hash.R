@@ -1,7 +1,7 @@
-context("commands - ")
+context("commands - hash")
 
 test_that("HDEL", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("HDEL")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -12,7 +12,7 @@ test_that("HDEL", {
 })
 
 test_that("HEXISTS", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("HEXISTS")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -23,7 +23,7 @@ test_that("HEXISTS", {
 })
 
 test_that("HGET", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("HGET")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -34,7 +34,7 @@ test_that("HGET", {
 })
 
 test_that("HGETALL", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("HGETALL")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -50,7 +50,7 @@ test_that("HGETALL", {
 })
 
 test_that("HINCRBY", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("HINCRBY")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -62,7 +62,7 @@ test_that("HINCRBY", {
 })
 
 test_that("HINCRBYFLOAT", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("HINCRBYFLOAT")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -75,7 +75,7 @@ test_that("HINCRBYFLOAT", {
 })
 
 test_that("HKEYS", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("HKEYS")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -86,7 +86,7 @@ test_that("HKEYS", {
 })
 
 test_that("HLEN", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("HLEN")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -97,7 +97,7 @@ test_that("HLEN", {
 })
 
 test_that("HMGET", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("HMGET")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -109,7 +109,7 @@ test_that("HMGET", {
 })
 
 test_that("HMSET", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("HMSET")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -120,7 +120,7 @@ test_that("HMSET", {
 })
 
 test_that("HSET", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("HSET")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -129,9 +129,8 @@ test_that("HSET", {
   expect_equal(con$HGET(key, "field1"), "Hello")
 })
 
-
 test_that("HSETNX", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("HSETNX")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -141,13 +140,20 @@ test_that("HSETNX", {
   expect_equal(con$HGET(key, "field1"), "Hello")
 })
 
-test_that("HVALS", {
-  skip_if_no_redis()
+test_that("HSTRLEN", {
+  skip_if_cmd_unsupported("HSTRLEN")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
 
-  skip_if_no_redis()
+  con$HMSET(key, c("f1", "f2", "f3"), c("HelloWorld", "99", "-256"))
+  expect_equal(con$HSTRLEN(key, "f1"), 10)
+  expect_equal(con$HSTRLEN(key, "f2"), 2)
+  expect_equal(con$HSTRLEN(key, "f3"), 4)
+})
+
+test_that("HVALS", {
+  skip_if_cmd_unsupported("HVALS")
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
@@ -156,5 +162,3 @@ test_that("HVALS", {
   con$HSET(key, "field2", "World")
   expect_equal(con$HVALS(key), list("Hello", "World"))
 })
-
-## HSCAN in scan testing

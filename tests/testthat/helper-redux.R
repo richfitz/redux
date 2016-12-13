@@ -7,3 +7,14 @@ skip_if_no_rcppredis <- function() {
 }
 
 redis_cmds <- redis_api(list(command = identity))
+
+REDIS_VERSION <- tryCatch(
+  redis_version(hiredis()),
+  error = function(e) numeric_version("0.0.0"))
+
+skip_if_cmd_unsupported <- function(cmd) {
+  if (cmd_since[[cmd]] <= REDIS_VERSION) {
+    return()
+  }
+  skip(sprintf("command %s not supported in server redis version", cmd))
+}

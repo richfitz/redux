@@ -1,7 +1,7 @@
 context("commands - scripting")
 
 test_that("EVAL", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("EVAL")
   con <- hiredis()
 
   res <- con$EVAL("return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}", 2,
@@ -10,7 +10,7 @@ test_that("EVAL", {
 })
 
 test_that("EVALSHA/SCRIPT LOAD", {
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("EVALSHA")
   con <- hiredis()
   key <- rand_str()
 

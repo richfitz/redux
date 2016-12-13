@@ -28,7 +28,7 @@ test_that("PUNSUBSCRIBE", {
 test_that("SUBSCRIBE", {
   expect_error(redis_cmds$SUBSCRIBE("channel"),
                "Do not use SUBSCRIBE")
-  skip_if_no_redis()
+  skip_if_cmd_unsupported("SUBSCRIBE")
   con <- hiredis()
   expect_error(con$SUBSCRIBE("channel"),
                "Do not use SUBSCRIBE")
