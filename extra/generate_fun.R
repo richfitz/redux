@@ -180,11 +180,16 @@ hiredis_cmd <- function(x, standalone = FALSE) {
                 collapse = ", ")
   run <- sprintf("command(list(%s))", args)
 
-  if (name == "SUBSCRIBE") {
-    ## Don't allow use of SUBSCRIBE as it will lock the session and
-    ## never do anything useful:
-    run <-
-      'stop("Do not use SUBSCRIBE(); see subscribe() instead (lower-case)")'
+  if (name %in% c("PSUBSCRIBE", "SUBSCRIBE")) {
+    ## Don't allow use of PSUBSCRIBE/SUBSCRIBE as it will lock the
+    ## session and never do anything useful:
+    check <- pair <- NULL
+    run <- sprintf(
+      'stop("Do not use %s(); see subscribe() instead (lower-case)")', name)
+  }
+  if (name == "CLIENT REPLY") {
+    check <- pair <- NULL
+    run <- 'stop("Do not use CLIENT_REPLY; not supported with this client")'
   }
 
   fn_body <- paste(indent(c(check, pair, run)), collapse = "\n")
@@ -213,7 +218,7 @@ read_commands <- function() {
 }
 
 generate <- function(cmds) {
-  template <- 'redis_cmds <- function(command) {\n  list(\n%s)\n}'
+  template <- 'redis_commands <- function(command) {\n  list(\n%s)\n}'
   dat <- vcapply(cmds, hiredis_cmd, NULL, USE.NAMES = FALSE)
   str <- paste(reindent(dat, 4), collapse = ",\n")
   sprintf(template, str)

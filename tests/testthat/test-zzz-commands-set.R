@@ -110,7 +110,9 @@ test_that("SMEMBERS", {
 
   con$SADD(key, "hello")
   con$SADD(key, "world")
-  expect_equal(con$SMEMBERS(key), list("hello", "world"))
+  res <- con$SMEMBERS(key)
+  expect_is(res, "list")
+  expect_equal(sort(vcapply(res, identity)), sort(c("hello", "world")))
 })
 
 test_that("SMOVE", {
@@ -125,7 +127,8 @@ test_that("SMOVE", {
   con$SADD(key2, "three")
   expect_equal(con$SMOVE(key1, key2, "two"), 1)
   expect_equal(con$SMEMBERS(key1), list("one"))
-  expect_equal(con$SMEMBERS(key2), list("two", "three"))
+  expect_equal(sort(vcapply(con$SMEMBERS(key2), identity)),
+               sort(c("two", "three")))
 })
 
 test_that("SPOP", {

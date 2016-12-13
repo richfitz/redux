@@ -59,11 +59,9 @@ test_that("CLIENT PAUSE", {
 })
 
 test_that("CLIENT REPLY", {
-  skip_if_cmd_unsupported("CLIENT_REPLY")
   con <- hiredis()
-  expect_null(con$CLIENT_REPLY("SKIP"))
-  expect_null(con$PING())
-  expect_equal(con$PING(), redis_status("PONG"))
+  expect_error(con$CLIENT_REPLY("SKIP"),
+               "Do not use CLIENT_REPLY")
 })
 
 test_that("CLIENT SETNAME", {

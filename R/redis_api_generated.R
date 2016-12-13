@@ -74,8 +74,7 @@ redis_commands <- function(command) {
       command(list("CLIENT", "PAUSE", timeout))
     },
     CLIENT_REPLY = function(reply_mode) {
-      assert_match_value(reply_mode, c("ON", "OFF", "SKIP"))
-      command(list("CLIENT", "REPLY", reply_mode))
+      stop("Do not use CLIENT_REPLY; not supported with this client")
     },
     CLIENT_SETNAME = function(connection_name) {
       assert_scalar2(connection_name)
@@ -531,7 +530,7 @@ redis_commands <- function(command) {
       command(list("PSETEX", key, milliseconds, value))
     },
     PSUBSCRIBE = function(pattern) {
-      command(list("PSUBSCRIBE", pattern))
+      stop("Do not use PSUBSCRIBE(); see subscribe() instead (lower-case)")
     },
     PUBSUB = function(subcommand, argument = NULL) {
       assert_scalar2(subcommand)

@@ -29,9 +29,9 @@ test_that("BITFIELD", {
   key <- rand_str()
   on.exit(con$DEL(key))
 
-  expect_equal(
-    con$BITFIELD(key, INCRBY = c("i5", "100", "1"), GET = c("u4", "0")),
-    list(1, 0))
+  ans <- con$BITFIELD(key, INCRBY = c("i5", "100", "1"), GET = c("u4", "0"))
+
+  expect_equal(ans, list(0, 1))
 })
 
 test_that("BITCOUNT", {

@@ -1,9 +1,12 @@
 context("commands - cluster")
 
 test_that("PSUBSCRIBE", {
-  ## TODO: throw an error here too
-  expect_equal(redis_cmds$PSUBSCRIBE("*foo*"),
-               list("PSUBSCRIBE", "*foo*"))
+  expect_error(redis_cmds$PSUBSCRIBE("pat*"),
+               "Do not use PSUBSCRIBE")
+  skip_if_cmd_unsupported("PSUBSCRIBE")
+  con <- hiredis()
+  expect_error(con$PSUBSCRIBE("pat*"),
+               "Do not use PSUBSCRIBE")
 })
 
 test_that("PUBSUB", {
