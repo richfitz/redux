@@ -55,7 +55,7 @@ test_that("higher level", {
   }
 
   con <- hiredis()
-  vals <- con$subscribe(ch, transform=transform, terminate=terminate)
+  vals <- con$subscribe(ch, transform = transform, terminate = terminate)
   expect_gt(length(vals), 0)
 
   expect_true(all(vcapply(vals, "[[", 1L) == "message"))
@@ -73,12 +73,12 @@ test_that("higher level: collect n", {
   on.exit(file.remove(filename))
 
   con <- hiredis()
-  vals <- con$subscribe(ch, collect=TRUE, n=5)
+  vals <- con$subscribe(ch, collect = TRUE, n = 5)
 
   expect_equal(length(vals), 5)
 
   ## Collect nothing n times:
-  val <- con$subscribe(ch, collect=FALSE, n=5)
+  val <- con$subscribe(ch, collect = FALSE, n = 5)
   expect_null(val)
 })
 
@@ -89,7 +89,7 @@ test_that("pattern", {
   on.exit(file.remove(filename))
 
   con <- hiredis()
-  vals <- con$subscribe("foo*", pattern=TRUE, collect=TRUE, n=20)
+  vals <- con$subscribe("foo*", pattern = TRUE, collect = TRUE, n = 20)
 
   expect_equal(length(vals), 20)
   expect_equal(length(vals[[1]]), 4)
@@ -143,7 +143,7 @@ test_that("flood and recover", {
   pattern <- FALSE
   res1 <- try(.Call(redux:::Credux_redis_subscribe, ptr, ch, pattern,
                     fn, .GlobalEnv),
-              silent=TRUE)
+              silent = TRUE)
   res2 <- .Call(redux:::Credux_redis_unsubscribe, ptr, ch, pattern)
 
   expect_is(res1, "try-error")

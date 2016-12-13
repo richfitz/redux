@@ -9,7 +9,7 @@ test_that("socket connection", {
   logfile <- tempfile("redis_")
   socket <- tempfile("socket_")
   system2(redis_server, c("--port", 0, "--unixsocket", socket),
-          wait=FALSE, stdout=logfile, stderr=logfile)
+          wait = FALSE, stdout = logfile, stderr = logfile)
   Sys.sleep(.5)
 
   if (!file.exists(socket)) {

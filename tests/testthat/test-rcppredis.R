@@ -5,7 +5,7 @@ test_that("connection", {
 
   con <- rcppredis_connection()
   expect_is(con, "redis_connection")
-  expect_identical(attr(con, "type", exact=TRUE), "RcppRedis")
+  expect_identical(attr(con, "type", exact = TRUE), "RcppRedis")
   expect_is(con$config(), "redis_config")
   expect_is(con$reconnect, "function")
   expect_is(con$command, "function")
@@ -59,7 +59,7 @@ test_that("filter version", {
 
 test_that("simple interface", {
   skip_if_no_rcppredis()
-  con <- rcppredis_hiredis(version=TRUE)
+  con <- rcppredis_hiredis(version = TRUE)
   expect_is(con, "redis_api")
 })
 

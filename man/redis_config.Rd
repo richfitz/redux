@@ -62,13 +62,13 @@ used.}
 redis_config()
 
 # set values
-redis_config(host="myhost")
+redis_config(host = "myhost")
 
 # url settings:
-redis_config(url="redis://:p4ssw0rd@myhost:32000/2")
+redis_config(url = "redis://:p4ssw0rd@myhost:32000/2")
 
 # override url settings:
-redis_config(url="redis://myhost:32000", port=31000)
-redis_config(url="redis://myhost:32000", path="/tmp/redis.conf")
+redis_config(url = "redis://myhost:32000", port = 31000)
+redis_config(url = "redis://myhost:32000", path = "/tmp/redis.conf")
 }
 

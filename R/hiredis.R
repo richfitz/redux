@@ -24,7 +24,7 @@
 ##'   r$SET("foo", "bar")
 ##'   r$GET("foo")
 ##' }
-hiredis <- function(..., version=NULL) {
+hiredis <- function(..., version = NULL) {
   config <- redis_config(...)
   con <- redis_connection(config)
   redis_api(con, version)
@@ -35,5 +35,5 @@ hiredis <- function(..., version=NULL) {
 redis_available <- function(...) {
   ## This will throw if Redis is not running because we'll get a
   ## "connection refused" error.
-  !inherits(try(hiredis(...), silent=TRUE), "try-error")
+  !inherits(try(hiredis(...), silent = TRUE), "try-error")
 }

@@ -47,19 +47,19 @@
 ##' redis_config()
 ##'
 ##' # set values
-##' redis_config(host="myhost")
+##' redis_config(host = "myhost")
 ##'
 ##' # url settings:
-##' redis_config(url="redis://:p4ssw0rd@@myhost:32000/2")
+##' redis_config(url = "redis://:p4ssw0rd@@myhost:32000/2")
 ##'
 ##' # override url settings:
-##' redis_config(url="redis://myhost:32000", port=31000)
-##' redis_config(url="redis://myhost:32000", path="/tmp/redis.conf")
+##' redis_config(url = "redis://myhost:32000", port = 31000)
+##' redis_config(url = "redis://myhost:32000", path = "/tmp/redis.conf")
 ##' @title Redis configuration
 ##' @param ... See Details
 ##' @param config A list of options, to use in place of \code{...}
 ##' @export
-redis_config <- function(..., config=list(...)) {
+redis_config <- function(..., config = list(...)) {
   ## TODO: consider allowing case where where:
   ##   1 arg and is unnamed character (assume host)
   ##   2 arg and char/int, unnamed (assume host/port?)
@@ -99,7 +99,7 @@ redis_config <- function(..., config=list(...)) {
   err <- !is_null & len != 1L
   if (any(err)) {
     stop(sprintf("All config elements must be scalar (err on %s)",
-                 paste(names(err), collapse=", ")))
+                 paste(names(err), collapse = ", ")))
   }
 
   ## TODO: assert knowns, assert named, test this.
@@ -146,12 +146,12 @@ redis_config <- function(..., config=list(...)) {
 print.redis_config <- function(x, ...) {
   f <- function(x) if (is.null(x)) "" else as.character(x)
   cat("Redis configuration:\n")
-  cat(paste(sprintf("  - %s: %s\n", names(x), vcapply(x, f)), collapse=""))
+  cat(paste(sprintf("  - %s: %s\n", names(x), vcapply(x, f)), collapse = ""))
 }
 
 ##' @export
 print.redis_status <- function(x, ...) {
-  cat(sprintf('[Redis: %s]\n', x))
+  cat(sprintf("[Redis: %s]\n", x))
 }
 
 ##' Parse a Redis URL
@@ -160,7 +160,7 @@ print.redis_status <- function(x, ...) {
 ##' @export
 ##'
 parse_redis_url <- function(url) {
-  clean <- function(x, integer=FALSE) {
+  clean <- function(x, integer = FALSE) {
     if (x == "") {
       NULL
     } else if (integer) {

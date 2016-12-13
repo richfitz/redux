@@ -3,7 +3,7 @@ context("scan")
 test_that("scan", {
   skip_if_no_redis()
   con <- hiredis()
-  prefix <- rand_str(prefix="scan:")
+  prefix <- rand_str(prefix = "scan:")
   keys <- character(0)
   for (i in seq_len(10)) {
     key <- paste0(prefix, ":", rand_str())

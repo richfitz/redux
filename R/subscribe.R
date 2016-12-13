@@ -1,4 +1,4 @@
-make_collector <- function(collect=TRUE) {
+make_collector <- function(collect = TRUE) {
   if (collect) {
     vals <- list()
     add <- function(x) {
@@ -10,7 +10,7 @@ make_collector <- function(collect=TRUE) {
     add <- function(x) {
     }
   }
-  list(add=add, get=function() vals)
+  list(add = add, get = function() vals)
 }
 
 make_counter <- function() {

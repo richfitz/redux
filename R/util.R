@@ -8,7 +8,7 @@ vlapply <- function(X, FUN, ...) {
   vapply(X, FUN, logical(1), ...)
 }
 
-Sys_getenv <- function(x, unset=NULL) {
+Sys_getenv <- function(x, unset = NULL) {
   assert_scalar_character(x)
   ret <- Sys.getenv(x, NA_character_)
   if (is.na(ret)) unset else ret
@@ -18,7 +18,7 @@ drop_null <- function(x) {
   x[!vlapply(x, is.null)]
 }
 
-modify_list <- function(x, val, name=deparse(substitute(x))) {
+modify_list <- function(x, val, name = deparse(substitute(x))) {
   warn_unknown(name, val, names(x))
   modifyList(x, val)
 }
@@ -26,5 +26,5 @@ modify_list <- function(x, val, name=deparse(substitute(x))) {
 capture_args <- function(f, name) {
   args <- capture.output(args(f))
   sub("function ", name,
-      paste0(paste(args[-length(args)], collapse="\n"), "\n"))
+      paste0(paste(args[-length(args)], collapse = "\n"), "\n"))
 }

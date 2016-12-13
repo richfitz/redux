@@ -16,7 +16,7 @@ test_that("simple commands", {
 
   ans <- redis_command(ptr, list("PING"))
   expect_is(ans, "redis_status")
-  expect_output(print(ans), "[Redis: PONG]", fixed=TRUE)
+  expect_output(print(ans), "[Redis: PONG]", fixed = TRUE)
   expect_identical(as.character(ans), "PONG")
 
   expect_identical(redis_command(ptr, "PING"), ans)
@@ -65,14 +65,14 @@ test_that("commands with NULL arguments", {
 test_that("missing values are NULL", {
   skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
-  key <- rand_str(prefix="redux_")
+  key <- rand_str(prefix = "redux_")
   expect_null(redis_command(ptr, list("GET", key)))
 })
 
 test_that("Errors are converted", {
   skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
-  key <- rand_str(prefix="redux_")
+  key <- rand_str(prefix = "redux_")
   on.exit(redis_command(ptr, c("DEL", key)))
   ## Conversion to integer:
   expect_identical(redis_command(ptr, c("LPUSH", key, "a", "b", "c")), 3L)
@@ -89,7 +89,7 @@ test_that("Errors are converted", {
 test_that("Pipelining", {
   skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
-  key <- rand_str(prefix="redux_")
+  key <- rand_str(prefix = "redux_")
   cmd <- list(list("SET", key, "1"), list("GET", key))
   on.exit(redis_command(ptr, c("DEL", key)))
 
@@ -113,14 +113,14 @@ test_that("Binary data", {
   skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
   data <- serialize(1:5, NULL)
-  key <- rand_str(prefix="redux_")
+  key <- rand_str(prefix = "redux_")
   expect_equal(redis_command(ptr, list("SET", key, data)),
                redis_status("OK"))
   x <- redis_command(ptr, list("GET", key))
   expect_is(x, "raw")
   expect_equal(x, data)
 
-  key2 <- rand_str(prefix="redux_")
+  key2 <- rand_str(prefix = "redux_")
   ok <- redis_command(ptr, list("MSET", key, "1", key2, data))
   expect_equal(ok, redis_status("OK"))
 
@@ -134,8 +134,8 @@ test_that("Lists of binary data", {
   skip_if_no_redis()
   ptr <- redis_connect_tcp("127.0.0.1", 6379L)
   data <- serialize(1:5, NULL)
-  key1 <- rand_str(prefix="redux_")
-  key2 <- rand_str(prefix="redux_")
+  key1 <- rand_str(prefix = "redux_")
+  key2 <- rand_str(prefix = "redux_")
   cmd <- list("MSET", list(key1, data, key2, data))
 
   ok <- redis_command(ptr, list("MSET", list(key1, data, key2, data)))

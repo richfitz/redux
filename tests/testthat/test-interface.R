@@ -5,11 +5,11 @@ test_that("MSET / MGET / DEL", {
   skip_if_no_redis()
   r <- hiredis()
   expect_equal(r$MSET(letters, LETTERS), redis_status("OK"))
-  expect_equal(vapply(letters, r$EXISTS, integer(1), USE.NAMES=FALSE),
+  expect_equal(vapply(letters, r$EXISTS, integer(1), USE.NAMES = FALSE),
                rep(1L, length(letters)))
   expect_equal(r$MGET(letters), as.list(LETTERS))
   expect_equal(r$DEL(letters), length(letters))
-  expect_equal(vapply(letters, r$EXISTS, integer(1), USE.NAMES=FALSE),
+  expect_equal(vapply(letters, r$EXISTS, integer(1), USE.NAMES = FALSE),
                rep(0L, length(letters)))
 })
 
@@ -29,23 +29,23 @@ test_that("SORT", {
   ## *must* be given as a kw argument here, whereas there it's done
   ## positionally.  Not sure how to implement that, or if it's
   ## worthwhile.
-  expect_equal(r$SORT(key, order="DESC"), rev(cmp))
-  expect_equal(r$SORT(key, order="ASC"), cmp)
-  expect_error(r$SORT(key, order="A"), "order must be one of")
+  expect_equal(r$SORT(key, order = "DESC"), rev(cmp))
+  expect_equal(r$SORT(key, order = "ASC"), cmp)
+  expect_error(r$SORT(key, order = "A"), "order must be one of")
 
-  expect_equal(r$SORT(key, LIMIT=c(0, 10)),
+  expect_equal(r$SORT(key, LIMIT = c(0, 10)),
                cmp[1:10])
-  expect_equal(r$SORT(key, LIMIT=c(5, 10)),
+  expect_equal(r$SORT(key, LIMIT = c(5, 10)),
                cmp[6:15])
 
   cmp_alpha <- as.list(sort(as.character(i)))
-  expect_equal(r$SORT(key, sorting="ALPHA"), cmp_alpha)
-  expect_equal(r$SORT(key, sorting="ALPHA", order="DESC"),
+  expect_equal(r$SORT(key, sorting = "ALPHA"), cmp_alpha)
+  expect_equal(r$SORT(key, sorting = "ALPHA", order = "DESC"),
                rev(cmp_alpha))
 
   key2 <- rand_str()
   on.exit(r$DEL(key2))
-  expect_equal(r$SORT(key, STORE=key2), length(i))
+  expect_equal(r$SORT(key, STORE = key2), length(i))
   ## TODO: rlite doesn't return a redis_status here, which seems like a bug.
   ##   expect_equal(r$TYPE(key2), redis_status("list")))
   ## A fix would be substituting
@@ -61,7 +61,7 @@ test_that("SCAN", {
   skip_if_no_scan(r)
 
   prefix <- paste0(rand_str(), ":")
-  str <- replicate(50, rand_str(prefix=prefix))
+  str <- replicate(50, rand_str(prefix = prefix))
   r$MSET(str, str)
   on.exit(r$DEL(str))
 
@@ -111,8 +111,8 @@ test_that("serialisation", {
   expect_equal(r$MSET(key, list(object_to_bin(1:10))), redis_status("OK"))
   expect_equal(bin_to_object(r$GET(key)), 1:10)
 
-  str <- replicate(10, rand_str(prefix=paste0(rand_str(), ":")))
-  on.exit(r$DEL(str), add=TRUE)
+  str <- replicate(10, rand_str(prefix = paste0(rand_str(), ":")))
+  on.exit(r$DEL(str), add = TRUE)
 
   expect_equal(r$MSET(str, 1:10), redis_status("OK"))
   expect_equal(r$MGET(str), as.list(as.character(1:10)))

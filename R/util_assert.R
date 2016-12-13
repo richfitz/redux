@@ -129,7 +129,7 @@ warn_unknown <- function(name, defn, known) {
   unknown <- setdiff(names(defn), known)
   if (length(unknown) > 0) {
     msg <- sprintf("Unknown fields in %s: %s",
-                   name, paste(unknown, collapse=", "))
-    warning(msg, immediate.=TRUE, call. = FALSE)
+                   name, paste(unknown, collapse = ", "))
+    warning(msg, immediate. = TRUE, call. = FALSE)
   }
 }

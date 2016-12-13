@@ -16,5 +16,6 @@ skip_if_cmd_unsupported <- function(cmd) {
   if (cmd_since[[cmd]] <= REDIS_VERSION) {
     return()
   }
-  skip(sprintf("command %s not supported in server redis version", cmd))
+  testthat::skip(
+    sprintf("command %s not supported in server redis version", cmd))
 }

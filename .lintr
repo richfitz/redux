@@ -1,0 +1,2 @@
+linters: with_defaults(commented_code_linter = NULL)
+exclusions: list("inst/doc/redux.R", "inst/doc/low_level.R")

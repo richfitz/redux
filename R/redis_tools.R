@@ -10,12 +10,12 @@ redis_info <- function(con) {
 ##' @export
 ##' @rdname redis_info
 parse_info <- function(x) {
-  xx <- strsplit(x, "\r\n", fixed=TRUE)[[1]]
+  xx <- strsplit(x, "\r\n", fixed = TRUE)[[1]]
   xx <- strsplit(xx, ":")
   xx <- xx[viapply(xx, length) == 2L]
   keys <- setNames(vcapply(xx, "[[", 2),
                    vcapply(xx, "[[", 1))
-  keys <- strsplit(keys, ",", fixed=TRUE)
+  keys <- strsplit(keys, ",", fixed = TRUE)
   keys$redis_version <- numeric_version(keys$redis_version)
   keys
 }
@@ -39,7 +39,7 @@ redis_multi <- function(con, expr) {
     con$DISCARD()
     stop(e)
   }
-  tryCatch(error=discard, {
+  tryCatch(error = discard, {
     con$MULTI()
     eval.parent(expr)
     con$EXEC()
@@ -60,8 +60,8 @@ redis_multi <- function(con, expr) {
 ##'   \code{stop} expression is OK and will only be evaluated if
 ##'   values are missing.
 ##' @export
-from_redis_hash <- function(con, key, fields=NULL, f=as.character,
-                            missing=NA_character_) {
+from_redis_hash <- function(con, key, fields = NULL, f = as.character,
+                            missing = NA_character_) {
   if (is.null(fields)) {
     x <- con$HGETALL(key)
     dim(x) <- c(2, length(x) / 2)
@@ -71,7 +71,7 @@ from_redis_hash <- function(con, key, fields=NULL, f=as.character,
     setNames(f(vector("list", 0)), character(0))
   } else {
     x <- con$HMGET(key, fields)
-    ## NOTE: This is needed for the case where missing=NULL, otherwise
+    ## NOTE: This is needed for the case where missing = NULL, otherwise
     ## it will *delete* the elements.  However, if missing is NULL,
     ## then f should really be a list-returning function otherwise
     ## NULL -> "NULL.
@@ -95,13 +95,13 @@ redis_time <- function(con) {
 ##' @rdname redis_time
 ##' @param x a list as returned by \code{TIME}
 format_redis_time <- function(x) {
-  paste(as.character(x), collapse=".")
+  paste(as.character(x), collapse = ".")
 }
 
 ##' @export
 ##' @rdname redis_time
 redis_time_to_r <- function(x) {
-  as.POSIXct(as.numeric(x), origin="1970-01-01")
+  as.POSIXct(as.numeric(x), origin = "1970-01-01")
 }
 
 parse_client_info <- function(x) {

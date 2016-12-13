@@ -48,7 +48,7 @@
 ##'   # ?scan_find).
 ##'   scan_find(con, "*")
 ##' }
-rcppredis_connection <- function(config=redis_config()) {
+rcppredis_connection <- function(config = redis_config()) {
   ## TODO: why is this even available?  With RedisAPI merged into
   ## redux it's not hugely useful and could just be dropped
   loadNamespace("methods")
@@ -74,13 +74,13 @@ rcppredis_connection <- function(config=redis_config()) {
   ## implemented by the hiredis_function.
   ret <-
     list(
-      config=function() {
+      config = function() {
         config
       },
-      reconnect=function() {
+      reconnect = function() {
         r <<- connect(config)
       },
-      command=function(cmd) {
+      command = function(cmd) {
         run_command(r, cmd)
       })
   attr(ret, "type") <- "RcppRedis"
@@ -99,13 +99,13 @@ rcppredis_connection <- function(config=redis_config()) {
 ##'   numeric version (or something that can be coerced into one.  If
 ##'   given as \code{TRUE}, then we query the Redis server for its
 ##'   version and generate only commands supported by the server.
-rcppredis_hiredis <- function(..., version=NULL) {
+rcppredis_hiredis <- function(..., version = NULL) {
   redis_api(rcppredis_connection(redis_config(...)), version)
 }
 
 ##' @export
 ##' @rdname rcppredis_connection
 rcppredis_available <- function(...) {
-  requireNamespace("RcppRedis", quietly=TRUE) &&
-    !inherits(try(rcppredis_connection(), silent=TRUE), "try-error")
+  requireNamespace("RcppRedis", quietly = TRUE) &&
+    !inherits(try(rcppredis_connection(), silent = TRUE), "try-error")
 }

@@ -43,7 +43,7 @@ test_that("redis_multi", {
     con$INCR(id)
     con$INCR(id)
     stop("abort")
-  }), silent=TRUE)
+  }), silent = TRUE)
   expect_equal(con$GET(id), "2")
   expect_is(err, "try-error")
 
@@ -65,15 +65,15 @@ test_that("from_redis_hash", {
   expect_true(all(fields %in% names(res)))
   expect_equal(res[fields], cmp)
 
-  expect_equal(from_redis_hash(con, key, f=identity)[fields],
+  expect_equal(from_redis_hash(con, key, f = identity)[fields],
                as.list(cmp))
 
   expect_equal(from_redis_hash(con, key, "a"), cmp["a"])
-  expect_equal(from_redis_hash(con, key, "a", f=identity),
+  expect_equal(from_redis_hash(con, key, "a", f = identity),
                as.list(cmp)["a"])
 
   expect_equal(from_redis_hash(con, key, c("a", "xxx")),
-               c(a="1", xxx=NA_character_))
+               c(a = "1", xxx = NA_character_))
 
   expect_equal(from_redis_hash(con, key, character(0)),
                setNames(character(0), character(0)))
@@ -100,7 +100,7 @@ test_that("scripts", {
   redis.call("INCR", keyname)
   return redis.call("GET", keyname)'
 
-  obj <- redis_scripts(r, set_and_incr=lua)
+  obj <- redis_scripts(r, set_and_incr = lua)
   r$DEL("foo")
   res <- obj("set_and_incr", "foo", "10")
   expect_equal(res, "11")
