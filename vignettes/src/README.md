@@ -9,6 +9,4 @@ Because `redux.Rmd` requires Redis to be run, we use a trick (due to Carl Boetti
 * Copy `vignettes/src/redux.md` to `vignettes/redux.Rmd`
 * Knits `vignettes/redux.Rmd` (which has no executable code) to `inst/doc/`
 
-The `R CMD check` vignette builder then repeats the last step which does not require Redis server to be run.
-
-The travis build will rebuild the vignettes from scratch so we do get some level of checking there.
+The `R CMD check` vignette builder then repeats the last step which does not require Redis server to be present.

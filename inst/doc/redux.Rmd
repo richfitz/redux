@@ -1,7 +1,7 @@
 ---
 title: "Using Redis with redux"
 author: "Rich FitzJohn"
-date: "2016-05-27"
+date: "2016-12-13"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using Redis with redux}
@@ -12,15 +12,16 @@ vignette: >
 
 
 `redux` provides a full interface to the Redis API; it provides a
-hiredis driver wrapped in R and uses this to expose all `r
-length(names(redux::redis))` Redis commands as a set of
+hiredis driver wrapped in R and uses this to expose all
+188 Redis commands as a set of
 user-friendly R functions that do basic error checking.
 
 It is possible to build user-friendly applications on top of this,
 for example [`storr`](https://github.com/richfitz/storr) which
 provides a content-addressable object store, and
-[`rrqueue`](https://github.com/traitecoevo/rrqueue) which
-implements a scalable queuing system.
+[`rrqueue`](https://github.com/traitecoevo/rrqueue) /
+[`rrq`](https://github.com/richfitz/rrq) which implement a scalable
+queuing system.
 
 The main entry point for creating a `redis_api` object is the
 `hiredis` function:
@@ -30,11 +31,9 @@ r <- redux::hiredis()
 ```
 
 By default, it will connect to a database running on the local
-machine (`localhost`, or ip `127.0.0.1`) and port 6379.  The two
-arguments that `hiredis` accepts are `host` and `port` if you need
-to change these to point at a different location.  Alternatively,
-you can set the `REDIS_HOST` and `REDIS_PORT` environment variables
-to appropriate values and then use `hiredis()` with no arguments.
+machine (`127.0.0.1`) and port 6379.  To connect to a different
+host, or to specify a password, initial database, or to use a
+socket connection, use the command \code{redis_config}.
 
 The `redis_api` object is an [`R6`](https://github.com/wch/R6)
 class with _many_ methods, each corresponding to a different Redis
@@ -86,10 +85,13 @@ r$GET("mykey")
 # Serialisation
 
 The value for most arguments must be a string or will be coerced
-into one.  So if you want to save an arbitrary R object, you need
-to convert it to a string.  The `object_to_bin` and
-`object_to_string` functions can help here, serialising the objects
-to binary and string represenations.
+into one; clearly this is not going to be suitable for most R
+objects.  The solution is to *serialise* the R object.  `redux` can
+accept objects serialised to strings or to byte streams, and the
+functions the `object_to_bin` and `object_to_string` functions can
+help here, serialising the objects to binary and string
+represenations.  (Alternatively you can do this yourself using
+`serialize`.)
 
 ```r
 obj <- redux::object_to_bin(1:10)
@@ -97,7 +99,7 @@ obj
 ```
 
 ```
-##  [1] 58 0a 00 00 00 02 00 03 03 00 00 02 03 00 00 00 00 0d 00 00 00 0a 00
+##  [1] 58 0a 00 00 00 02 00 03 02 03 00 02 03 00 00 00 00 0d 00 00 00 0a 00
 ## [24] 00 00 01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06
 ## [47] 00 00 00 07 00 00 00 08 00 00 00 09 00 00 00 0a
 ```
@@ -110,7 +112,7 @@ str
 ```
 
 ```
-## [1] "A\n2\n197376\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
+## [1] "A\n2\n197123\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
 ```
 
 The binary serialisation is faster, smaller, and preserves all the
@@ -152,7 +154,7 @@ r$GET("mylist")
 ```
 
 ```
-##  [1] 58 0a 00 00 00 02 00 03 03 00 00 02 03 00 00 00 00 0d 00 00 00 0a 00
+##  [1] 58 0a 00 00 00 02 00 03 02 03 00 02 03 00 00 00 00 0d 00 00 00 0a 00
 ## [24] 00 00 01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06
 ## [47] 00 00 00 07 00 00 00 08 00 00 00 09 00 00 00 0a
 ```
@@ -180,7 +182,7 @@ r$GET("mylist")
 ```
 
 ```
-## [1] "A\n2\n197376\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
+## [1] "A\n2\n197123\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
 ```
 
 ```r
@@ -366,7 +368,7 @@ dat
 
 ```
 ## [[1]]
-## [1] "A\n2\n197376\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
+## [1] "A\n2\n197123\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
 ##
 ## [[2]]
 ## [1] "carrot"
@@ -425,9 +427,9 @@ If arguments are named, then the return value is named:
 
 ```r
 r$pipeline(
-  a=redis$INCR("x"),
-  b=redis$INCR("x"),
-  c=redis$DEL("x"))
+  a = redis$INCR("x"),
+  b = redis$INCR("x"),
+  c = redis$DEL("x"))
 ```
 
 ```
@@ -454,7 +456,7 @@ the dots argument.  Instead, you can pass a list of commands to the
 
 ```r
 cmds <- lapply(seq_len(4), function(.) redis$PING())
-r$pipeline(.commands=cmds)
+r$pipeline(.commands = cmds)
 ```
 
 ```
@@ -526,9 +528,9 @@ messages or a message reading exactly "goodbye" you would write:
 
 ```r
 res <- r$subscribe("mychannel",
-                   transform=function(x) x$value,
-                   terminate=function(x) identical(x, "goodbye"),
-                   n=100)
+                   transform = function(x) x$value,
+                   terminate = function(x) identical(x, "goodbye"),
+                   n = 100)
 ```
 
 To test this out, we need a second process that will publish to the
@@ -550,7 +552,7 @@ and can be run with:
 
 ```r
 system2(file.path(R.home(), "bin", "Rscript"), path_to_publisher,
-        wait=FALSE, stdout=FALSE, stderr=FALSE)
+        wait = FALSE, stdout = FALSE, stderr = FALSE)
 ```
 
 to start the publisher.
@@ -569,93 +571,93 @@ transform <- function(x) {
 
 ```r
 res <- r$subscribe("mychannel",
-                   transform=transform,
-                   terminate=function(x) identical(x, "goodbye"),
-                   n=100)
+                   transform = transform,
+                   terminate = function(x) identical(x, "goodbye"),
+                   n = 100)
 ```
 
 ```
-## 2016-05-27 12:16:54.388: got message: 1120
+## 2016-12-13 08:40:53.240: got message: 1120
 ```
 
 ```
-## 2016-05-27 12:16:54.438: got message: 1160
+## 2016-12-13 08:40:53.293: got message: 1160
 ```
 
 ```
-## 2016-05-27 12:16:54.489: got message: 963
+## 2016-12-13 08:40:53.348: got message: 963
 ```
 
 ```
-## 2016-05-27 12:16:54.539: got message: 1210
+## 2016-12-13 08:40:53.404: got message: 1210
 ```
 
 ```
-## 2016-05-27 12:16:54.589: got message: 1160
+## 2016-12-13 08:40:53.454: got message: 1160
 ```
 
 ```
-## 2016-05-27 12:16:54.639: got message: 1160
+## 2016-12-13 08:40:53.510: got message: 1160
 ```
 
 ```
-## 2016-05-27 12:16:54.690: got message: 813
+## 2016-12-13 08:40:53.566: got message: 813
 ```
 
 ```
-## 2016-05-27 12:16:54.740: got message: 1230
+## 2016-12-13 08:40:53.618: got message: 1230
 ```
 
 ```
-## 2016-05-27 12:16:54.790: got message: 1370
+## 2016-12-13 08:40:53.673: got message: 1370
 ```
 
 ```
-## 2016-05-27 12:16:54.841: got message: 1140
+## 2016-12-13 08:40:53.729: got message: 1140
 ```
 
 ```
-## 2016-05-27 12:16:54.891: got message: 995
+## 2016-12-13 08:40:53.780: got message: 995
 ```
 
 ```
-## 2016-05-27 12:16:54.941: got message: 935
+## 2016-12-13 08:40:53.836: got message: 935
 ```
 
 ```
-## 2016-05-27 12:16:54.991: got message: 1110
+## 2016-12-13 08:40:53.891: got message: 1110
 ```
 
 ```
-## 2016-05-27 12:16:55.042: got message: 994
+## 2016-12-13 08:40:53.943: got message: 994
 ```
 
 ```
-## 2016-05-27 12:16:55.092: got message: 1020
+## 2016-12-13 08:40:53.998: got message: 1020
 ```
 
 ```
-## 2016-05-27 12:16:55.142: got message: 960
+## 2016-12-13 08:40:54.054: got message: 960
 ```
 
 ```
-## 2016-05-27 12:16:55.193: got message: 1180
+## 2016-12-13 08:40:54.105: got message: 1180
 ```
 
 ```
-## 2016-05-27 12:16:55.243: got message: 799
+## 2016-12-13 08:40:54.161: got message: 799
 ```
 
 ```
-## 2016-05-27 12:16:55.293: got message: 958
+## 2016-12-13 08:40:54.214: got message: 958
 ```
 
 ```
-## 2016-05-27 12:16:55.344: got message: 1140
+## 2016-12-13 08:40:54.268: got message: 1140
 ```
 
 ```
-## 2016-05-27 12:16:55.344: got message: goodbye
+## 2016-12-13 08:40:54.269: got message: goodbye
 ```
 
 
@@ -686,10 +688,10 @@ First, a generator object that sets up a new list at `key` within
 the database `r`.
 
 ```r
-rlist <- function(..., key="rlist", r=redux::hiredis()) {
+rlist <- function(..., key = "rlist", r = redux::hiredis()) {
   dat <- vapply(c(...), redux::object_to_string, character(1))
   r$RPUSH(key, dat)
-  ret <- list(r=r, key=key)
+  ret <- list(r = r, key = key)
   class(ret) <- "rlist"
   ret
 }
@@ -756,14 +758,6 @@ obj[[2]] == obj2[[2]]
 
 For a better version of this, see
 [storr](https://github.com/richfitz/storr) which does similar things to implement "[indexable serialisation](http://htmlpreview.github.io/?https://raw.githubusercontent.com/richfitz/storr/master/inst/doc/storr.html#lists-and-indexable-serialisation)"
-
-What would be nice is a set of tools for working with any R/`Redis`
-package that can convert R objects into `Redis` data structures so
-that they can be accessed in pieces.  Of course, these objects
-could be read/written by programs *other* than R if they also
-support `Redis`.  We have made some approaches towards that with
-the [docdbi](https://github.com/ropensci/docdbi) package, but this
-is a work in progress.
 
 # Getting help
 

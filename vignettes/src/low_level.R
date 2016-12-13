@@ -10,7 +10,7 @@
 ## ---
 
 ## These are some implementation details that may be of interest if
-## developing alternative (non-hiredis based) drivers. 
+## developing alternative (non-hiredis based) drivers.
 
 ## Create a connection:
 con <- redux::redis_connection(redux::redis_config())
@@ -73,7 +73,8 @@ con$command(c("INCR", "X"))
 ## Server: 2
 ## ```
 
-## These commands can be *pipelined* together into a single request so that the interaction looks like:
+## These commands can be *pipelined* together into a single request so
+## that the interaction looks like:
 
 ## ```
 ## Client: INCR X
@@ -82,7 +83,8 @@ con$command(c("INCR", "X"))
 ## Server: 2
 ## ```
 
-## To do this, the `pipeline` function in the redis object accepts multiple Redis commands as a list:
+## To do this, the `pipeline` function in the redis object accepts
+## multiple Redis commands as a list:
 con$pipeline(list(
   c("INCR", "X"),
   c("INCR", "X")
@@ -106,7 +108,8 @@ con$pipeline(list(
 ## * `channel`: a vector of one or more channels to listen on
 ## * `pattern`: a logical indicating if the `channel` is a pattern
 ## * `callback`: a function described below
-## * `envir`: environment to evaluate the function in, by default the parent frame
+## * `envir`: environment to evaluate the function in, by default the
+##   parent frame
 
 ## The callback function must take a single argument; this will be the
 ## recieved message with named elements `type` (which will be

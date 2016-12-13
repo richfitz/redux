@@ -10,3 +10,4 @@ src/Makevars
 TODO.md
 windows
 redux_*.tar.gz
+extra/redis-doc

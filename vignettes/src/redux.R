@@ -9,40 +9,39 @@
 ##   \usepackage[utf8]{inputenc}
 ## ---
 
-##+ echo=FALSE,results="hide"
+##+ echo = FALSE,results = "hide"
 library(methods)
-knitr::opts_chunk$set(error=FALSE)
+knitr::opts_chunk$set(error = FALSE)
 redux::hiredis()$DEL(c("mykey", "mylist", "mylist2", "rlist"))
 set.seed(1)
 
 ## `redux` provides a full interface to the Redis API; it provides a
-## hiredis driver wrapped in R and uses this to expose all `r
-## length(names(redux::redis))` Redis commands as a set of
+## hiredis driver wrapped in R and uses this to expose all
+## `r length(names(redux::redis))` Redis commands as a set of
 ## user-friendly R functions that do basic error checking.
 
 ## It is possible to build user-friendly applications on top of this,
 ## for example [`storr`](https://github.com/richfitz/storr) which
 ## provides a content-addressable object store, and
-## [`rrqueue`](https://github.com/traitecoevo/rrqueue) which
-## implements a scalable queuing system.
+## [`rrqueue`](https://github.com/traitecoevo/rrqueue) /
+## [`rrq`](https://github.com/richfitz/rrq) which implement a scalable
+## queuing system.
 
 ## The main entry point for creating a `redis_api` object is the
 ## `hiredis` function:
 r <- redux::hiredis()
 
 ## By default, it will connect to a database running on the local
-## machine (`localhost`, or ip `127.0.0.1`) and port 6379.  The two
-## arguments that `hiredis` accepts are `host` and `port` if you need
-## to change these to point at a different location.  Alternatively,
-## you can set the `REDIS_HOST` and `REDIS_PORT` environment variables
-## to appropriate values and then use `hiredis()` with no arguments.
+## machine (`127.0.0.1`) and port 6379.  To connect to a different
+## host, or to specify a password, initial database, or to use a
+## socket connection, use the command \code{redis_config}.
 
 ## The `redis_api` object is an [`R6`](https://github.com/wch/R6)
 ## class with _many_ methods, each corresponding to a different Redis
 ## command.
-##+ eval=FALSE
+##+ eval = FALSE
 r
-##+ echo=FALSE
+##+ echo = FALSE
 res <- capture.output(print(r))
 res <- c(res[1:6], "    ...",
          res[(max(grep("\\s+[A-Z]", res)) - 2):length(res)])
@@ -55,10 +54,13 @@ r$GET("mykey")
 ## # Serialisation
 
 ## The value for most arguments must be a string or will be coerced
-## into one.  So if you want to save an arbitrary R object, you need
-## to convert it to a string.  The `object_to_bin` and
-## `object_to_string` functions can help here, serialising the objects
-## to binary and string represenations.
+## into one; clearly this is not going to be suitable for most R
+## objects.  The solution is to *serialise* the R object.  `redux` can
+## accept objects serialised to strings or to byte streams, and the
+## functions the `object_to_bin` and `object_to_string` functions can
+## help here, serialising the objects to binary and string
+## represenations.  (Alternatively you can do this yourself using
+## `serialize`.)
 obj <- redux::object_to_bin(1:10)
 obj
 
@@ -96,7 +98,7 @@ redux::string_to_object(r$GET("mylist"))
 ## values; you can use them as keys; this is perfectly valid:
 r$SET(redux::object_to_bin(1:10), "mydata")
 r$GET(redux::object_to_bin(1:10))
-##+ echo=FALSE, results="hide"
+##+ echo = FALSE, results = "hide"
 r$DEL(redux::object_to_bin(1:10))
 
 ## However, depending on what you want to achieve, Redis offers
@@ -161,9 +163,9 @@ r$pipeline(
 
 ## If arguments are named, then the return value is named:
 r$pipeline(
-  a=redis$INCR("x"),
-  b=redis$INCR("x"),
-  c=redis$DEL("x"))
+  a = redis$INCR("x"),
+  b = redis$INCR("x"),
+  c = redis$DEL("x"))
 
 ## here a variable "x" was incremented twice and then deleted.
 
@@ -176,7 +178,7 @@ r$pipeline(
 ## the dots argument.  Instead, you can pass a list of commands to the
 ## `.commands` argument of `pipeline`:
 cmds <- lapply(seq_len(4), function(.) redis$PING())
-r$pipeline(.commands=cmds)
+r$pipeline(.commands = cmds)
 
 ## # Subscriptions
 
@@ -223,16 +225,16 @@ r$PUBLISH("mychannel", "hello")
 ## That all sounds a lot more complicated it really is.  To collect
 ## all messages on the `"mychannel"` channel, stopping after 100
 ## messages or a message reading exactly "goodbye" you would write:
-##+ eval=FALSE
+##+ eval = FALSE
 res <- r$subscribe("mychannel",
-                   transform=function(x) x$value,
-                   terminate=function(x) identical(x, "goodbye"),
-                   n=100)
+                   transform = function(x) x$value,
+                   terminate = function(x) identical(x, "goodbye"),
+                   n = 100)
 
 ## To test this out, we need a second process that will publish to the
 ## channel (or we'll wait forever).  This function will publish the
 ## first 20 values out of the Nile data set.
-##+ echo=FALSE
+##+ echo = FALSE
 path_to_publisher <- tempfile()
 writeLines('r <- redux::hiredis()
 for (i in Nile[1:20]) {
@@ -241,13 +243,13 @@ for (i in Nile[1:20]) {
 }
 r$PUBLISH("mychannel", "goodbye")', path_to_publisher)
 
-##+ echo=FALSE, results="asis"
+##+ echo = FALSE, results = "asis"
 writeLines(c("```r", readLines(path_to_publisher), "```"))
 
 ## This file is at `path_to_publisher` (in R's temporary directory)
 ## and can be run with:
 system2(file.path(R.home(), "bin", "Rscript"), path_to_publisher,
-        wait=FALSE, stdout=FALSE, stderr=FALSE)
+        wait = FALSE, stdout = FALSE, stderr = FALSE)
 
 ## to start the publisher.
 
@@ -261,11 +263,11 @@ transform <- function(x) {
 }
 ##+ subscription
 res <- r$subscribe("mychannel",
-                   transform=transform,
-                   terminate=function(x) identical(x, "goodbye"),
-                   n=100)
+                   transform = transform,
+                   terminate = function(x) identical(x, "goodbye"),
+                   n = 100)
 
-##+ echo=FALSE, results="hide"
+##+ echo = FALSE, results = "hide"
 file.remove(path_to_publisher)
 
 ## The timestamps in the printed output show when the message was
@@ -283,10 +285,10 @@ unlist(res)
 
 ## First, a generator object that sets up a new list at `key` within
 ## the database `r`.
-rlist <- function(..., key="rlist", r=redux::hiredis()) {
+rlist <- function(..., key = "rlist", r = redux::hiredis()) {
   dat <- vapply(c(...), redux::object_to_string, character(1))
   r$RPUSH(key, dat)
-  ret <- list(r=r, key=key)
+  ret <- list(r = r, key = key)
   class(ret) <- "rlist"
   ret
 }
@@ -321,14 +323,6 @@ obj[[2]] == obj2[[2]]
 
 ## For a better version of this, see
 ## [storr](https://github.com/richfitz/storr) which does similar things to implement "[indexable serialisation](http://htmlpreview.github.io/?https://raw.githubusercontent.com/richfitz/storr/master/inst/doc/storr.html#lists-and-indexable-serialisation)"
-
-## What would be nice is a set of tools for working with any R/`Redis`
-## package that can convert R objects into `Redis` data structures so
-## that they can be accessed in pieces.  Of course, these objects
-## could be read/written by programs *other* than R if they also
-## support `Redis`.  We have made some approaches towards that with
-## the [docdbi](https://github.com/ropensci/docdbi) package, but this
-## is a work in progress.
 
 ## # Getting help
 

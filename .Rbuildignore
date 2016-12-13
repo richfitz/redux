@@ -14,3 +14,5 @@
 ^appveyor\.yml$
 ^windows$
 ^redux_.*\.tar\.gz$
+^vignettes/src$
+^\.lintr$
