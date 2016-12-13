@@ -23,6 +23,17 @@ test_that("BITCOUNT", {
   expect_equal(con$BITCOUNT(key, 1, 1), 6L)
 })
 
+test_that("BITFIELD", {
+  skip_if_cmd_unsupported("BITFIELD")
+  con <- hiredis()
+  key <- rand_str()
+  on.exit(con$DEL(key))
+
+  expect_equal(
+    con$BITFIELD(key, INCRBY = c("i5", "100", "1"), GET = c("u4", "0")),
+    list(1, 0))
+})
+
 test_that("BITCOUNT", {
   skip_if_cmd_unsupported("BITCOUNT")
   con <- hiredis()
