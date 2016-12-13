@@ -72,3 +72,17 @@ test_that("invalid argument types", {
   expect_error(con$SET("key", 1+3i),
                "Incompatible list element")
 })
+
+test_that("long integers", {
+  con <- hiredis()
+  key <- rand_str()
+  on.exit(con$DEL(key))
+
+  con$SET(key, "Hello")
+  expect_equal(con$PEXPIREAT(key, 1555555555005), 1)
+
+  t0 <- con$TTL(key)
+  t1 <- con$PTTL(key)
+  expect_equal(storage.mode(t0), "integer")
+  expect_equal(storage.mode(t1), "double")
+})
