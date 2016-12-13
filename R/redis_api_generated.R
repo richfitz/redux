@@ -1,4 +1,4 @@
-redis_cmds <- function(command) {
+redis_commands <- function(command) {
   list(
     APPEND = function(key, value) {
       assert_scalar2(key)

@@ -7,7 +7,7 @@ test_that("Redis commands", {
 })
 
 test_that("Filter", {
-  tmp <- redis_cmds(identity)
+  tmp <- redis_commands(identity)
   expect_lt(length(filter_redis_commands(tmp, "1.0.0")),
             length(tmp))
   expect_equal(length(filter_redis_commands(tmp, "0.9.9")), 0)
@@ -20,7 +20,7 @@ test_that("Filter", {
 })
 
 test_that("filter -- sanity checking", {
-  expect_error(filter_redis_commands(tmp, TRUE),
+  expect_error(filter_redis_commands(redis_commands(identity), TRUE),
                "No redis connection to get version from")
 })
 

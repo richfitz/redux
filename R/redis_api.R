@@ -35,7 +35,7 @@ R6_redis_api <- R6::R6Class(
       self$.pipeline <- hiredis_function("pipeline", x)
       self$.subscribe <- hiredis_function("subscribe", x)
       self$type <- function() attr(x, "type", exact = TRUE)
-      redis <- filter_redis_commands(redis_cmds(self$command),
+      redis <- filter_redis_commands(redis_commands(self$command),
                                      version, self$command)
       for (el in names(redis)) {
         self[[el]] <- redis[[el]]

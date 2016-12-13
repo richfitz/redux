@@ -11,7 +11,7 @@
 ##' redis$PING()
 redis <- local({
   self <- new.env(parent = emptyenv(), hash = TRUE)
-  redis <- redis_cmds(identity)
+  redis <- redis_commands(identity)
   for (el in names(redis)) {
     self[[el]] <- redis[[el]]
   }
