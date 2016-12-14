@@ -52,6 +52,10 @@ is_field <- function(name, args) {
 hiredis_cmd <- function(x, standalone = FALSE) {
   name <- x$name
   args <- as.data.frame(x$arguments)
+  if (name == "COMMAND GETKEYS") {
+    args <- data.frame(name = "cmd", variadic = TRUE,
+                       stringsAsFactors = FALSE)
+  }
 
   ## This is literally the variadic set
   if (any(args$variadic)) {
@@ -176,9 +180,13 @@ hiredis_cmd <- function(x, standalone = FALSE) {
                                 args$command_length[is_command] > 1L)
   }
 
-  args <- paste(c(dquote(strsplit(name, " ", name, fixed = TRUE)[[1]]), vars),
-                collapse = ", ")
-  run <- sprintf("command(list(%s))", args)
+  name_split <- dquote(strsplit(name, " ", fixed = TRUE)[[1]])
+  if (name == "COMMAND GETKEYS") {
+    args <- sprintf("c(list(%s), %s)", paste(name_split, collapse = ", "), vars)
+  } else {
+    args <- sprintf("list(%s)", paste(c(name_split, vars), collapse = ", "))
+  }
+  run <- sprintf("command(%s)", args)
 
   if (name %in% c("PSUBSCRIBE", "SUBSCRIBE")) {
     ## Don't allow use of PSUBSCRIBE/SUBSCRIBE as it will lock the

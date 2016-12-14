@@ -156,8 +156,8 @@ redis_commands <- function(command) {
     COMMAND_COUNT = function() {
       command(list("COMMAND", "COUNT"))
     },
-    COMMAND_GETKEYS = function() {
-      command(list("COMMAND", "GETKEYS"))
+    COMMAND_GETKEYS = function(cmd) {
+      command(c(list("COMMAND", "GETKEYS"), cmd))
     },
     COMMAND_INFO = function(command_name) {
       command(list("COMMAND", "INFO", command_name))

@@ -93,19 +93,18 @@ test_that("COMMAND COUNT", {
 })
 
 test_that("COMMAND GETKEYS", {
-  ## TODO: this is broken; we need a custom function body for this.
-  ##
-  ## A nice interface might look like:
-  ##
-  ##   con$COMMAND_GETKEYS(redis_cmds$MSET(letters[1:3], 1:3))
-  ##
-  ## but need to deal with empty command things:
-  ##
-  ##   con$COMMAND_GETKEYS(redis_cmds$SET("a", 1))
-  ##
-  ## this requires filtering out the NULL values from the list, which
-  ## requires calling out to the C code that I use, so there's a bit
-  ## of faff involved here, really.
+  skip_if_cmd_unsupported("COMMAND_GETKEYS")
+  con <- hiredis()
+
+  cmd <- redis_cmds$MSET(letters[1:3], 1:3)
+  expect_equal(con$COMMAND_GETKEYS(cmd), as.list(letters[1:3]))
+
+  cmd <- redis_cmds$EVAL("not consulted", 3, paste0("key", 1:3),
+                         paste0("arg", 1:4))
+  expect_equal(con$COMMAND_GETKEYS(cmd), as.list(paste0("key", 1:3)))
+
+  cmd <- redis_cmds$SORT("mylist", "ALPHA", STORE = "outlist")
+  expect_equal(con$COMMAND_GETKEYS(cmd), list("mylist", "outlist"))
 })
 
 test_that("COMMAND INFO", {
