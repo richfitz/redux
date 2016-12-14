@@ -65,14 +65,14 @@ hiredis_cmd <- function(x, standalone = FALSE) {
   is_multiple <- is_field("multiple", args)
 
   is_command <- is_field("command", args)
-  is_paired <- viapply(args$name, length) > 1L
+  is_grouped <- lengths(args$name) > 1L
 
   if (any(is_command)) {
-    j <- is_command & !(is_paired & is_multiple)
+    j <- is_command & !(is_grouped & is_multiple)
     args$name_orig <- args$name
     args$command_length <- viapply(args$name, length)
     args$name[j] <- args$command[j]
-    is_paired <- viapply(args$name, length) > 1L
+    is_grouped <- viapply(args$name, length) > 1L
   }
 
   if (any(args$variadic)) {
@@ -80,26 +80,26 @@ hiredis_cmd <- function(x, standalone = FALSE) {
   }
 
   ## need to be same length, share optional status.
-  if (any(is_paired)) {
-    if (sum(is_paired) > 1L) {
-      stop("multiple paired groups")
+  if (any(is_grouped)) {
+    if (sum(is_grouped) > 1L) {
+      stop("multiple grouped arguments")
     }
-    len <- length(args$name[[which(is_paired)]])
-    args1 <- args[!is_paired, , drop = FALSE]
+    len <- length(args$name[[which(is_grouped)]])
+    args1 <- args[!is_grouped, , drop = FALSE]
 
     ## Lots of assumptions here:
-    args2 <- args[rep(which(is_paired), len), ]
-    args2$name <- args$name[[which(is_paired)]]
-    args2$type <- args$type[[which(is_paired)]]
+    args2 <- args[rep(which(is_grouped), len), ]
+    args2$name <- args$name[[which(is_grouped)]]
+    args2$type <- args$type[[which(is_grouped)]]
 
     args3 <- rbind(args1, args2)
     ## Reorder:
     args3 <- args3[match(unlist(args$name), args3$name), ]
     rownames(args3) <- NULL
-    pair_from <- args$name[[which(is_paired)]][[1L]]
-    pair_to   <- args$name[[which(is_paired)]][-1L]
-    args3$paired <- ""
-    args3$paired[match(pair_to, args3$name)] <- pair_from
+    group_from <- args$name[[which(is_grouped)]][[1L]]
+    group_to   <- args$name[[which(is_grouped)]][-1L]
+    args3$grouped <- ""
+    args3$grouped[match(group_to, args3$name)] <- group_from
 
     args3$name <- unlist(args3$name)
 
@@ -141,7 +141,6 @@ hiredis_cmd <- function(x, standalone = FALSE) {
                         args$name[j], args$command_length[j])
   }
 
-
   if (any(args$variadic)) {
     j <- which(args$variadic)
     check[j] <- sprintf("assert_length2(%s, length(key))", args$name[j])
@@ -160,16 +159,16 @@ hiredis_cmd <- function(x, standalone = FALSE) {
   ## (no multiple enums, no multiple commands)
   check <- check[!is_multiple]
 
-  is_paired <- args$paired != ""
+  is_grouped <- args$grouped != ""
   ## Here we can't use c() to pull args together but have to
-  ## interleave for the paired ones.  This bit of hackery depends
+  ## interleave for the grouped ones.  This bit of hackery depends
   ## crucially on the single pair rule.
-  if (any(is_paired & is_multiple)) {
-    pair <- sprintf("%s <- cmd_interleave(%s, %s)",
-                    pair_from, pair_from, pair_to)
-    vars <- setdiff(args$name, pair_to)
+  if (any(is_grouped & is_multiple)) {
+    group <- sprintf("%s <- cmd_interleave(%s, %s)",
+                    group_from, group_from, paste(group_to, collapse = ", "))
+    vars <- setdiff(args$name, group_to)
   } else {
-    pair <- NULL
+    group <- NULL
     vars <- args$name
   }
 
@@ -191,16 +190,16 @@ hiredis_cmd <- function(x, standalone = FALSE) {
   if (name %in% c("PSUBSCRIBE", "SUBSCRIBE")) {
     ## Don't allow use of PSUBSCRIBE/SUBSCRIBE as it will lock the
     ## session and never do anything useful:
-    check <- pair <- NULL
+    check <- group <- NULL
     run <- sprintf(
       'stop("Do not use %s(); see subscribe() instead (lower-case)")', name)
   }
   if (name == "CLIENT REPLY") {
-    check <- pair <- NULL
+    check <- group <- NULL
     run <- 'stop("Do not use CLIENT_REPLY; not supported with this client")'
   }
 
-  fn_body <- paste(indent(c(check, pair, run)), collapse = "\n")
+  fn_body <- paste(indent(c(check, group, run)), collapse = "\n")
   fmt <- "%s = function(%s) {\n%s\n}"
   sprintf(fmt, x$name_r, r_fn_args, fn_body)
 }

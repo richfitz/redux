@@ -95,8 +95,12 @@ filter_redis_commands <- function(x, version, command = NULL) {
   x
 }
 
-cmd_interleave <- function(a, b) {
+cmd_interleave <- function(a, b, c = NULL) {
   assert_length2(b, length2(a))
+  arg3 <- !is.null(c)
+  if (arg3) {
+    assert_length2(c, length2(a))
+  }
   convert <- function(x) {
     if (is.logical(x)) {
       as.character(as.integer(x))
@@ -108,13 +112,18 @@ cmd_interleave <- function(a, b) {
       as.character(x)
     }
   }
-  join <- function(a, b) {
-    c(rbind(a, b))
+  join <- function(a, b, c = NULL) {
+    c(rbind(a, b, c))
   }
   a <- convert(a)
   b <- convert(b)
-  if (is.character(a) && is.character(b)) {
-    join(a, b)
+  if (arg3) {
+    c <- convert(c)
+  }
+  if (is.character(a) && is.character(b) && (!arg3 || is.character(c))) {
+    join(a, b, c)
+  } else if (arg3) {
+    join(as.list(a), as.list(b), as.list(c))
   } else {
     join(as.list(a), as.list(b))
   }

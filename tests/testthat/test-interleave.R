@@ -47,4 +47,13 @@ test_that("cmd_interleave", {
                "b must be length")
   expect_error(cmd_interleave(obj[[1]], runif(length(obj[[1]]))),
                "b must be length")
+
+  ## 3 arg:
+  expect_equal(cmd_interleave("a", "b", "c"), c("a", "b", "c"))
+  expect_equal(cmd_interleave("a", "b", NULL), c("a", "b"))
+  expect_equal(cmd_interleave(NULL, NULL, NULL), character(0))
+
+  expect_equal(cmd_interleave("a", 1, pi), c("a", 1, pi))
+  expect_equal(cmd_interleave("a", raw(4), pi),
+               list("a", raw(4), as.character(pi)))
 })

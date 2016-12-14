@@ -244,8 +244,7 @@ redis_commands <- function(command) {
     },
     GEOADD = function(key, longitude, latitude, member) {
       assert_scalar2(key)
-      longitude <- cmd_interleave(longitude, latitude)
-      longitude <- cmd_interleave(longitude, member)
+      longitude <- cmd_interleave(longitude, latitude, member)
       command(list("GEOADD", key, longitude))
     },
     GEOHASH = function(key, member) {
