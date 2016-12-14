@@ -6,6 +6,7 @@ addons:
   apt:
     packages:
       - libhiredis-dev
+      - redis-server
 
 services:
   - redis-server
