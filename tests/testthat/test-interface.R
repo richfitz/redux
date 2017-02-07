@@ -129,6 +129,7 @@ test_that("serialisation", {
 test_that("pipeline naming", {
   skip_if_no_redis()
   con <- hiredis()
+  redis <- redux::redis
 
   res <- con$pipeline(
     a = redis$SET("a", 1),

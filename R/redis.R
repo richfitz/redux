@@ -63,3 +63,7 @@ redis_subscribe <- function(ptr, channel, pattern, callback, envir) {
   .Call(Credux_redis_subscribe, ptr, channel, pattern, callback, envir)
   invisible()
 }
+
+drop_null <- function(x) {
+  x[!vapply(x, is.null, logical(1))]
+}

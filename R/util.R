@@ -14,10 +14,6 @@ Sys_getenv <- function(x, unset = NULL) {
   if (is.na(ret)) unset else ret
 }
 
-drop_null <- function(x) {
-  x[!vlapply(x, is.null)]
-}
-
 modify_list <- function(x, val, name = deparse(substitute(x))) {
   warn_unknown(name, val, names(x))
   modifyList(x, val)
