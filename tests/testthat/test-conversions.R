@@ -74,6 +74,7 @@ test_that("invalid argument types", {
 })
 
 test_that("long integers", {
+  skip_if_no_redis()
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))

@@ -59,6 +59,7 @@ test_that("CLIENT PAUSE", {
 })
 
 test_that("CLIENT REPLY", {
+  skip_if_cmd_unsupported("CLIENT_REPLY")
   con <- hiredis()
   expect_error(con$CLIENT_REPLY("SKIP"),
                "Do not use CLIENT_REPLY")
