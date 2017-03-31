@@ -36,7 +36,7 @@ test_that("SDIFF", {
   con$SADD(key2, "c")
   con$SADD(key2, "d")
   con$SADD(key2, "e")
-  expect_equal(con$SDIFF(c(key1, key2)), list("a", "b"))
+  expect_equal(sort(unlist(con$SDIFF(c(key1, key2)))), sort(c("a", "b")))
 })
 
 test_that("SDIFFSTORE", {
@@ -54,7 +54,7 @@ test_that("SDIFFSTORE", {
   con$SADD(key2, "d")
   con$SADD(key2, "e")
   expect_equal(con$SDIFFSTORE(key3, c(key1, key2)), 2)
-  expect_equal(con$SMEMBERS(key3), list("a", "b"))
+  expect_equal(sort(unlist(con$SMEMBERS(key3))), sort(c("a", "b")))
 })
 
 test_that("SINTER", {
