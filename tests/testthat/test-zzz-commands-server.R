@@ -79,6 +79,7 @@ test_that("COMMAND", {
   ## TODO: we could parse this to do better with determining how to
   ## structure nasry commands a bit better, perhaps.
   skip_if_cmd_unsupported("COMMAND")
+  skip_on_travis()
   con <- hiredis()
   dat <- con$COMMAND()
   expect_is(dat, "list")
@@ -89,6 +90,7 @@ test_that("COMMAND", {
 
 test_that("COMMAND COUNT", {
   skip_if_cmd_unsupported("COMMAND_COUNT")
+  skip_on_travis()
   con <- hiredis()
   expect_equal(con$COMMAND_COUNT(), length(con$COMMAND()))
 })
@@ -110,6 +112,7 @@ test_that("COMMAND GETKEYS", {
 
 test_that("COMMAND INFO", {
   skip_if_cmd_unsupported("COMMAND_INFO")
+  skip_on_travis()
   con <- hiredis()
   d <- con$COMMAND_INFO(c("get", "set", "eval"))
   dat <- con$COMMAND()
