@@ -8,32 +8,22 @@ time_checker <- function(timeout) {
 }
 
 start_publisher <- function(channel, dt = 0.02) {
+  skip_if_not_installed("processx")
   filename <- tempfile("redux_")
   writeLines(c(channel, dt), filename)
   log <- tempfile("redux_")
   Sys.setenv("R_TESTS" = "")
-  res <- system2("./pub_runif.R", filename, wait = FALSE, stderr = log)
+  px <- processx::process$new("./pub_runif.R", filename, stderr = log)
+
   t <- time_checker(1.0)
-  pid <- NULL
   while (!t()) {
     if (file.exists(log)) {
-      dat <- readLines(log, 1L)
-      if (length(dat) == 1L) {
-        pid <- dat
-        break
-      }
-      Sys.sleep(.05)
+      break
     }
+    Sys.sleep(.05)
   }
-  if (length(pid) != 1L || !pid_exists(pid)) {
+  if (!px$is_alive()) {
     stop("Didn't get publisher started")
   }
-  filename
-}
-
-## This does not work on windows.  It will be *much* better to use
-## Gabor's new processx thing I think.
-PSKILL_SUCCESS <- tools::pskill(Sys.getpid(), 0)
-pid_exists <- function(pid) {
-  tools::pskill(pid, 0) == PSKILL_SUCCESS
+  list(px = px, filename = filename)
 }

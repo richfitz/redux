@@ -8,8 +8,8 @@ context("subscription")
 test_that("low level", {
   skip_if_no_redis()
   ch <- "foo"
-  filename <- start_publisher(ch)
-  on.exit(file.remove(filename))
+  dat <- start_publisher(ch)
+  on.exit(file.remove(dat$filename))
 
   ## This is the sort of headache that the higher level interface is
   ## meant to remove:
@@ -43,8 +43,8 @@ test_that("low level", {
 test_that("higher level", {
   skip_if_no_redis()
   ch <- "foo"
-  filename <- start_publisher(ch)
-  on.exit(file.remove(filename))
+  dat <- start_publisher(ch)
+  on.exit(file.remove(dat$filename))
 
   transform <- function(x) {
     message(sprintf("[%s] %s: %s", Sys.time(), x$channel, x$value))
@@ -69,8 +69,8 @@ test_that("higher level", {
 test_that("higher level: collect n", {
   skip_if_no_redis()
   ch <- "foo"
-  filename <- start_publisher(ch)
-  on.exit(file.remove(filename))
+  dat <- start_publisher(ch)
+  on.exit(file.remove(dat$filename))
 
   con <- hiredis()
   vals <- con$subscribe(ch, collect = TRUE, n = 5)
@@ -85,7 +85,9 @@ test_that("higher level: collect n", {
 test_that("pattern", {
   skip_if_no_redis()
   ch <- c("foo1", "foo2")
-  filename <- vcapply(ch, start_publisher)
+
+  dat <- lapply(ch, start_publisher)
+  filename <- vcapply(dat, "[[", "filename")
   on.exit(file.remove(filename))
 
   con <- hiredis()
@@ -130,8 +132,8 @@ test_that("flood and recover", {
   }
 
   ch <- "foo"
-  filename <- start_publisher(ch)
-  on.exit(file.remove(filename))
+  dat <- start_publisher(ch)
+  on.exit(file.remove(dat$filename))
 
   col <- make_collector()
   fn <- make_callback(display, terminate, col$add, Inf)
@@ -162,8 +164,8 @@ test_that("flood and recover", {
 test_that("error cases", {
   skip_if_no_redis()
   ch <- "foo"
-  filename <- start_publisher(ch)
-  on.exit(file.remove(filename))
+  dat <- start_publisher(ch)
+  on.exit(file.remove(dat$filename))
 
   ## This is the sort of headache that the higher level interface is
   ## meant to remove:
