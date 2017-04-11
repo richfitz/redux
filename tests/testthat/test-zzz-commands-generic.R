@@ -63,21 +63,19 @@ test_that("EXPIREAT", {
 
 test_that("KEYS", {
   skip_if_cmd_unsupported("KEYS")
-  skip_if_not_isolated_redis()
+  skip_if_not_isolated_redis() # KEYS should not be used on production dbs
   con <- hiredis()
-  con$FLUSHDB()
-  on.exit(con$DEL(c("one", "two", "three", "four")))
-  con$MSET(c("one", "two", "three", "four"), 1:4)
+  keys <- c("one", "two", "three", "four")
+  on.exit(con$DEL(keys))
+  con$MSET(keys, 1:4)
 
-  tmp <- con$KEYS("*o*")
-  expect_equal(sort(vcapply(tmp, identity, USE.NAMES = FALSE)),
-               sort(c("one", "two", "four")))
+  run_keys <- function(pat) {
+    vcapply(con$KEYS(pat), identity, USE.NAMES = FALSE)
+  }
 
-  expect_equal(con$KEYS("t??"), list("two"))
-
-  tmp <- con$KEYS("*")
-  expect_equal(sort(vcapply(tmp, identity, USE.NAMES = FALSE)),
-               sort(c("one", "two", "three", "four")))
+  expect_true(all(c("one", "two", "four") %in% run_keys("*o*")))
+  expect_true("two" %in% run_keys("t??"))
+  expect_true(all(keys %in% run_keys("*")))
 })
 
 test_that("MOVE", {
@@ -158,16 +156,11 @@ test_that("PTTL", {
 
 test_that("RANDOMKEY", {
   skip_if_cmd_unsupported("RANDOMKEY")
-  skip_if_not_isolated_redis()
   con <- hiredis()
   key <- rand_str()
   on.exit(con$DEL(key))
-
-  con$FLUSHDB()
   con$SET(key, "hello")
-  expect_equal(con$RANDOMKEY(), key)
-  con$FLUSHDB()
-  expect_null(con$RANDOMKEY())
+  expect_is(con$RANDOMKEY(), "character")
 })
 
 test_that("RENAME", {
