@@ -3,10 +3,6 @@ context("commands - cluster")
 test_that("PSUBSCRIBE", {
   expect_error(redis_cmds$PSUBSCRIBE("pat*"),
                "Do not use PSUBSCRIBE")
-  skip_if_cmd_unsupported("PSUBSCRIBE")
-  con <- hiredis()
-  expect_error(con$PSUBSCRIBE("pat*"),
-               "Do not use PSUBSCRIBE")
 })
 
 test_that("PUBSUB", {
@@ -31,11 +27,6 @@ test_that("PUNSUBSCRIBE", {
 test_that("SUBSCRIBE", {
   expect_error(redis_cmds$SUBSCRIBE("channel"),
                "Do not use SUBSCRIBE")
-  skip_if_cmd_unsupported("SUBSCRIBE")
-  con <- hiredis()
-  expect_error(con$SUBSCRIBE("channel"),
-               "Do not use SUBSCRIBE")
-
 })
 
 test_that("UNSUBSCRIBE", {

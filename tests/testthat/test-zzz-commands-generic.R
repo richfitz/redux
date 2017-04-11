@@ -250,6 +250,12 @@ test_that("TYPE", {
 })
 
 test_that("UNLINK", {
+  key1 <- rand_str()
+  key2 <- rand_str()
+  key3 <- rand_str()
+  expect_equal(redis_cmds$UNLINK(c(key1, key2, key3)),
+               list("UNLINK", c(key1, key2, key3)))
+
   skip_if_cmd_unsupported("UNLINK")
   con <- hiredis()
   key1 <- rand_str()
@@ -260,6 +266,7 @@ test_that("UNLINK", {
   con$SET(key1, "Hello")
   con$SET(key2, "World")
   expect_equal(con$UNLINK(c(key1, key2, key3)), 2L)
+
 })
 
 test_that("WAIT", {

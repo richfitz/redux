@@ -1,23 +1,17 @@
 context("commands - connection")
 
 test_that("AUTH", {
-  skip_if_cmd_unsupported("AUTH")
-  con <- hiredis()
   pw <- rand_str()
-  expect_error(con$AUTH(pw), "no password")
+  expect_equal(redis_cmds$AUTH(pw), list("AUTH", pw))
 })
 
 test_that("ECHO", {
-  skip_if_cmd_unsupported("ECHO")
-  con <- hiredis()
-  expect_equal(con$ECHO("Hello World!"), "Hello World!")
+  str <- rand_str()
+  expect_equal(redis_cmds$ECHO(str), list("ECHO", str))
 })
 
 test_that("PING", {
-  skip_if_cmd_unsupported("PING")
-  con <- hiredis()
-  expect_equal(con$PING(), redis_status("PONG"))
-  ## TODO: recent versions allow an argument
+  expect_equal(redis_cmds$PING(), list("PING", NULL))
 })
 
 test_that("QUIT", {
