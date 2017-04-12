@@ -203,7 +203,14 @@ test_that("RESTORE", {
   expect_equal(con$LRANGE(key, 0, -1), list("1", "2", "3"))
 })
 
-test_that("TOUCH", {
+test_that("TOUCH:prep", {
+  key1 <- rand_str()
+  key2 <- rand_str()
+  expect_equal(redis_cmds$TOUCH(c(key1, key2)),
+               list("TOUCH", c(key1, key2)))
+})
+
+test_that("TOUCH:run", {
   skip_if_cmd_unsupported("TOUCH")
   con <- hiredis()
   key1 <- rand_str()
@@ -242,13 +249,15 @@ test_that("TYPE", {
   expect_equal(con$TYPE(key3), redis_status("set"))
 })
 
-test_that("UNLINK", {
+test_that("UNLINK:prep", {
   key1 <- rand_str()
   key2 <- rand_str()
   key3 <- rand_str()
   expect_equal(redis_cmds$UNLINK(c(key1, key2, key3)),
                list("UNLINK", c(key1, key2, key3)))
+})
 
+test_that("UNLINK:run", {
   skip_if_cmd_unsupported("UNLINK")
   con <- hiredis()
   key1 <- rand_str()

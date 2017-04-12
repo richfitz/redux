@@ -1,6 +1,16 @@
 context("commands - geo")
 
-test_that("GEOADD", {
+test_that("GEOADD:prep", {
+  key <- rand_str()
+  x <- c(13.361389, 15.087269)
+  y <- c(38.115556, 37.502669)
+  nms <- c("Palermo", "Catania")
+
+  expect_equal(redis_cmds$GEOADD(key, x, y, nms),
+               list("GEOADD", key, c(rbind(x, y, nms))))
+})
+
+test_that("GEOADD:run", {
   skip_if_cmd_unsupported("GEOADD")
   con <- hiredis()
   key <- rand_str()
@@ -16,7 +26,14 @@ test_that("GEOADD", {
   expect_equal(con$GEORADIUS(key, 15, 37, 200, "km"), as.list(nms))
 })
 
-test_that("GEOHASH", {
+test_that("GEOHASH:prep", {
+  key <- rand_str()
+  nms <- c("Palermo", "Catania")
+  list(redis_cmds$GEOHASH(key, nms),
+       list("GEOHASH", key, nms))
+})
+
+test_that("GEOHASH:run", {
   skip_if_cmd_unsupported("GEOHASH")
   con <- hiredis()
   key <- rand_str()
@@ -31,7 +48,14 @@ test_that("GEOHASH", {
                list("sqc8b49rny0", "sqdtr74hyu0"))
 })
 
-test_that("GEOPOS", {
+test_that("GEOPOS:prep", {
+  key <- rand_str()
+  nms <- c("Palermo", "Catania")
+  expect_equal(redis_cmds$GEOPOS(key, nms),
+               list("GEOPOS", key, nms))
+})
+
+test_that("GEOPOS:run", {
   skip_if_cmd_unsupported("GEOPOS")
   con <- hiredis()
   key <- rand_str()
@@ -45,7 +69,14 @@ test_that("GEOPOS", {
   con$GEOPOS(key, c(nms, "NonExisting"))
 })
 
-test_that("GEODIST", {
+test_that("GEODIST:prep", {
+  key <- rand_str()
+  nms <- c("Palermo", "Catania")
+  expect_equal(redis_cmds$GEODIST(key, nms[[1]], nms[[2]]),
+               list("GEODIST", key, nms[[1]], nms[[2]], NULL))
+})
+
+test_that("GEODIST:run", {
   skip_if_cmd_unsupported("GEODIST")
   con <- hiredis()
   key <- rand_str()
@@ -62,7 +93,15 @@ test_that("GEODIST", {
   expect_null(con$GEODIST(key, "foo", "bar"))
 })
 
-test_that("GEORADIUS", {
+test_that("GEORADIUS:prep", {
+  key <- rand_str()
+  expect_equal(
+    redis_cmds$GEORADIUS(key, 15, 37, 200, "km", withdist = "WITHDIST"),
+    list("GEORADIUS", key, 15, 37, 200, "km", NULL, "WITHDIST",
+         NULL, NULL, NULL, NULL, NULL))
+})
+
+test_that("GEORADIUS:run", {
   skip_if_cmd_unsupported("GEORADIUS")
   con <- hiredis()
   key <- rand_str()
@@ -94,7 +133,14 @@ test_that("GEORADIUS", {
   expect_equal(dat, cmp)
 })
 
-test_that("GEORADIUSBYMEMBER", {
+test_that("GEORADIUSBYMEMBER:run", {
+  key <- rand_str()
+  expect_equal(redis_cmds$GEORADIUSBYMEMBER(key, "Agrigento", 100, "km"),
+               c(list("GEORADIUSBYMEMBER", key, "Agrigento", 100, "km"),
+                 rep(list(NULL), 7)))
+})
+
+test_that("GEORADIUSBYMEMBER:run", {
   skip_if_cmd_unsupported("GEORADIUSBYMEMBER")
   con <- hiredis()
   key <- rand_str()

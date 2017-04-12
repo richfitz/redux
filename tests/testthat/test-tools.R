@@ -105,3 +105,14 @@ test_that("scripts", {
   res <- obj("set_and_incr", "foo", "10")
   expect_equal(res, "11")
 })
+
+test_that("parse_client_info", {
+  str <- 'id=3 addr=127.0.0.1:56110 fd=6 name= age=0 idle=0 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=32768 obl=0 oll=0 omem=0 events=r cmd=client\n'
+  dat <- parse_client_info(str)
+  expect_is(dat, "list")
+  expect_equal(length(dat), 1)
+  expect_is(dat[[1]], "character")
+  expect_equal(dat[[1]][["id"]], "3")
+
+  expect_equal(parse_client_info(""), list())
+})

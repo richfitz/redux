@@ -23,7 +23,18 @@ test_that("BITCOUNT", {
   expect_equal(con$BITCOUNT(key, 1, 1), 6L)
 })
 
-test_that("BITFIELD", {
+test_that("BITFIELD:prep", {
+  key <- rand_str()
+  ans <- redis_cmds$BITFIELD(key, INCRBY = c("i5", "100", "1"),
+                             GET = c("u4", "0"))
+  expect_equal(ans, list("BITFIELD", key,
+                         list("GET", c("u4", "0")),
+                         NULL,
+                         list("INCRBY", c("i5", "100", "1")),
+                         NULL))
+})
+
+test_that("BITFIELD:run", {
   skip_if_cmd_unsupported("BITFIELD")
   con <- hiredis()
   key <- rand_str()
@@ -33,6 +44,7 @@ test_that("BITFIELD", {
 
   expect_equal(ans, list(0, 1))
 })
+
 
 test_that("BITCOUNT", {
   skip_if_cmd_unsupported("BITCOUNT")

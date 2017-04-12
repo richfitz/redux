@@ -140,7 +140,13 @@ test_that("HSETNX", {
   expect_equal(con$HGET(key, "field1"), "Hello")
 })
 
-test_that("HSTRLEN", {
+test_that("HSTRLEN:prep", {
+  key <- rand_str()
+  expect_equal(redis_cmds$HSTRLEN(key, "f1"),
+               list("HSTRLEN", key, "f1"))
+})
+
+test_that("HSTRLEN:run", {
   skip_if_cmd_unsupported("HSTRLEN")
   con <- hiredis()
   key <- rand_str()
