@@ -2,6 +2,7 @@
 #include "conversions.h"
 
 static void redis_finalize(SEXP extPtr);
+char * string_duplicate(const char * x);
 
 // API functions first:
 SEXP redux_redis_connect(SEXP host, SEXP port) {
@@ -11,7 +12,9 @@ SEXP redux_redis_connect(SEXP host, SEXP port) {
     error("Creating context failed catastrophically [tcp]"); // # nocov
   }
   if (context->err != 0) {
-    error("Failed to create context: %s", context->errstr);
+    const char * errstr = string_duplicate(context->errstr);
+    redisFree(context);
+    error("Failed to create context: %s", errstr);
   }
   SEXP extPtr = PROTECT(R_MakeExternalPtr(context, host, R_NilValue));
   R_RegisterCFinalizer(extPtr, redis_finalize);
@@ -25,7 +28,9 @@ SEXP redux_redis_connect_unix(SEXP path) {
     error("Creating context failed catastrophically [unix]"); // # nocov
   }
   if (context->err != 0) {
-    error("Failed to create context: %s", context->errstr);
+    const char * errstr = string_duplicate(context->errstr);
+    redisFree(context);
+    error("Failed to create context: %s", errstr);
   }
   SEXP extPtr = PROTECT(R_MakeExternalPtr(context, path, R_NilValue));
   R_RegisterCFinalizer(extPtr, redis_finalize);
@@ -104,4 +109,11 @@ static void redis_finalize(SEXP extPtr) {
   if (context) {
     redisFree(context);
   }
+}
+
+char * string_duplicate(const char * x) {
+  const size_t n = strlen(x);
+  char * ret = (char*) R_alloc(n + 1, sizeof(char));
+  strcpy(ret, x);
+  return ret;
 }
