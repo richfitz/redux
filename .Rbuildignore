@@ -16,3 +16,4 @@
 ^redux_.*\.tar\.gz$
 ^vignettes/src$
 ^\.lintr$
+^\.valgrind_ignore$

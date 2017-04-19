@@ -9,6 +9,14 @@ compile_dll:
 test:
 	${RSCRIPT} -e 'library(methods); devtools::test()'
 
+test_leaks: .valgrind_ignore
+	R -d 'valgrind --leak-check=full --suppressions=.valgrind_ignore' -e 'devtools::test()'
+
+.valgrind_ignore:
+	R -d 'valgrind --leak-check=full --gen-suppressions=all --log-file=$@' -e 'library(testthat)'
+	sed -i .bak '/^=/ d' $@
+	rm -f $@.bak
+
 RcppR6:
 	${RSCRIPT} -e "library(methods); RcppR6::RcppR6()"
 
