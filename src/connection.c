@@ -47,7 +47,7 @@ SEXP redux_redis_command(SEXP extPtr, SEXP cmd) {
   const size_t argc = sexp_to_redis(cmd, &argv, &argvlen);
 
   redisReply *reply = redisCommandArgv(context, argc, argv, argvlen);
-  SEXP ret = PROTECT(redis_reply_to_sexp(reply, REPLY_ERROR_THROW));
+  SEXP ret = PROTECT(redis_reply_to_sexp(reply, true));
   freeReplyObject(reply);
   UNPROTECT(2);
   return ret;
@@ -78,7 +78,7 @@ SEXP redux_redis_pipeline(SEXP extPtr, SEXP list) {
   SEXP ret = PROTECT(allocVector(VECSXP, nc));
   for (size_t i = 0; i < nc; ++i) {
     redisGetReply(context, (void*)&reply);
-    SET_VECTOR_ELT(ret, i, redis_reply_to_sexp(reply, REPLY_ERROR_OK));
+    SET_VECTOR_ELT(ret, i, redis_reply_to_sexp(reply, false));
     freeReplyObject(reply);
   }
   UNPROTECT(2);

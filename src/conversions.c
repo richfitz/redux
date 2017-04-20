@@ -1,6 +1,6 @@
 #include "conversions.h"
 
-SEXP redis_reply_to_sexp(redisReply* reply, int error_action) {
+SEXP redis_reply_to_sexp(redisReply* reply, bool error_throw) {
   if (reply == NULL) {
     error("Failure communicating with the Redis server");
   }
@@ -16,9 +16,9 @@ SEXP redis_reply_to_sexp(redisReply* reply, int error_action) {
   case REDIS_REPLY_NIL:
     return R_NilValue;
   case REDIS_REPLY_ARRAY:
-    return array_to_sexp(reply, error_action);
+    return array_to_sexp(reply, error_throw);
   case REDIS_REPLY_ERROR:
-    return reply_error(reply, error_action);
+    return reply_error(reply, error_throw);
   default:
     // In theory we should do something based on error action here but
     // it's also not triggerable.
@@ -252,33 +252,35 @@ SEXP raw_string_to_sexp(const char* str, size_t len) {
   }
   return ret;
 }
+
 SEXP status_to_sexp(const char* str) {
   SEXP ret = PROTECT(mkString(str));
   setAttrib(ret, R_ClassSymbol, mkString("redis_status"));
   UNPROTECT(1);
   return ret;
 }
-SEXP array_to_sexp(redisReply* reply, int error_action) {
+
+SEXP array_to_sexp(redisReply* reply, bool error_throw) {
   SEXP ret = PROTECT(allocVector(VECSXP, reply->elements));
   size_t i;
   for (i = 0; i < reply->elements; ++i) {
     SET_VECTOR_ELT(ret, i,
-                   redis_reply_to_sexp(reply->element[i], error_action));
+                   redis_reply_to_sexp(reply->element[i], error_throw));
   }
   UNPROTECT(1);
   return ret;
 }
 
-SEXP reply_error(redisReply* reply, int error_action) {
+SEXP reply_error(redisReply* reply, bool error_throw) {
   SEXP ret = NULL;
-  if (error_action == REPLY_ERROR_THROW) {
+  if (error_throw) {
     char * msg = (char*) R_alloc(reply->len + 1, sizeof(const char));
     memcpy(msg, reply->str, reply->len);
     msg[reply->len] = '\0';
     freeReplyObject(reply);
     error(msg);
     return ret;
-  } else { // REPLY_ERROR_OK
+  } else { // pass error back as object
     SEXP ret = PROTECT(mkString(reply->str));
     setAttrib(ret, R_ClassSymbol, mkString("redis_error"));
     UNPROTECT(1);

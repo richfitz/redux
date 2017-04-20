@@ -39,7 +39,7 @@ void redux_redis_subscribe_loop(redisContext* context, int pattern,
   while (keep_going) {
     R_CheckUserInterrupt();
     redisGetReply(context, (void*)&reply);
-    SEXP x = PROTECT(redis_reply_to_sexp(reply, REPLY_ERROR_OK));
+    SEXP x = PROTECT(redis_reply_to_sexp(reply, false));
     setAttrib(x, R_NamesSymbol, nms);
     SETCADR(call, x);
     freeReplyObject(reply);
@@ -90,7 +90,7 @@ SEXP redux_redis_unsubscribe(SEXP extPtr, SEXP channel, SEXP pattern) {
     n_discarded++;
     redisGetReply(context, (void*)&reply);
   }
-  SEXP ret = PROTECT(redis_reply_to_sexp(reply, REPLY_ERROR_THROW));
+  SEXP ret = PROTECT(redis_reply_to_sexp(reply, true));
   freeReplyObject(reply);
   if (n_discarded > 0) {
     setAttrib(ret, mkString("n_discarded"), ScalarInteger(n_discarded));
