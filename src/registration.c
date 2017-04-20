@@ -27,7 +27,7 @@ void R_init_redux(DllInfo *info) {
 #endif
   R_registerRoutines(info, NULL, callMethods, NULL, NULL);
 #if defined(R_VERSION) && R_VERSION >= R_Version(3, 3, 0)
-  R_useDynamicSymbols(dll, FALSE);
-  R_forceSymbols(dll, TRUE);
+  R_useDynamicSymbols(info, FALSE);
+  R_forceSymbols(info, TRUE);
 #endif
 }
