@@ -14,7 +14,7 @@ test_leaks: .valgrind_ignore
 
 .valgrind_ignore:
 	R -d 'valgrind --leak-check=full --gen-suppressions=all --log-file=$@' -e 'library(testthat)'
-	sed -i .bak '/^=/ d' $@
+	sed -i.bak '/^=/ d' $@
 	rm -f $@.bak
 
 RcppR6:
