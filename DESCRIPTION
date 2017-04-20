@@ -23,6 +23,7 @@ Imports:
 Suggests:
     RcppRedis,
     knitr,
+    methods,
     processx,
     rmarkdown,
     testthat
