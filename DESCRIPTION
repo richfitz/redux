@@ -16,7 +16,7 @@ License: GPL-2
 LazyData: true
 URL: https://github.com/richfitz/redux
 BugReports: https://github.com/richfitz/redux/issues
-Requires:
+Depends:
     R (>= 3.2.0)
 Imports:
     R6
