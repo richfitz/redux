@@ -108,6 +108,7 @@ static void redis_finalize(SEXP extPtr) {
   redisContext *context = redis_get_context(extPtr, false);
   if (context) {
     redisFree(context);
+    R_ClearExternalPtr(extPtr);
   }
 }
 
