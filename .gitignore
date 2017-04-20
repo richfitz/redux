@@ -12,3 +12,4 @@ windows
 redux_*.tar.gz
 extra/redis-doc
 .valgrind_ignore
+src/redux.so.dSYM
