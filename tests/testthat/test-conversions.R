@@ -4,10 +4,10 @@ context("conversions")
 ## identify bugs and should act to stop them reappearing.
 test_that("difficult conversions", {
   redis_flatten_command <- function(list) {
-    .Call("redis_flatten_command", list, PACKAGE = "redux")
+    .Call(Credis_flatten_command, list, PACKAGE = "redux")
   }
   redis_check_command <- function(list) {
-    .Call("redis_check_command", list, PACKAGE = "redux")
+    .Call(Credis_check_command, list, PACKAGE = "redux")
   }
 
   ## Was throwing an error because of the 0L in there.
