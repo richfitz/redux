@@ -2,6 +2,7 @@
 #include "conversions.h"
 #include "subscribe.h"
 #include <R_ext/Rdynload.h>
+#include <Rversion.h>
 
 static const R_CallMethodDef callMethods[] = {
   {"Credux_redis_connect",       (DL_FUNC) &redux_redis_connect,        2},
@@ -25,4 +26,8 @@ void R_init_redux(DllInfo *info) {
   WSAStartup(MAKEWORD(2, 2), &wsaData);
 #endif
   R_registerRoutines(info, NULL, callMethods, NULL, NULL);
+#if defined(R_VERSION) && R_VERSION >= R_Version(3, 3, 0)
+  R_useDynamicSymbols(dll, FALSE);
+  R_forceSymbols(dll, TRUE);
+#endif
 }
