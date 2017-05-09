@@ -58,15 +58,17 @@ See the package vignette for more information (`vignette("redux")`) or https://r
 ## Installation
 
 ```r
-devtools::install_github("richfitz/redux")
+remotes::install_github("richfitz/redux", upgrade = FALSE)
 ```
 
 ## See also
 
+There is considerable prior work in this space:
+
 * [`rredis`](https://cran.r-project.org/package=rredis), the original R Redis client
-* [`RcppRedis`](https://github.com/eddelbuettel/rcppredis), Dirk Eddelbuettel's R Redis client, which greatly influenced the design decisions here
-* [`hiredis-rb`](https://github.com/redis/hiredis-rb), the _Ruby_ Redis client that influenced the subscribe and pipeline support here.
-* [`rrlite`](https://github.com/ropensci/rrlite), an almost identical interface to [`rlite`](https://github.com/seppo0010/rlite), a serverless-zero configuration database with an identical interface to Redis.
+* [`RcppRedis`](https://cran.r-project.org/package=RcppRedis), Dirk Eddelbuettel's R Redis client, which greatly influenced the design decisions here
+* [`hiredis-rb`](https://github.com/redis/hiredis-rb), the _Ruby_ Redis client that inspired the subscribe and pipeline support here.
+* [`rrlite`](https://github.com/ropensci/rrlite), an almost identical interface to [`rlite`](https://github.com/seppo0010/rlite), a serverless-zero configuration database with an identical interface to Redis
 
 ## License
 
