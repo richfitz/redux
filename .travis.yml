@@ -6,7 +6,6 @@ env: _R_CHECK_FORCE_SUGGESTS_=FALSE
 matrix:
   include:
     - os: linux
-      dist: trusty
       env: R_CODECOV=true
     - os: osx
       osx_image: xcode8.3

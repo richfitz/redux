@@ -1,6 +1,6 @@
 #include <R.h>
 #include <Rinternals.h>
-#include <hiredis/hiredis.h>
+#include <hiredis.h>
 #include <stdbool.h>
 
 SEXP redux_redis_connect(SEXP host, SEXP port);
