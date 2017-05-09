@@ -6,8 +6,6 @@
 context("subscription")
 
 test_that("low level", {
-  skip_on_appveyor()
-  skip_if_no_redis()
   ch <- "foo"
   dat <- start_publisher(ch)
   on.exit(file.remove(dat$filename))
@@ -42,8 +40,6 @@ test_that("low level", {
 })
 
 test_that("higher level", {
-  skip_on_appveyor()
-  skip_if_no_redis()
   ch <- "foo"
   dat <- start_publisher(ch)
   on.exit(file.remove(dat$filename))
@@ -69,8 +65,6 @@ test_that("higher level", {
 })
 
 test_that("higher level: collect n", {
-  skip_on_appveyor()
-  skip_if_no_redis()
   ch <- "foo"
   dat <- start_publisher(ch)
   on.exit(file.remove(dat$filename))
@@ -86,8 +80,6 @@ test_that("higher level: collect n", {
 })
 
 test_that("pattern", {
-  skip_on_appveyor()
-  skip_if_no_redis()
   ch <- c("foo1", "foo2")
 
   dat <- lapply(ch, start_publisher)
@@ -122,8 +114,6 @@ test_that("pattern", {
 ## the UNSUBSCRIBE is handled in an on.exit call, and because that
 ## leaves the n_discarded attribute non-fetchable.
 test_that("flood and recover", {
-  skip_on_appveyor()
-  skip_if_no_redis()
   terminate <- function(x) {
     if (as.numeric(x$value) > 0.8) {
       Sys.sleep(.5)
@@ -167,8 +157,6 @@ test_that("flood and recover", {
 })
 
 test_that("error cases", {
-  skip_on_appveyor()
-  skip_if_no_redis()
   ch <- "foo"
   dat <- start_publisher(ch)
   on.exit(file.remove(dat$filename))

@@ -8,12 +8,19 @@ time_checker <- function(timeout) {
 }
 
 start_publisher <- function(channel, dt = 0.02) {
-  skip_if_not_installed("processx")
+  testthat::skip_on_appveyor()
+  testthat::skip_on_cran()
+  testthat::skip_if_not_installed("sys")
+  skip_if_no_redis()
+
   filename <- tempfile("redux_")
   writeLines(c(channel, dt), filename)
   log <- tempfile("redux_")
   Sys.setenv("R_TESTS" = "")
-  px <- processx::process$new("./pub_runif.R", filename, stderr = log)
+
+  Rscript <- file.path(R.home(), "Rscript")
+  pid <- sys::exec_background(Rscript, c("./pub_runif.R", filename),
+                              std_out = log, std_err = log)
 
   t <- time_checker(1.0)
   while (!t()) {
@@ -22,8 +29,8 @@ start_publisher <- function(channel, dt = 0.02) {
     }
     Sys.sleep(.05)
   }
-  if (!px$is_alive()) {
+  if (!is.na(sys::exec_status(pid, FALSE))) {
     stop("Didn't get publisher started")
   }
-  list(px = px, filename = filename)
+  list(pid = pid, filename = filename, log = log)
 }

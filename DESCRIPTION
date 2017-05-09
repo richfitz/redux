@@ -24,9 +24,8 @@ Suggests:
     RcppRedis,
     knitr,
     methods,
-    processx,
     rmarkdown,
+    sys,
     testthat
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
-Remotes: r-pkgs/processx
