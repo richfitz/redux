@@ -47,3 +47,20 @@ rand_str <- function(len = 8, prefix = "") {
 vcapply <- function(X, FUN, ...) {
   vapply(X, FUN, character(1), ...)
 }
+
+sys_setenv <- function(...) {
+  vars <- names(list(...))
+  prev <- vapply(vars, Sys.getenv, "", NA_character_)
+  Sys.setenv(...)
+  prev
+}
+
+sys_resetenv <- function(old) {
+  i <- is.na(old)
+  if (any(i)) {
+    Sys.unsetenv(names(old)[i])
+  }
+  if (any(!i)) {
+    do.call("Sys.setenv", as.list(old[!i]))
+  }
+}

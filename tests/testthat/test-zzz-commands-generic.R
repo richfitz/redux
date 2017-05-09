@@ -282,7 +282,7 @@ test_that("WAIT", {
 
 test_that("MIGRATE", {
   ip <- "192.168.1.34"
-  port <- 6379
+  port <- 8765
   db <- 0
   timeout <- 5000
   keys <- letters

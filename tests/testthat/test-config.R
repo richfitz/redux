@@ -29,7 +29,7 @@ test_that("url parse", {
 
 test_that("defaults", {
   ## Defaults, same as redis-rb, seem pretty reasonable to me:
-  obj <- redis_config()
+  obj <- redis_config(url = "redis://127.0.0.1:6379")
   expect_equal(obj$host, "127.0.0.1")
   expect_equal(obj$port, 6379L)
   expect_null(obj$db)
@@ -82,8 +82,8 @@ test_that("NULL options do not override", {
 })
 
 test_that("url environment variable", {
-  Sys.setenv(REDIS_URL = "redis://:secr3t@foo.com:999/2")
-  on.exit(Sys.unsetenv("REDIS_URL"))
+  oo <- sys_setenv(REDIS_URL = "redis://:secr3t@foo.com:999/2")
+  on.exit(sys_resetenv(oo))
   obj <- redis_config()
   expect_equal(obj$host,     "foo.com")
   expect_equal(obj$port,     999L)
@@ -92,32 +92,32 @@ test_that("url environment variable", {
 })
 
 test_that("host environment variable", {
-  Sys.setenv(REDIS_HOST = "myhost")
-  on.exit(Sys.unsetenv("REDIS_HOST"))
+  oo <- sys_setenv(REDIS_HOST = "myhost")
+  on.exit(sys_resetenv(oo))
   obj <- redis_config()
   expect_equal(obj$host, "myhost")
-  expect_equal(obj$port, 6379L)
+  expect_is(obj$port, "integer")
 
   obj <- redis_config(host = "other")
   expect_equal(obj$host, "other")
 
   ## How does this interact with URL?  Looks like URL currently replaces host.
-  Sys.setenv(REDIS_URL = "redis://:secr3t@foo.com:999/2")
-  on.exit(Sys.unsetenv("REDIS_URL"), add = TRUE)
+  oo2 <- sys_setenv(REDIS_URL = "redis://:secr3t@foo.com:999/2")
+  on.exit(sys_resetenv(oo2), add = TRUE)
   obj <- redis_config()
   expect_equal(obj$host, "foo.com")
 })
 
 test_that("port environment variable", {
-  Sys.setenv(REDIS_PORT = "9999")
-  on.exit(Sys.unsetenv("REDIS_PORT"))
+  oo <- sys_setenv(REDIS_PORT = "9999")
+  on.exit(sys_resetenv(oo))
   obj <- redis_config()
   expect_equal(obj$host, "127.0.0.1")
   expect_equal(obj$port, 9999L)
 
   ## How does this interact with URL?  Looks like URL currently replaces port.
-  Sys.setenv(REDIS_URL = "redis://:secr3t@foo.com:999/2")
-  on.exit(Sys.unsetenv("REDIS_URL"), add = TRUE)
+  oo2 <- sys_setenv(REDIS_URL = "redis://:secr3t@foo.com:999/2")
+  on.exit(sys_resetenv(oo2), add = TRUE)
   obj <- redis_config()
   expect_equal(obj$host, "foo.com")
   expect_equal(obj$port, 999L)

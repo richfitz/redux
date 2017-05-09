@@ -2,7 +2,7 @@ context("hiredis")
 
 test_that("connection", {
   skip_if_no_redis()
-  ptr <- redis_connect_tcp("127.0.0.1", 6379L)
+  ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
   ## Dangerous raw pointer:
   expect_is(ptr, "externalptr")
   ## Check for no crash:
@@ -12,7 +12,7 @@ test_that("connection", {
 
 test_that("simple commands", {
   skip_if_no_redis()
-  ptr <- redis_connect_tcp("127.0.0.1", 6379L)
+  ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
 
   ans <- redis_command(ptr, list("PING"))
   expect_is(ans, "redis_status")
@@ -40,7 +40,7 @@ test_that("simple commands", {
 
 test_that("commands with arguments", {
   skip_if_no_redis()
-  ptr <- redis_connect_tcp("127.0.0.1", 6379L)
+  ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
 
   expect_equal(redis_command(ptr, list("SET", "foo", "1")),
                redis_status("OK"))
@@ -52,7 +52,7 @@ test_that("commands with arguments", {
 
 test_that("commands with NULL arguments", {
   skip_if_no_redis()
-  ptr <- redis_connect_tcp("127.0.0.1", 6379L)
+  ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
 
   expect_equal(redis_command(ptr, list("SET", "foo", "1", NULL)),
                redis_status("OK"))
@@ -64,14 +64,14 @@ test_that("commands with NULL arguments", {
 
 test_that("missing values are NULL", {
   skip_if_no_redis()
-  ptr <- redis_connect_tcp("127.0.0.1", 6379L)
+  ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
   key <- rand_str(prefix = "redux_")
   expect_null(redis_command(ptr, list("GET", key)))
 })
 
 test_that("Errors are converted", {
   skip_if_no_redis()
-  ptr <- redis_connect_tcp("127.0.0.1", 6379L)
+  ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
   key <- rand_str(prefix = "redux_")
   on.exit(redis_command(ptr, c("DEL", key)))
   ## Conversion to integer:
@@ -88,7 +88,7 @@ test_that("Errors are converted", {
 ## balanced approach is easiest.
 test_that("Pipelining", {
   skip_if_no_redis()
-  ptr <- redis_connect_tcp("127.0.0.1", 6379L)
+  ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
   key <- rand_str(prefix = "redux_")
   cmd <- list(list("SET", key, "1"), list("GET", key))
   on.exit(redis_command(ptr, c("DEL", key)))
@@ -111,7 +111,7 @@ test_that("Pipelining", {
 ## Storing binary data:
 test_that("Binary data", {
   skip_if_no_redis()
-  ptr <- redis_connect_tcp("127.0.0.1", 6379L)
+  ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
   data <- serialize(1:5, NULL)
   key <- rand_str(prefix = "redux_")
   expect_equal(redis_command(ptr, list("SET", key, data)),
@@ -132,7 +132,7 @@ test_that("Binary data", {
 
 test_that("Lists of binary data", {
   skip_if_no_redis()
-  ptr <- redis_connect_tcp("127.0.0.1", 6379L)
+  ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
   data <- serialize(1:5, NULL)
   key1 <- rand_str(prefix = "redux_")
   key2 <- rand_str(prefix = "redux_")
@@ -158,7 +158,7 @@ test_that("pointer commands are safe", {
                "Expected an external pointer")
   expect_error(redis_command(list(), "PING"),
                "Expected an external pointer")
-  ptr <- redis_connect_tcp("127.0.0.1", 6379L)
+  ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
   expect_error(redis_command(list(ptr), "PING"),
                "Expected an external pointer")
 

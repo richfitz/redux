@@ -16,8 +16,9 @@ test_that("socket connection", {
     ## This does leave a redis server running on a socket!
     skip("Didn't start socket server")
   }
+  config <- redis_config()
   ptr_sock <- redis_connect_unix(socket)
-  ptr_tcp  <- redis_connect_tcp("127.0.0.1", 6379L)
+  ptr_tcp  <- redis_connect_tcp(config$host, config$port)
   cmp <- redis_status("PONG")
   expect_equal(redis_command(ptr_sock, list("PING")), cmp)
   expect_equal(redis_command(ptr_tcp,  list("PING")), cmp)
