@@ -10,7 +10,7 @@
 
 <meta name="author" content="Rich FitzJohn" />
 
-<meta name="date" content="2016-12-13" />
+<meta name="date" content="2017-05-09" />
 
 <title>Using Redis with redux</title>
 
@@ -72,11 +72,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">Using Redis with redux</h1>
 <h4 class="author"><em>Rich FitzJohn</em></h4>
-<h4 class="date"><em>2016-12-13</em></h4>
+<h4 class="date"><em>2017-05-09</em></h4>
 </div>
 
 
-<p><code>redux</code> provides a full interface to the Redis API; it provides a hiredis driver wrapped in R and uses this to expose all 188 Redis commands as a set of user-friendly R functions that do basic error checking.</p>
+<p><code>redux</code> provides a full interface to the Redis API; it provides a hiredis driver wrapped in R and uses this to expose all 199 Redis commands as a set of user-friendly R functions that do basic error checking.</p>
 <p>It is possible to build user-friendly applications on top of this, for example <a href="https://github.com/richfitz/storr"><code>storr</code></a> which provides a content-addressable object store, and <a href="https://github.com/traitecoevo/rrqueue"><code>rrqueue</code></a> / <a href="https://github.com/richfitz/rrq"><code>rrq</code></a> which implement a scalable queuing system.</p>
 <p>The main entry point for creating a <code>redis_api</code> object is the <code>hiredis</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span>redux::<span class="kw">hiredis</span>()</code></pre></div>
@@ -111,9 +111,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The value for most arguments must be a string or will be coerced into one; clearly this is not going to be suitable for most R objects. The solution is to <em>serialise</em> the R object. <code>redux</code> can accept objects serialised to strings or to byte streams, and the functions the <code>object_to_bin</code> and <code>object_to_string</code> functions can help here, serialising the objects to binary and string represenations. (Alternatively you can do this yourself using <code>serialize</code>.)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">obj &lt;-<span class="st"> </span>redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>)
 obj</code></pre></div>
-<pre><code>##  [1] 58 0a 00 00 00 02 00 03 02 03 00 02 03 00 00 00 00 0d 00 00 00 0a 00
-## [24] 00 00 01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06
-## [47] 00 00 00 07 00 00 00 08 00 00 00 09 00 00 00 0a</code></pre>
+<pre><code>##  [1] 42 0a 02 00 00 00 03 02 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
+## [24] 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06 00 00 00
+## [47] 07 00 00 00 08 00 00 00 09 00 00 00 0a 00 00 00</code></pre>
 <p>or</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">str &lt;-<span class="st"> </span>redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>)
 str</code></pre></div>
@@ -128,9 +128,9 @@ str</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>)</code></pre></div>
-<pre><code>##  [1] 58 0a 00 00 00 02 00 03 02 03 00 02 03 00 00 00 00 0d 00 00 00 0a 00
-## [24] 00 00 01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06
-## [47] 00 00 00 07 00 00 00 08 00 00 00 09 00 00 00 0a</code></pre>
+<pre><code>##  [1] 42 0a 02 00 00 00 03 02 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
+## [24] 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06 00 00 00
+## [47] 07 00 00 00 08 00 00 00 09 00 00 00 0a 00 00 00</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">bin_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>Or:</p>
@@ -329,27 +329,27 @@ r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>,
                    <span class="dt">transform =</span> transform,
                    <span class="dt">terminate =</span> function(x) <span class="kw">identical</span>(x, <span class="st">&quot;goodbye&quot;</span>),
                    <span class="dt">n =</span> <span class="dv">100</span>)</code></pre></div>
-<pre><code>## 2016-12-13 08:40:53.240: got message: 1120</code></pre>
-<pre><code>## 2016-12-13 08:40:53.293: got message: 1160</code></pre>
-<pre><code>## 2016-12-13 08:40:53.348: got message: 963</code></pre>
-<pre><code>## 2016-12-13 08:40:53.404: got message: 1210</code></pre>
-<pre><code>## 2016-12-13 08:40:53.454: got message: 1160</code></pre>
-<pre><code>## 2016-12-13 08:40:53.510: got message: 1160</code></pre>
-<pre><code>## 2016-12-13 08:40:53.566: got message: 813</code></pre>
-<pre><code>## 2016-12-13 08:40:53.618: got message: 1230</code></pre>
-<pre><code>## 2016-12-13 08:40:53.673: got message: 1370</code></pre>
-<pre><code>## 2016-12-13 08:40:53.729: got message: 1140</code></pre>
-<pre><code>## 2016-12-13 08:40:53.780: got message: 995</code></pre>
-<pre><code>## 2016-12-13 08:40:53.836: got message: 935</code></pre>
-<pre><code>## 2016-12-13 08:40:53.891: got message: 1110</code></pre>
-<pre><code>## 2016-12-13 08:40:53.943: got message: 994</code></pre>
-<pre><code>## 2016-12-13 08:40:53.998: got message: 1020</code></pre>
-<pre><code>## 2016-12-13 08:40:54.054: got message: 960</code></pre>
-<pre><code>## 2016-12-13 08:40:54.105: got message: 1180</code></pre>
-<pre><code>## 2016-12-13 08:40:54.161: got message: 799</code></pre>
-<pre><code>## 2016-12-13 08:40:54.214: got message: 958</code></pre>
-<pre><code>## 2016-12-13 08:40:54.268: got message: 1140</code></pre>
-<pre><code>## 2016-12-13 08:40:54.269: got message: goodbye</code></pre>
+<pre><code>## 2017-05-09 07:13:57.049: got message: 1120</code></pre>
+<pre><code>## 2017-05-09 07:13:57.104: got message: 1160</code></pre>
+<pre><code>## 2017-05-09 07:13:57.160: got message: 963</code></pre>
+<pre><code>## 2017-05-09 07:13:57.211: got message: 1210</code></pre>
+<pre><code>## 2017-05-09 07:13:57.267: got message: 1160</code></pre>
+<pre><code>## 2017-05-09 07:13:57.323: got message: 1160</code></pre>
+<pre><code>## 2017-05-09 07:13:57.374: got message: 813</code></pre>
+<pre><code>## 2017-05-09 07:13:57.430: got message: 1230</code></pre>
+<pre><code>## 2017-05-09 07:13:57.485: got message: 1370</code></pre>
+<pre><code>## 2017-05-09 07:13:57.537: got message: 1140</code></pre>
+<pre><code>## 2017-05-09 07:13:57.592: got message: 995</code></pre>
+<pre><code>## 2017-05-09 07:13:57.648: got message: 935</code></pre>
+<pre><code>## 2017-05-09 07:13:57.699: got message: 1110</code></pre>
+<pre><code>## 2017-05-09 07:13:57.755: got message: 994</code></pre>
+<pre><code>## 2017-05-09 07:13:57.805: got message: 1020</code></pre>
+<pre><code>## 2017-05-09 07:13:57.861: got message: 960</code></pre>
+<pre><code>## 2017-05-09 07:13:57.916: got message: 1180</code></pre>
+<pre><code>## 2017-05-09 07:13:57.968: got message: 799</code></pre>
+<pre><code>## 2017-05-09 07:13:58.024: got message: 958</code></pre>
+<pre><code>## 2017-05-09 07:13:58.079: got message: 1140</code></pre>
+<pre><code>## 2017-05-09 07:13:58.080: got message: goodbye</code></pre>
 <p>The timestamps in the printed output show when the message was recieved (with fractional seconds so that this is more obvious since this only takes ~1s to complete).</p>
 <p>The <code>res</code> object contains all the values, including the “goodbye” that was our end-of-stream message:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlist</span>(res)</code></pre></div>

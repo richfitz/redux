@@ -83,7 +83,7 @@ r$SET("mylist", redux::object_to_bin(1:10))
 r$GET("mylist")
 redux::bin_to_object(r$GET("mylist"))
 
-## Or:
+## Using string serialisation is similar:
 r$SET("mylist", redux::object_to_string(1:10))
 r$GET("mylist")
 redux::string_to_object(r$GET("mylist"))
@@ -101,9 +101,9 @@ r$GET(redux::object_to_bin(1:10))
 ##+ echo = FALSE, results = "hide"
 r$DEL(redux::object_to_bin(1:10))
 
-## However, depending on what you want to achieve, Redis offers
-## potentially better ways of holding lists using its native data
-## types.  For example;
+## Beyond `GET` / `SET` / `DEL`, Redis offers potentially better ways
+## of holding things like lists using its native data types.  For
+## example;
 
 r$RPUSH("mylist2", 1:10)
 
@@ -141,6 +141,9 @@ dat <- r$LRANGE("mylist2", 0, 2)
 dat
 dat[[1]] <- redux::string_to_object(dat[[1]])
 dat
+
+## As with all functions in the `redis_api` object, all functions and
+## their arguments are described in the Redis documentation.
 
 ## # Pipelining
 
@@ -230,6 +233,10 @@ res <- r$subscribe("mychannel",
                    transform = function(x) x$value,
                    terminate = function(x) identical(x, "goodbye"),
                    n = 100)
+
+## *NOTE*: you need to be careful here - `hiredis` internally uses a
+## blocking read which cannot be interrupted with Ctrl-C once started
+## unless a message is recieved on the channels being listened to!
 
 ## To test this out, we need a second process that will publish to the
 ## channel (or we'll wait forever).  This function will publish the

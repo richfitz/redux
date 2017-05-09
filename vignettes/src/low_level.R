@@ -138,7 +138,7 @@ callback <- local({
 
 ## ```r
 ## con$subscribe("foo", FALSE, callback)
-##
+## ```
 
 ## This will sit there forever unless something publishes on channel
 ## `foo`.  In a second instance you can run:
