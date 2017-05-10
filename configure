@@ -1,21 +1,18 @@
 #!/bin/bash
-# Anticonf (tm) script by Jeroen Ooms (2016)
+# Anticonf (tm) script by Jeroen Ooms (2017)
 # This script will query 'pkg-config' for the required cflags and ldflags.
 # If pkg-config is unavailable or does not find the library, try setting
 # INCLUDE_DIR and LIB_DIR manually via e.g:
 # R CMD INSTALL --configure-vars='INCLUDE_DIR=/.../include LIB_DIR=/.../lib'
 
-# Modified by RGF to also try PREFIX=/usr/local because that's where
-# hiredis installs on a Mac.
-
 # Library settings
-PKG_CONFIG_NAME="libhiredis"
+PKG_CONFIG_NAME="hiredis"
 PKG_DEB_NAME="libhiredis-dev"
 PKG_RPM_NAME="hiredis-devel"
 PKG_BREW_NAME="hiredis"
-PKG_TEST_HEADER="<hiredis/hiredis.h>"
+PKG_TEST_HEADER="<hiredis.h>"
+PKG_CFLAGS="-I/usr/include/hiredis"
 PKG_LIBS="-lhiredis"
-PKG_CFLAGS=""
 
 # Use pkg-config if available
 if [ $(command -v pkg-config) ]; then
@@ -33,32 +30,14 @@ elif [ "$PKGCONFIG_CFLAGS" ] || [ "$PKGCONFIG_LIBS" ]; then
   PKG_CFLAGS=${PKGCONFIG_CFLAGS}
   PKG_LIBS=${PKGCONFIG_LIBS}
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-  if [ -f /usr/local/include/hiredis/hiredis.h ]; then
-    PKG_CFLAGS=-I/usr/local/include
-    PKG_LIBS="-L/usr/local/lib $PKG_LIBS"
-    if [ ! $(echo "$DYLD_LIBRARY_PATH" | grep "/usr/local/lib") ]; then
-      echo "------------------------- ANTICONF WARNING -------------------------"
-      echo "DYLD_LIBRARY_PATH does include /usr/local/lib but hiredis found there"
-      echo "The package load will fail."
-      echo "You need to set DYLD_LIBRARY_PATH=/usr/local/lib (not set by default on Mac)"
-      echo "--------------------------------------------------------------------"
-    fi
+  if [ $(command -v brew) ]; then
+    BREWDIR=$(brew --prefix)
   else
-    if [ $(command -v brew) ]; then
-      BREWDIR=$(brew --prefix)
-    else
-      echo "Auto-brewing $PKG_BREW_NAME..."
-      BREWDIR="/tmp/homebrew"
-      rm -Rf $BREWDIR
-      mkdir -p $BREWDIR
-      curl -fsSL https://github.com/Homebrew/homebrew/tarball/master | tar xz --strip 1 -C $BREWDIR
-      HOMEBREW_CACHE="/tmp" $BREWDIR/bin/brew install $PKG_BREW_NAME 2>&1 | sed 's/Warning/Note/g'
-      rm -f $BREWDIR/Cellar/$PKG_BREW_NAME/*/lib/*.dylib
-      rm -f $BREWDIR/opt/$PKG_BREW_NAME/lib/*.dylib
-    fi
-    PKG_CFLAGS="-I$BREWDIR/opt/$PKG_BREW_NAME/include"
-    PKG_LIBS="-L$BREWDIR/opt/$PKG_BREW_NAME/lib $PKG_LIBS"
+    curl -sfL "https://jeroen.github.io/autobrew/$PKG_BREW_NAME" > autobrew
+    source autobrew
   fi
+  PKG_CFLAGS="-I$BREWDIR/opt/$PKG_BREW_NAME/include/hiredis -D_FILE_OFFSET_BITS=64"
+  PKG_LIBS="-L$BREWDIR/opt/$PKG_BREW_NAME/lib $PKG_LIBS"
 fi
 
 # For debugging
