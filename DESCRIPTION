@@ -21,9 +21,7 @@ Depends:
 Imports:
     R6
 Suggests:
-    RcppRedis,
     knitr,
-    methods,
     rmarkdown,
     sys,
     testthat

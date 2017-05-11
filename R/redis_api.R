@@ -161,7 +161,7 @@ print_methods <- function(x, pattern) {
              collapse = ""))
 }
 
-## NOTE: Used by rcppredis_connection, redis_connection, rlite_connection
+## NOTE: Used by redis_connection, rlite_connection
 ##' @export
 print.redis_connection <- function(x, ...) {
   cat(sprintf("<redis_connection[%s]>:\n", attr(x, "type", exact = TRUE)))
