@@ -1,7 +1,6 @@
 language: R
 sudo: false
 cache: packages
-env: _R_CHECK_FORCE_SUGGESTS_=FALSE
 
 matrix:
   include:
