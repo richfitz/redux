@@ -35,6 +35,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
   else
     curl -sfL "https://jeroen.github.io/autobrew/$PKG_BREW_NAME" > autobrew
     source autobrew
+    rm autobrew
   fi
   PKG_CFLAGS="-I$BREWDIR/opt/$PKG_BREW_NAME/include/hiredis -D_FILE_OFFSET_BITS=64"
   PKG_LIBS="-L$BREWDIR/opt/$PKG_BREW_NAME/lib $PKG_LIBS"
