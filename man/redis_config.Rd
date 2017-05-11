@@ -71,4 +71,3 @@ redis_config(url = "redis://:p4ssw0rd@myhost:32000/2")
 redis_config(url = "redis://myhost:32000", port = 31000)
 redis_config(url = "redis://myhost:32000", path = "/tmp/redis.conf")
 }
-

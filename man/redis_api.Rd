@@ -21,4 +21,3 @@ Create a Redis API object.  This function is designed to be used
 from other packages, and not designed to be used directly by
 users.
 }
-

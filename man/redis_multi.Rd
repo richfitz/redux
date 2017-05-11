@@ -17,4 +17,3 @@ occurs then, \code{DISCARD} is called and the transaction is
 cancelled.  Otherwise \code{EXEC} is called and the transaction is
 processed.
 }
-

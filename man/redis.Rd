@@ -19,4 +19,3 @@ See the \code{redux} package for an example.
 redis$PING()
 }
 \keyword{datasets}
-

@@ -36,4 +36,3 @@ if (redis_available()) {
   r$GET("foo")
 }
 }
-

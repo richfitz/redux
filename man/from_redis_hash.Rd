@@ -27,4 +27,3 @@ values are missing.}
 \description{
 Convert a Redis hash to a character vector or list.
 }
-

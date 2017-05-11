@@ -20,4 +20,3 @@ available to use via \code{EVALSHA}, and will be preloaded on the
 Redis server.  Scripts are then accessed by \emph{name} rather
 than by content or SHA.
 }
-

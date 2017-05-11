@@ -50,4 +50,3 @@ The functions \code{scan_del} and \code{scan_find} are example
 functions that delete and find all keys corresponding to a given
 pattern.
 }
-

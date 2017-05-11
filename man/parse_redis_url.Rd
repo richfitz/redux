@@ -12,4 +12,3 @@ parse_redis_url(url)
 \description{
 Parse a Redis URL
 }
-
