@@ -1,7 +1,7 @@
 ---
 title: "Using Redis with redux"
 author: "Rich FitzJohn"
-date: "2017-05-09"
+date: "2017-05-11"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using Redis with redux}
@@ -99,7 +99,7 @@ obj
 ```
 
 ```
-##  [1] 42 0a 02 00 00 00 03 02 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
+##  [1] 42 0a 02 00 00 00 03 03 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
 ## [24] 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06 00 00 00
 ## [47] 07 00 00 00 08 00 00 00 09 00 00 00 0a 00 00 00
 ```
@@ -112,7 +112,7 @@ str
 ```
 
 ```
-## [1] "A\n2\n197123\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
+## [1] "A\n2\n197379\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
 ```
 
 The binary serialisation is faster, smaller, and preserves all the
@@ -154,7 +154,7 @@ r$GET("mylist")
 ```
 
 ```
-##  [1] 42 0a 02 00 00 00 03 02 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
+##  [1] 42 0a 02 00 00 00 03 03 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
 ## [24] 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06 00 00 00
 ## [47] 07 00 00 00 08 00 00 00 09 00 00 00 0a 00 00 00
 ```
@@ -167,7 +167,7 @@ redux::bin_to_object(r$GET("mylist"))
 ##  [1]  1  2  3  4  5  6  7  8  9 10
 ```
 
-Or:
+Using string serialisation is similar:
 
 ```r
 r$SET("mylist", redux::object_to_string(1:10))
@@ -182,7 +182,7 @@ r$GET("mylist")
 ```
 
 ```
-## [1] "A\n2\n197123\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
+## [1] "A\n2\n197379\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
 ```
 
 ```r
@@ -219,9 +219,9 @@ r$GET(redux::object_to_bin(1:10))
 ```
 
 
-However, depending on what you want to achieve, Redis offers
-potentially better ways of holding lists using its native data
-types.  For example;
+Beyond `GET` / `SET` / `DEL`, Redis offers potentially better ways
+of holding things like lists using its native data types.  For
+example;
 
 
 ```r
@@ -368,7 +368,7 @@ dat
 
 ```
 ## [[1]]
-## [1] "A\n2\n197123\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
+## [1] "A\n2\n197379\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
 ##
 ## [[2]]
 ## [1] "carrot"
@@ -392,6 +392,9 @@ dat
 ## [[3]]
 ## [1] "3"
 ```
+
+As with all functions in the `redis_api` object, all functions and
+their arguments are described in the Redis documentation.
 
 # Pipelining
 
@@ -533,6 +536,10 @@ res <- r$subscribe("mychannel",
                    n = 100)
 ```
 
+*NOTE*: you need to be careful here - `hiredis` internally uses a
+blocking read which cannot be interrupted with Ctrl-C once started
+unless a message is recieved on the channels being listened to!
+
 To test this out, we need a second process that will publish to the
 channel (or we'll wait forever).  This function will publish the
 first 20 values out of the Nile data set.
@@ -577,87 +584,87 @@ res <- r$subscribe("mychannel",
 ```
 
 ```
-## 2017-05-09 07:13:57.049: got message: 1120
+## 2017-05-11 18:21:12.225: got message: 1120
 ```
 
 ```
-## 2017-05-09 07:13:57.104: got message: 1160
+## 2017-05-11 18:21:12.281: got message: 1160
 ```
 
 ```
-## 2017-05-09 07:13:57.160: got message: 963
+## 2017-05-11 18:21:12.336: got message: 963
 ```
 
 ```
-## 2017-05-09 07:13:57.211: got message: 1210
+## 2017-05-11 18:21:12.392: got message: 1210
 ```
 
 ```
-## 2017-05-09 07:13:57.267: got message: 1160
+## 2017-05-11 18:21:12.447: got message: 1160
 ```
 
 ```
-## 2017-05-09 07:13:57.323: got message: 1160
+## 2017-05-11 18:21:12.503: got message: 1160
 ```
 
 ```
-## 2017-05-09 07:13:57.374: got message: 813
+## 2017-05-11 18:21:12.556: got message: 813
 ```
 
 ```
-## 2017-05-09 07:13:57.430: got message: 1230
+## 2017-05-11 18:21:12.612: got message: 1230
 ```
 
 ```
-## 2017-05-09 07:13:57.485: got message: 1370
+## 2017-05-11 18:21:12.667: got message: 1370
 ```
 
 ```
-## 2017-05-09 07:13:57.537: got message: 1140
+## 2017-05-11 18:21:12.723: got message: 1140
 ```
 
 ```
-## 2017-05-09 07:13:57.592: got message: 995
+## 2017-05-11 18:21:12.778: got message: 995
 ```
 
 ```
-## 2017-05-09 07:13:57.648: got message: 935
+## 2017-05-11 18:21:12.832: got message: 935
 ```
 
 ```
-## 2017-05-09 07:13:57.699: got message: 1110
+## 2017-05-11 18:21:12.886: got message: 1110
 ```
 
 ```
-## 2017-05-09 07:13:57.755: got message: 994
+## 2017-05-11 18:21:12.942: got message: 994
 ```
 
 ```
-## 2017-05-09 07:13:57.805: got message: 1020
+## 2017-05-11 18:21:12.997: got message: 1020
 ```
 
 ```
-## 2017-05-09 07:13:57.861: got message: 960
+## 2017-05-11 18:21:13.053: got message: 960
 ```
 
 ```
-## 2017-05-09 07:13:57.916: got message: 1180
+## 2017-05-11 18:21:13.108: got message: 1180
 ```
 
 ```
-## 2017-05-09 07:13:57.968: got message: 799
+## 2017-05-11 18:21:13.164: got message: 799
 ```
 
 ```
-## 2017-05-09 07:13:58.024: got message: 958
+## 2017-05-11 18:21:13.218: got message: 958
 ```
 
 ```
-## 2017-05-09 07:13:58.079: got message: 1140
+## 2017-05-11 18:21:13.273: got message: 1140
 ```
 
 ```
-## 2017-05-09 07:13:58.080: got message: goodbye
+## 2017-05-11 18:21:13.274: got message: goodbye
 ```
 
 
@@ -758,6 +765,82 @@ obj[[2]] == obj2[[2]]
 
 For a better version of this, see
 [storr](https://github.com/richfitz/storr) which does similar things to implement "[indexable serialisation](http://htmlpreview.github.io/?https://raw.githubusercontent.com/richfitz/storr/master/inst/doc/storr.html#lists-and-indexable-serialisation)"
+
+# Scripts
+
+Redis allows storing and evaluting Lua scripts on the redis server.
+At this point it's all getting a bit meta (using R to tell Redis to
+call another dynamic language that drives Redis) but this can be
+very useful - especially in avoiding race conditions (because a
+script is atomic) and avoiding roundtrips.
+
+Describing how to write Lua scripts is out of scope for this
+document but is a bit fiddly.  Here is a trivial one that returns
+the value of a key:
+
+```r
+r$SET("key", "a")
+```
+
+```
+## [Redis: OK]
+```
+
+```r
+res <- r$EVAL("return redis.call('get', 'key')", 1L, "key", NULL)
+```
+
+This can also be run by pushing the script into Redis and referring
+to it by SHA:
+
+```r
+sha <- r$SCRIPT_LOAD("return redis.call('get', 'key')")
+r$SCRIPT_EXISTS(sha)
+```
+
+```
+## [[1]]
+## [1] 1
+```
+
+and calling it like so:
+
+```r
+r$EVALSHA(sha, 1, "key", NULL)
+```
+
+```
+## [1] "a"
+```
+
+A more interesting example, setting, incrementing and getting a key
+(this is all do-able with redis commands)
+
+```r
+lua <- '
+  local keyname = KEYS[1]
+  local value = ARGV[1]
+  redis.call("SET", keyname, value)
+  redis.call("INCR", keyname)
+  return redis.call("GET", keyname)'
+```
+
+With the `redis_scripts` wrapper you can give friendly names to a script:
+
+```r
+obj <- redux::redis_scripts(r, set_and_incr = lua)
+```
+
+And then call them by name:
+
+```r
+res <- obj("set_and_incr", "foo", "10")
+res
+```
+
+```
+## [1] "11"
+```
 
 # Getting help
 

@@ -4,13 +4,15 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <meta name="author" content="Rich FitzJohn" />
 
-<meta name="date" content="2017-05-09" />
+<meta name="date" content="2017-05-11" />
 
 <title>Using Redis with redux</title>
 
@@ -54,14 +56,10 @@ code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Ann
 code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 </style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 
 
-<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0A%7D%0Apre%20%7B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -69,11 +67,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<div id="header">
-<h1 class="title">Using Redis with redux</h1>
+
+<h1 class="title toc-ignore">Using Redis with redux</h1>
 <h4 class="author"><em>Rich FitzJohn</em></h4>
-<h4 class="date"><em>2017-05-09</em></h4>
-</div>
+<h4 class="date"><em>2017-05-11</em></h4>
+
 
 
 <p><code>redux</code> provides a full interface to the Redis API; it provides a hiredis driver wrapped in R and uses this to expose all 199 Redis commands as a set of user-friendly R functions that do basic error checking.</p>
@@ -111,13 +109,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The value for most arguments must be a string or will be coerced into one; clearly this is not going to be suitable for most R objects. The solution is to <em>serialise</em> the R object. <code>redux</code> can accept objects serialised to strings or to byte streams, and the functions the <code>object_to_bin</code> and <code>object_to_string</code> functions can help here, serialising the objects to binary and string represenations. (Alternatively you can do this yourself using <code>serialize</code>.)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">obj &lt;-<span class="st"> </span>redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>)
 obj</code></pre></div>
-<pre><code>##  [1] 42 0a 02 00 00 00 03 02 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
+<pre><code>##  [1] 42 0a 02 00 00 00 03 03 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
 ## [24] 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06 00 00 00
 ## [47] 07 00 00 00 08 00 00 00 09 00 00 00 0a 00 00 00</code></pre>
 <p>or</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">str &lt;-<span class="st"> </span>redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>)
 str</code></pre></div>
-<pre><code>## [1] &quot;A\n2\n197123\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
+<pre><code>## [1] &quot;A\n2\n197379\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
 <p>The binary serialisation is faster, smaller, and preserves all the bits of floating point numbers. The string version might be preferable where having only strings in the database is wanted. The binary serialisation is compatible with the same approach used in <code>RcppRedis</code>, though it is never done automatically.</p>
 <p>These values can be deserialised:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">bin_to_object</span>(obj)</code></pre></div>
@@ -128,16 +126,16 @@ str</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>)</code></pre></div>
-<pre><code>##  [1] 42 0a 02 00 00 00 03 02 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
+<pre><code>##  [1] 42 0a 02 00 00 00 03 03 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
 ## [24] 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06 00 00 00
 ## [47] 07 00 00 00 08 00 00 00 09 00 00 00 0a 00 00 00</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">bin_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
-<p>Or:</p>
+<p>Using string serialisation is similar:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;A\n2\n197123\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
+<pre><code>## [1] &quot;A\n2\n197379\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">string_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>This gives you all the power of Redis, but you will have to manually serialise/deserialise all complicated R objects (i.e., everything other than logicals, numbers or strings). Similarly, you are responsible for type coersion/deserialisation when retrieving data at the other end.</p>
@@ -146,7 +144,7 @@ str</code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
 <pre><code>## [1] &quot;mydata&quot;</code></pre>
-<p>However, depending on what you want to achieve, Redis offers potentially better ways of holding lists using its native data types. For example;</p>
+<p>Beyond <code>GET</code> / <code>SET</code> / <code>DEL</code>, Redis offers potentially better ways of holding things like lists using its native data types. For example;</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">RPUSH</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">1</span>:<span class="dv">10</span>)</code></pre></div>
 <pre><code>## [1] 10</code></pre>
 <p>(the returned value <code>10</code> indicates that the list “mylist2” is 10 elements long). There are lots of commands for operating on lists. For example, you can do things like;</p>
@@ -223,7 +221,7 @@ str</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dat &lt;-<span class="st"> </span>r$<span class="kw">LRANGE</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">0</span>, <span class="dv">2</span>)
 dat</code></pre></div>
 <pre><code>## [[1]]
-## [1] &quot;A\n2\n197123\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;
+## [1] &quot;A\n2\n197379\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;
 ##
 ## [[2]]
 ## [1] &quot;carrot&quot;
@@ -240,6 +238,7 @@ dat</code></pre></div>
 ##
 ## [[3]]
 ## [1] &quot;3&quot;</code></pre>
+<p>As with all functions in the <code>redis_api</code> object, all functions and their arguments are described in the Redis documentation.</p>
 </div>
 <div id="pipelining" class="section level1">
 <h1>Pipelining</h1>
@@ -307,6 +306,7 @@ r$<span class="kw">pipeline</span>(<span class="dt">.commands =</span> cmds)</co
                    <span class="dt">transform =</span> function(x) x$value,
                    <span class="dt">terminate =</span> function(x) <span class="kw">identical</span>(x, <span class="st">&quot;goodbye&quot;</span>),
                    <span class="dt">n =</span> <span class="dv">100</span>)</code></pre></div>
+<p><em>NOTE</em>: you need to be careful here - <code>hiredis</code> internally uses a blocking read which cannot be interrupted with Ctrl-C once started unless a message is recieved on the channels being listened to!</p>
 <p>To test this out, we need a second process that will publish to the channel (or we’ll wait forever). This function will publish the first 20 values out of the Nile data set.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span>redux::<span class="kw">hiredis</span>()
 for (i in Nile[<span class="dv">1</span>:<span class="dv">20</span>]) {
@@ -329,27 +329,27 @@ r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>,
                    <span class="dt">transform =</span> transform,
                    <span class="dt">terminate =</span> function(x) <span class="kw">identical</span>(x, <span class="st">&quot;goodbye&quot;</span>),
                    <span class="dt">n =</span> <span class="dv">100</span>)</code></pre></div>
-<pre><code>## 2017-05-09 07:13:57.049: got message: 1120</code></pre>
-<pre><code>## 2017-05-09 07:13:57.104: got message: 1160</code></pre>
-<pre><code>## 2017-05-09 07:13:57.160: got message: 963</code></pre>
-<pre><code>## 2017-05-09 07:13:57.211: got message: 1210</code></pre>
-<pre><code>## 2017-05-09 07:13:57.267: got message: 1160</code></pre>
-<pre><code>## 2017-05-09 07:13:57.323: got message: 1160</code></pre>
-<pre><code>## 2017-05-09 07:13:57.374: got message: 813</code></pre>
-<pre><code>## 2017-05-09 07:13:57.430: got message: 1230</code></pre>
-<pre><code>## 2017-05-09 07:13:57.485: got message: 1370</code></pre>
-<pre><code>## 2017-05-09 07:13:57.537: got message: 1140</code></pre>
-<pre><code>## 2017-05-09 07:13:57.592: got message: 995</code></pre>
-<pre><code>## 2017-05-09 07:13:57.648: got message: 935</code></pre>
-<pre><code>## 2017-05-09 07:13:57.699: got message: 1110</code></pre>
-<pre><code>## 2017-05-09 07:13:57.755: got message: 994</code></pre>
-<pre><code>## 2017-05-09 07:13:57.805: got message: 1020</code></pre>
-<pre><code>## 2017-05-09 07:13:57.861: got message: 960</code></pre>
-<pre><code>## 2017-05-09 07:13:57.916: got message: 1180</code></pre>
-<pre><code>## 2017-05-09 07:13:57.968: got message: 799</code></pre>
-<pre><code>## 2017-05-09 07:13:58.024: got message: 958</code></pre>
-<pre><code>## 2017-05-09 07:13:58.079: got message: 1140</code></pre>
-<pre><code>## 2017-05-09 07:13:58.080: got message: goodbye</code></pre>
+<pre><code>## 2017-05-11 18:21:12.225: got message: 1120</code></pre>
+<pre><code>## 2017-05-11 18:21:12.281: got message: 1160</code></pre>
+<pre><code>## 2017-05-11 18:21:12.336: got message: 963</code></pre>
+<pre><code>## 2017-05-11 18:21:12.392: got message: 1210</code></pre>
+<pre><code>## 2017-05-11 18:21:12.447: got message: 1160</code></pre>
+<pre><code>## 2017-05-11 18:21:12.503: got message: 1160</code></pre>
+<pre><code>## 2017-05-11 18:21:12.556: got message: 813</code></pre>
+<pre><code>## 2017-05-11 18:21:12.612: got message: 1230</code></pre>
+<pre><code>## 2017-05-11 18:21:12.667: got message: 1370</code></pre>
+<pre><code>## 2017-05-11 18:21:12.723: got message: 1140</code></pre>
+<pre><code>## 2017-05-11 18:21:12.778: got message: 995</code></pre>
+<pre><code>## 2017-05-11 18:21:12.832: got message: 935</code></pre>
+<pre><code>## 2017-05-11 18:21:12.886: got message: 1110</code></pre>
+<pre><code>## 2017-05-11 18:21:12.942: got message: 994</code></pre>
+<pre><code>## 2017-05-11 18:21:12.997: got message: 1020</code></pre>
+<pre><code>## 2017-05-11 18:21:13.053: got message: 960</code></pre>
+<pre><code>## 2017-05-11 18:21:13.108: got message: 1180</code></pre>
+<pre><code>## 2017-05-11 18:21:13.164: got message: 799</code></pre>
+<pre><code>## 2017-05-11 18:21:13.218: got message: 958</code></pre>
+<pre><code>## 2017-05-11 18:21:13.273: got message: 1140</code></pre>
+<pre><code>## 2017-05-11 18:21:13.274: got message: goodbye</code></pre>
 <p>The timestamps in the printed output show when the message was recieved (with fractional seconds so that this is more obvious since this only takes ~1s to complete).</p>
 <p>The <code>res</code> object contains all the values, including the “goodbye” that was our end-of-stream message:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlist</span>(res)</code></pre></div>
@@ -397,6 +397,35 @@ obj[[<span class="dv">2</span>]] ==<span class="st"> </span>obj2[[<span class="d
 <pre><code>## [1] TRUE</code></pre>
 <p>For a better version of this, see <a href="https://github.com/richfitz/storr">storr</a> which does similar things to implement “<a href="http://htmlpreview.github.io/?https://raw.githubusercontent.com/richfitz/storr/master/inst/doc/storr.html#lists-and-indexable-serialisation">indexable serialisation</a>”</p>
 </div>
+<div id="scripts" class="section level1">
+<h1>Scripts</h1>
+<p>Redis allows storing and evaluting Lua scripts on the redis server. At this point it’s all getting a bit meta (using R to tell Redis to call another dynamic language that drives Redis) but this can be very useful - especially in avoiding race conditions (because a script is atomic) and avoiding roundtrips.</p>
+<p>Describing how to write Lua scripts is out of scope for this document but is a bit fiddly. Here is a trivial one that returns the value of a key:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;key&quot;</span>, <span class="st">&quot;a&quot;</span>)</code></pre></div>
+<pre><code>## [Redis: OK]</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>r$<span class="kw">EVAL</span>(<span class="st">&quot;return redis.call('get', 'key')&quot;</span>, 1L, <span class="st">&quot;key&quot;</span>, <span class="ot">NULL</span>)</code></pre></div>
+<p>This can also be run by pushing the script into Redis and referring to it by SHA:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sha &lt;-<span class="st"> </span>r$<span class="kw">SCRIPT_LOAD</span>(<span class="st">&quot;return redis.call('get', 'key')&quot;</span>)
+r$<span class="kw">SCRIPT_EXISTS</span>(sha)</code></pre></div>
+<pre><code>## [[1]]
+## [1] 1</code></pre>
+<p>and calling it like so:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">EVALSHA</span>(sha, <span class="dv">1</span>, <span class="st">&quot;key&quot;</span>, <span class="ot">NULL</span>)</code></pre></div>
+<pre><code>## [1] &quot;a&quot;</code></pre>
+<p>A more interesting example, setting, incrementing and getting a key (this is all do-able with redis commands)</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lua &lt;-<span class="st"> '</span>
+<span class="st">  local keyname = KEYS[1]</span>
+<span class="st">  local value = ARGV[1]</span>
+<span class="st">  redis.call(&quot;SET&quot;, keyname, value)</span>
+<span class="st">  redis.call(&quot;INCR&quot;, keyname)</span>
+<span class="st">  return redis.call(&quot;GET&quot;, keyname)'</span></code></pre></div>
+<p>With the <code>redis_scripts</code> wrapper you can give friendly names to a script:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">obj &lt;-<span class="st"> </span>redux::<span class="kw">redis_scripts</span>(r, <span class="dt">set_and_incr =</span> lua)</code></pre></div>
+<p>And then call them by name:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">obj</span>(<span class="st">&quot;set_and_incr&quot;</span>, <span class="st">&quot;foo&quot;</span>, <span class="st">&quot;10&quot;</span>)
+res</code></pre></div>
+<pre><code>## [1] &quot;11&quot;</code></pre>
+</div>
 <div id="getting-help" class="section level1">
 <h1>Getting help</h1>
 <p>Because the interface <code>redux</code> uses is simply a wrapper around the Redis API, the main source of documentation is the Redis help itself at <a href="http://redis.io" class="uri">http://redis.io</a></p>
@@ -409,7 +438,7 @@ obj[[<span class="dv">2</span>]] ==<span class="st"> </span>obj2[[<span class="d
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

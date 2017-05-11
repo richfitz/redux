@@ -2,6 +2,22 @@
 ##' @title Parse Redis INFO
 ##' @param con A Redis connection
 ##' @export
+##' @examples
+##' if (redux::redis_available()) {
+##'   r <- redux::hiredis()
+##'
+##'   # Redis server version:
+##'   redux::redis_version(r)
+##'   # This is a 'numeric_version' object so you can compute with it
+##'   # if you need to check for minimum versions
+##'   redux::redis_version(r) >= numeric_version("2.1.1")
+##'
+##'   # Extensive information is given back by the server:
+##'   redux::redis_info(r)
+##'
+##'   # Which is just:
+##'   redux::parse_info(r$INFO())
+##' }
 redis_info <- function(con) {
   parse_info(con$INFO())
 }
@@ -46,7 +62,10 @@ redis_multi <- function(con, expr) {
   })
 }
 
-##' Convert a Redis hash to a character vector or list.
+##' Convert a Redis hash to a character vector or list.  This tries to
+##' bridge the gap between the way Redis returns hashes and the way
+##' that they are nice to work with in R, but keeping all conversions
+##' very explicit.
 ##' @title Convert Redis hash
 ##' @param con A Redis connection object
 ##' @param key key of the hash
@@ -60,6 +79,34 @@ redis_multi <- function(con, expr) {
 ##'   \code{stop} expression is OK and will only be evaluated if
 ##'   values are missing.
 ##' @export
+##' @examples
+##' if (redux::redis_available()) {
+##'   # Using a random key so we don't overwrite anything in your database:
+##'   key <- paste0("redux::", paste(sample(letters, 15), collapse = ""))
+##'   r <- redux::hiredis()
+##'   r$HSET(key, "a", "apple")
+##'   r$HSET(key, "b", "banana")
+##'   r$HSET(key, "c", "carrot")
+##'
+##'   # Now we have a hash with three elements:
+##'   r$HGETALL(key)
+##'
+##'   # Ew, that's not very nice.  This is nicer:
+##'   redux::from_redis_hash(r, key)
+##'
+##'   # If one of the elements was not a string, then that would not
+##'   # have worked, but you can always leave as a list:
+##'   redux::from_redis_hash(r, key, f = identity)
+##'
+##'   # To get just some elements:
+##'   redux::from_redis_hash(r, key, c("a", "c"))
+##'
+##'   # And if some are not present:
+##'   redux::from_redis_hash(r, key, c("a", "x"))
+##'   redux::from_redis_hash(r, key, c("a", "z"), missing = "zebra")
+##'
+##'   r$DEL(key)
+##' }
 from_redis_hash <- function(con, key, fields = NULL, f = as.character,
                             missing = NA_character_) {
   if (is.null(fields)) {
@@ -87,6 +134,20 @@ from_redis_hash <- function(con, key, fields = NULL, f = as.character,
 ##' @title Get time from Redis
 ##' @param con A Redis connection object
 ##' @export
+##' @examples
+##' if (redux::redis_available()) {
+##'   r <- redux::hiredis()
+##'
+##'   # The output of Redis' TIME command is not the *most* useful
+##'   # thing in the world:
+##'   r$TIME()
+##'
+##'   # We can get a slightly nicer representation like so:
+##'   redux::redis_time(r)
+##'
+##'   # And from that convert to an actual R time:
+##'   redux::redis_time_to_r(redux::redis_time(r))
+##' }
 redis_time <- function(con) {
   format_redis_time(con$TIME())
 }

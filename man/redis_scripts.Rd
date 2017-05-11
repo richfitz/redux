@@ -18,5 +18,6 @@ Load Lua scripts into Redis, providing a convenience function to
 call them with.  Using this function means that scripts will be
 available to use via \code{EVALSHA}, and will be preloaded on the
 Redis server.  Scripts are then accessed by \emph{name} rather
-than by content or SHA.
+than by content or SHA.  See the vignette for details and an
+example.
 }

@@ -24,7 +24,7 @@ test_that("EVALSHA/SCRIPT LOAD", {
 
   expect_equal(con$SCRIPT_FLUSH(), redis_status("OK"))
 
-    expect_equal(con$SCRIPT_EXISTS(sha), list(0))
+  expect_equal(con$SCRIPT_EXISTS(sha), list(0))
 })
 
 test_that("SCRIPT DEBUG", {

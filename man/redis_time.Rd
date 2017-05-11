@@ -20,3 +20,18 @@ redis_time_to_r(x)
 \description{
 Get time from Redis and format as a string.
 }
+\examples{
+if (redux::redis_available()) {
+  r <- redux::hiredis()
+
+  # The output of Redis' TIME command is not the *most* useful
+  # thing in the world:
+  r$TIME()
+
+  # We can get a slightly nicer representation like so:
+  redux::redis_time(r)
+
+  # And from that convert to an actual R time:
+  redux::redis_time_to_r(redux::redis_time(r))
+}
+}

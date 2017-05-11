@@ -16,6 +16,16 @@ method (where supported) these commands will then be pipelined.
 See the \code{redux} package for an example.
 }
 \examples{
+# This object creates commands in the format expected by the
+# lower-level redis connection object:
 redis$PING()
+
+# For example to send two PING commands in a single transmission:
+if (redux::redis_available()) {
+  r <- redux::hiredis()
+  r$pipeline(
+    redux::redis$PING(),
+    redux::redis$PING())
+}
 }
 \keyword{datasets}

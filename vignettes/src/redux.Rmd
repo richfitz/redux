@@ -98,7 +98,7 @@ r$GET("mylist")
 redux::bin_to_object(r$GET("mylist"))
 ```
 
-Or:
+Using string serialisation is similar:
 ``` {r }
 r$SET("mylist", redux::object_to_string(1:10))
 r$GET("mylist")
@@ -121,9 +121,9 @@ r$GET(redux::object_to_bin(1:10))
 r$DEL(redux::object_to_bin(1:10))
 ```
 
-However, depending on what you want to achieve, Redis offers
-potentially better ways of holding lists using its native data
-types.  For example;
+Beyond `GET` / `SET` / `DEL`, Redis offers potentially better ways
+of holding things like lists using its native data types.  For
+example;
 
 ``` {r }
 r$RPUSH("mylist2", 1:10)
@@ -177,6 +177,9 @@ dat
 dat[[1]] <- redux::string_to_object(dat[[1]])
 dat
 ```
+
+As with all functions in the `redis_api` object, all functions and
+their arguments are described in the Redis documentation.
 
 # Pipelining
 
@@ -275,6 +278,10 @@ res <- r$subscribe("mychannel",
                    terminate = function(x) identical(x, "goodbye"),
                    n = 100)
 ```
+
+*NOTE*: you need to be careful here - `hiredis` internally uses a
+blocking read which cannot be interrupted with Ctrl-C once started
+unless a message is recieved on the channels being listened to!
 
 To test this out, we need a second process that will publish to the
 channel (or we'll wait forever).  This function will publish the
@@ -386,6 +393,56 @@ obj[[2]] == obj2[[2]]
 
 For a better version of this, see
 [storr](https://github.com/richfitz/storr) which does similar things to implement "[indexable serialisation](http://htmlpreview.github.io/?https://raw.githubusercontent.com/richfitz/storr/master/inst/doc/storr.html#lists-and-indexable-serialisation)"
+
+# Scripts
+
+Redis allows storing and evaluting Lua scripts on the redis server.
+At this point it's all getting a bit meta (using R to tell Redis to
+call another dynamic language that drives Redis) but this can be
+very useful - especially in avoiding race conditions (because a
+script is atomic) and avoiding roundtrips.
+
+Describing how to write Lua scripts is out of scope for this
+document but is a bit fiddly.  Here is a trivial one that returns
+the value of a key:
+``` {r }
+r$SET("key", "a")
+res <- r$EVAL("return redis.call('get', 'key')", 1L, "key", NULL)
+```
+
+This can also be run by pushing the script into Redis and referring
+to it by SHA:
+``` {r }
+sha <- r$SCRIPT_LOAD("return redis.call('get', 'key')")
+r$SCRIPT_EXISTS(sha)
+```
+
+and calling it like so:
+``` {r }
+r$EVALSHA(sha, 1, "key", NULL)
+```
+
+A more interesting example, setting, incrementing and getting a key
+(this is all do-able with redis commands)
+``` {r }
+lua <- '
+  local keyname = KEYS[1]
+  local value = ARGV[1]
+  redis.call("SET", keyname, value)
+  redis.call("INCR", keyname)
+  return redis.call("GET", keyname)'
+```
+
+With the `redis_scripts` wrapper you can give friendly names to a script:
+``` {r }
+obj <- redux::redis_scripts(r, set_and_incr = lua)
+```
+
+And then call them by name:
+``` {r }
+res <- obj("set_and_incr", "foo", "10")
+res
+```
 
 # Getting help
 

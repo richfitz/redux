@@ -331,6 +331,44 @@ obj[[2]] == obj2[[2]]
 ## For a better version of this, see
 ## [storr](https://github.com/richfitz/storr) which does similar things to implement "[indexable serialisation](http://htmlpreview.github.io/?https://raw.githubusercontent.com/richfitz/storr/master/inst/doc/storr.html#lists-and-indexable-serialisation)"
 
+## # Scripts
+
+## Redis allows storing and evaluting Lua scripts on the redis server.
+## At this point it's all getting a bit meta (using R to tell Redis to
+## call another dynamic language that drives Redis) but this can be
+## very useful - especially in avoiding race conditions (because a
+## script is atomic) and avoiding roundtrips.
+
+## Describing how to write Lua scripts is out of scope for this
+## document but is a bit fiddly.  Here is a trivial one that returns
+## the value of a key:
+r$SET("key", "a")
+res <- r$EVAL("return redis.call('get', 'key')", 1L, "key", NULL)
+
+## This can also be run by pushing the script into Redis and referring
+## to it by SHA:
+sha <- r$SCRIPT_LOAD("return redis.call('get', 'key')")
+r$SCRIPT_EXISTS(sha)
+
+## and calling it like so:
+r$EVALSHA(sha, 1, "key", NULL)
+
+## A more interesting example, setting, incrementing and getting a key
+## (this is all do-able with redis commands)
+lua <- '
+  local keyname = KEYS[1]
+  local value = ARGV[1]
+  redis.call("SET", keyname, value)
+  redis.call("INCR", keyname)
+  return redis.call("GET", keyname)'
+
+## With the `redis_scripts` wrapper you can give friendly names to a script:
+obj <- redux::redis_scripts(r, set_and_incr = lua)
+
+## And then call them by name:
+res <- obj("set_and_incr", "foo", "10")
+res
+
 ## # Getting help
 
 ## Because the interface `redux` uses is simply a wrapper around the
