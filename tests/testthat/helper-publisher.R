@@ -13,12 +13,19 @@ start_publisher <- function(channel, dt = 0.02) {
   testthat::skip_if_not_installed("sys")
   skip_if_no_redis()
 
+  Rscript <- file.path(R.home(), "Rscript")
+  if (!file.exists(Rscript)) {
+    Rscript <- Sys.which("Rscript")
+    if (!nzchar(Rscript)) {
+      testthat::skip("Did not find Rscript")
+    }
+  }
+
   filename <- tempfile("redux_")
   writeLines(c(channel, dt), filename)
   log <- tempfile("redux_")
   Sys.setenv("R_TESTS" = "")
 
-  Rscript <- file.path(R.home(), "Rscript")
   pid <- sys::exec_background(Rscript, c("./pub_runif.R", filename),
                               std_out = log, std_err = log)
 
