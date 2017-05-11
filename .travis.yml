@@ -19,6 +19,7 @@ matrix:
 addons:
   apt:
     packages:
+      - libapparmor-dev
       - libhiredis-dev
       - redis-server
 
