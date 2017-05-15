@@ -1,6 +1,6 @@
 # redux
 
-[![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
+[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![Build Status](https://travis-ci.org/richfitz/redux.png?branch=master)](https://travis-ci.org/richfitz/redux)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/richfitz/redux?branch=master&svg=true)](https://ci.appveyor.com/project/richfitz/redux)
 [![codecov.io](https://codecov.io/github/richfitz/redux/coverage.svg?branch=master)](https://codecov.io/github/richfitz/redux?branch=master)
@@ -56,6 +56,14 @@ r$SET("foo", "bar")
 See the package vignette for more information (`vignette("redux")`) or https://richfitz.github.io/redux/vignettes/redux.html
 
 ## Installation
+
+Install from CRAN with
+
+```r
+install.packages("redux")
+```
+
+or install the development version with
 
 ```r
 remotes::install_github("richfitz/redux", upgrade = FALSE)
