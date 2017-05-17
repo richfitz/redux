@@ -17,6 +17,14 @@ test_that("Filter", {
                length(tmp))
   expect_equal(length(filter_redis_commands(tmp, as.character(mv))),
                length(tmp))
+
+  skip_if_no_redis()
+  con <- hiredis()
+  v <- redis_version(con)
+  ans1 <- filter_redis_commands(tmp, TRUE, con$command)
+  ans2 <- filter_redis_commands(tmp, v)
+  expect_equal(sort(names(ans1)),
+               sort(names(ans2)))
 })
 
 test_that("filter -- sanity checking", {

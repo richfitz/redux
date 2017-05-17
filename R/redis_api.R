@@ -67,6 +67,7 @@ hiredis_function <- function(name, obj, required = FALSE) {
     if (required) {
       stop(sprintf("Interface function %s required", name))
     }
+    ## This was required for RcppRedis but I removed that.
     f <- function(...) {
       stop(sprintf("%s is not supported with the %s interface",
                    name, attr(obj, "type")))
@@ -79,15 +80,10 @@ filter_redis_commands <- function(x, version, command = NULL) {
   if (is.character(version)) {
     version <- numeric_version(version)
   } else if (isTRUE(version)) {
-    if (is.function(command)) {
-      version <- tryCatch(
-        redis_version(x),
-        error = function(e)
-          warning("Error while collecting version: ", e$message,
-                  call. = FALSE, immediate. = TRUE))
-    } else {
+    if (!is.function(command)) {
       stop("No redis connection to get version from")
     }
+    version <- parse_info(command("INFO"))$redis_version
   }
   if (inherits(version, "numeric_version")) {
     x <- x[cmd_since[names(x)] <= version]

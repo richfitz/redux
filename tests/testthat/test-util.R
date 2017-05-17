@@ -53,4 +53,7 @@ test_that("assertions work", {
 test_that("hiredis_function", {
   expect_error(hiredis_function("foo", list(a = identity), required = TRUE),
                "Interface function foo required")
+  f <- hiredis_function("foo", structure(list(), type = "bar"), FALSE)
+  expect_is(f, "function")
+  expect_error(f(), "foo is not supported with the bar interface")
 })
