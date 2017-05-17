@@ -1,7 +1,7 @@
 ---
 title: "Using Redis with redux"
 author: "Rich FitzJohn"
-date: "2017-05-11"
+date: "2017-05-17"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using Redis with redux}
@@ -558,7 +558,7 @@ This file is at `path_to_publisher` (in R's temporary directory)
 and can be run with:
 
 ```r
-system2(file.path(R.home(), "bin", "Rscript"), path_to_publisher,
+system2(file.path(R.home("bin"), "Rscript"), path_to_publisher,
         wait = FALSE, stdout = FALSE, stderr = FALSE)
 ```
 
@@ -584,87 +584,87 @@ res <- r$subscribe("mychannel",
 ```
 
 ```
-## 2017-05-11 18:21:12.225: got message: 1120
+## 2017-05-17 16:11:11.638: got message: 1120
 ```
 
 ```
-## 2017-05-11 18:21:12.281: got message: 1160
+## 2017-05-17 16:11:11.688: got message: 1160
 ```
 
 ```
-## 2017-05-11 18:21:12.336: got message: 963
+## 2017-05-17 16:11:11.739: got message: 963
 ```
 
 ```
-## 2017-05-11 18:21:12.392: got message: 1210
+## 2017-05-17 16:11:11.789: got message: 1210
 ```
 
 ```
-## 2017-05-11 18:21:12.447: got message: 1160
+## 2017-05-17 16:11:11.839: got message: 1160
 ```
 
 ```
-## 2017-05-11 18:21:12.503: got message: 1160
+## 2017-05-17 16:11:11.889: got message: 1160
 ```
 
 ```
-## 2017-05-11 18:21:12.556: got message: 813
+## 2017-05-17 16:11:11.939: got message: 813
 ```
 
 ```
-## 2017-05-11 18:21:12.612: got message: 1230
+## 2017-05-17 16:11:11.990: got message: 1230
 ```
 
 ```
-## 2017-05-11 18:21:12.667: got message: 1370
+## 2017-05-17 16:11:12.040: got message: 1370
 ```
 
 ```
-## 2017-05-11 18:21:12.723: got message: 1140
+## 2017-05-17 16:11:12.090: got message: 1140
 ```
 
 ```
-## 2017-05-11 18:21:12.778: got message: 995
+## 2017-05-17 16:11:12.140: got message: 995
 ```
 
 ```
-## 2017-05-11 18:21:12.832: got message: 935
+## 2017-05-17 16:11:12.190: got message: 935
 ```
 
 ```
-## 2017-05-11 18:21:12.886: got message: 1110
+## 2017-05-17 16:11:12.240: got message: 1110
 ```
 
 ```
-## 2017-05-11 18:21:12.942: got message: 994
+## 2017-05-17 16:11:12.291: got message: 994
 ```
 
 ```
-## 2017-05-11 18:21:12.997: got message: 1020
+## 2017-05-17 16:11:12.341: got message: 1020
 ```
 
 ```
-## 2017-05-11 18:21:13.053: got message: 960
+## 2017-05-17 16:11:12.391: got message: 960
 ```
 
 ```
-## 2017-05-11 18:21:13.108: got message: 1180
+## 2017-05-17 16:11:12.441: got message: 1180
 ```
 
 ```
-## 2017-05-11 18:21:13.164: got message: 799
+## 2017-05-17 16:11:12.491: got message: 799
 ```
 
 ```
-## 2017-05-11 18:21:13.218: got message: 958
+## 2017-05-17 16:11:12.542: got message: 958
 ```
 
 ```
-## 2017-05-11 18:21:13.273: got message: 1140
+## 2017-05-17 16:11:12.592: got message: 1140
 ```
 
 ```
-## 2017-05-11 18:21:13.274: got message: goodbye
+## 2017-05-17 16:11:12.594: got message: goodbye
 ```
 
 

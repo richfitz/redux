@@ -255,7 +255,7 @@ writeLines(c("```r", readLines(path_to_publisher), "```"))
 
 ## This file is at `path_to_publisher` (in R's temporary directory)
 ## and can be run with:
-system2(file.path(R.home(), "bin", "Rscript"), path_to_publisher,
+system2(file.path(R.home("bin"), "Rscript"), path_to_publisher,
         wait = FALSE, stdout = FALSE, stderr = FALSE)
 
 ## to start the publisher.
