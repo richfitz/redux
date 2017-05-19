@@ -2,6 +2,8 @@ language: R
 sudo: false
 cache: packages
 
+env: ISOLATED_REDIS=true
+
 matrix:
   include:
     - os: linux
