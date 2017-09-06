@@ -2,9 +2,9 @@ language: R
 sudo: false
 cache: packages
 
-env: ISOLATED_REDIS=true
-
 matrix:
+  global:
+    - ISOLATED_REDIS=true
   include:
     - os: linux
       env: R_CODECOV=true
