@@ -41,25 +41,30 @@ test_that("simple commands", {
 test_that("commands with arguments", {
   skip_if_no_redis()
   ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
+  key <- rand_str()
 
-  expect_equal(redis_command(ptr, list("SET", "foo", "1")),
+  expect_equal(redis_command(ptr, list("SET", key, "1")),
                redis_status("OK"))
-  expect_equal(redis_command(ptr, list("SET", "foo", "1")),
+  expect_equal(redis_command(ptr, list("SET", key, "1")),
                redis_status("OK"))
 
-  expect_equal(redis_command(ptr, list("GET", "foo")), "1")
+  expect_equal(redis_command(ptr, list("GET", key)), "1")
+
+  expect_equal(redis_command(ptr, list("DEL", key)), 1)
 })
 
 test_that("commands with NULL arguments", {
   skip_if_no_redis()
   ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
+  key <- rand_str()
 
-  expect_equal(redis_command(ptr, list("SET", "foo", "1", NULL)),
+  expect_equal(redis_command(ptr, list("SET", key, "1", NULL)),
                redis_status("OK"))
-  expect_equal(redis_command(ptr, list("SET", "foo", NULL, "1", NULL)),
+  expect_equal(redis_command(ptr, list("SET", key, NULL, "1", NULL)),
                redis_status("OK"))
-  expect_equal(redis_command(ptr, list("SET", NULL, "foo", NULL, "1", NULL)),
+  expect_equal(redis_command(ptr, list("SET", NULL, key, NULL, "1", NULL)),
                redis_status("OK"))
+  expect_equal(redis_command(ptr, list("DEL", key)), 1)
 })
 
 test_that("missing values are NULL", {
@@ -150,6 +155,8 @@ test_that("Lists of binary data", {
   expect_error(
     redis_command(ptr, list("MSET", list(list(key1), data, key2, data))),
     "Nested list element")
+
+  redis_command(ptr, list("DEL", list(key1, key2)))
 })
 
 test_that("pointer commands are safe", {

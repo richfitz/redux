@@ -16,6 +16,7 @@ test_that("EVALSHA/SCRIPT LOAD", {
 
   x <- serialize(runif(10), NULL)
   con$SET(key, x)
+  on.exit(con$DEL(key))
 
   sha <- con$SCRIPT_LOAD(sprintf("return redis.call('get', '%s')", key))
   expect_identical(con$EVALSHA(sha, 1, key, NULL), x)

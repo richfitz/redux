@@ -100,10 +100,13 @@ test_that("scripts", {
   redis.call("INCR", keyname)
   return redis.call("GET", keyname)'
 
+  key <- rand_str()
+
   obj <- redis_scripts(r, set_and_incr = lua)
-  r$DEL("foo")
-  res <- obj("set_and_incr", "foo", "10")
+  r$DEL(key)
+  res <- obj("set_and_incr", key, "10")
   expect_equal(res, "11")
+  r$DEL(key)
 })
 
 test_that("parse_client_info", {

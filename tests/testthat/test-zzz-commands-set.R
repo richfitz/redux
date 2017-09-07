@@ -45,7 +45,7 @@ test_that("SDIFFSTORE", {
   key1 <- rand_str()
   key2 <- rand_str()
   key3 <- rand_str()
-  on.exit(con$DEL(c(key1, key2)))
+  on.exit(con$DEL(c(key1, key2, key3)))
 
   con$SADD(key1, "a")
   con$SADD(key1, "b")
@@ -79,7 +79,7 @@ test_that("SINTERSTORE", {
   key1 <- rand_str()
   key2 <- rand_str()
   key3 <- rand_str()
-  on.exit(con$DEL(c(key1, key2)))
+  on.exit(con$DEL(c(key1, key2, key3)))
 
   con$SADD(key1, "a")
   con$SADD(key1, "b")
@@ -211,7 +211,7 @@ test_that("SUNIONSTORE", {
   key1 <- rand_str()
   key2 <- rand_str()
   key3 <- rand_str()
-  on.exit(con$DEL(c(key1, key2)))
+  on.exit(con$DEL(c(key1, key2, key3)))
 
   con$SADD(key1, "a")
   con$SADD(key1, "b")
