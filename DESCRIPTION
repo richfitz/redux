@@ -20,7 +20,7 @@ Depends:
     R (>= 3.2.0)
 Imports:
     R6,
-    storr
+    storr (>= 1.1.1)
 Suggests:
     knitr,
     rmarkdown,
