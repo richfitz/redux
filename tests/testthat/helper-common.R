@@ -8,8 +8,8 @@ skip_if_no_redis <- function() {
 }
 
 skip_if_not_isolated_redis <- function() {
-  skip_if_no_redis()
-  if (identical(Sys.getenv("ISOLATED_REDIS"), "true")) {
+  if (identical(Sys.getenv("ISOLATED_REDIS"), "true") ||
+      identical(Sys.getenv("TRAVIS"), "true")) {
     return()
   }
   testthat::skip("Redis is not isolated (set envvar ISOLATED_REDIS to 'true')")

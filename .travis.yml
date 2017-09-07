@@ -3,8 +3,6 @@ sudo: false
 cache: packages
 
 matrix:
-  global:
-    - ISOLATED_REDIS=true
   include:
     - os: linux
       env: R_CODECOV=true
