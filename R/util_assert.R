@@ -72,6 +72,12 @@ assert_scalar_or_raw <- function(x, name = deparse(substitute(x))) {
   }
 }
 
+assert_raw <- function(x, name = deparse(substitute(x))) {
+  if (!is.raw(x)) {
+    stop(sprintf("'%s' must be raw", name), call. = FALSE)
+  }
+}
+
 assert_length_or_null <- function(x, n, name = deparse(substitute(x))) {
   if (!is.null(x)) {
     assert_length(x, n, name)

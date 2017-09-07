@@ -4,6 +4,7 @@ skip_if_no_redis <- function() {
   if (redis_available()) {
     return()
   }
+  skip_on_cran()
   testthat::skip("Redis is not available")
 }
 

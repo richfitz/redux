@@ -24,3 +24,7 @@ capture_args <- function(f, name) {
   sub("function ", name,
       paste0(paste(args[-length(args)], collapse = "\n"), "\n"))
 }
+
+str_drop_start <- function(x, sub) {
+  substr(x, nchar(sub) + 1L, nchar(x))
+}
