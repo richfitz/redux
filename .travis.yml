@@ -33,8 +33,5 @@ notifications:
 r_packages:
   - covr
 
-r_github_packages:
-  - richfitz/storr@develop
-
 after_success:
   - Rscript -e 'covr::codecov()'
