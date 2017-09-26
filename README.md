@@ -12,7 +12,7 @@ As well as supporting Redis commands, `redux` supports:
 * **pipelineing**: execute more than one command in a single Redis roundtrip, which can greatly increase performance, especially over high-latency connections.
 * **socket connections**: can connect to a locally running Redis instance over a unix socket (if Redis is configured to do so) for faster communication.
 * **flexible serialisation**: serialise any part of a Redis command, including keys and fields.  Binary serialisation is supported via `object_to_bin` / `bin_to_object`, which are thin wrappers around `serialize` / `unserialize`
-* **subscriptions**: create a simple blocking subscribe client, applying a callback function to every message recieved.
+* **subscriptions**: create a simple blocking subscribe client, applying a callback function to every message received.
 * **error handling**: Every Redis error becomes an  R error.
 
 ## Usage

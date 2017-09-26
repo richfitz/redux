@@ -1,7 +1,7 @@
 ---
 title: "Using Redis with redux"
 author: "Rich FitzJohn"
-date: "2017-05-17"
+date: "2017-09-26"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using Redis with redux}
@@ -90,7 +90,7 @@ objects.  The solution is to *serialise* the R object.  `redux` can
 accept objects serialised to strings or to byte streams, and the
 functions the `object_to_bin` and `object_to_string` functions can
 help here, serialising the objects to binary and string
-represenations.  (Alternatively you can do this yourself using
+representations.  (Alternatively you can do this yourself using
 `serialize`.)
 
 ```r
@@ -196,7 +196,7 @@ redux::string_to_object(r$GET("mylist"))
 This gives you all the power of Redis, but you will have to
 manually serialise/deserialise all complicated R objects (i.e.,
 everything other than logicals, numbers or strings).  Similarly,
-you are responsible for type coersion/deserialisation when
+you are responsible for type coercion/deserialisation when
 retrieving data at the other end.
 
 Note that you are not restricted to using serialised R objects as
@@ -236,7 +236,7 @@ r$RPUSH("mylist2", 1:10)
 elements long).  There are lots of commands for operating on lists.
 For example, you can do things like;
 
-* get an element by its index (note tht this uses C-style base-0
+* get an element by its index (note that this uses C-style base-0
 indexing for consistency with the `Redis` documentation rather than
 R's semantics)
 
@@ -452,7 +452,7 @@ If you use pipelining you should read the [Redis page on
 it](http://redis.io/topics/pipelining) because there are a few
 restrictions and cautions.
 
-Generating very large numbers (or variable nubmers) of commands
+Generating very large numbers (or variable numbers) of commands
 with the above interface will be difficult because `pipeline` uses
 the dots argument.  Instead, you can pass a list of commands to the
 `.commands` argument of `pipeline`:
@@ -538,7 +538,7 @@ res <- r$subscribe("mychannel",
 
 *NOTE*: you need to be careful here - `hiredis` internally uses a
 blocking read which cannot be interrupted with Ctrl-C once started
-unless a message is recieved on the channels being listened to!
+unless a message is received on the channels being listened to!
 
 To test this out, we need a second process that will publish to the
 channel (or we'll wait forever).  This function will publish the
@@ -564,7 +564,7 @@ system2(file.path(R.home("bin"), "Rscript"), path_to_publisher,
 
 to start the publisher.
 
-Let's add a little debgging information to the transform function,
+Let's add a little debugging information to the transform function,
 and set the subscriber off:
 
 ```r
@@ -584,93 +584,93 @@ res <- r$subscribe("mychannel",
 ```
 
 ```
-## 2017-05-17 16:11:11.638: got message: 1120
+## 2017-09-26 09:46:32.106: got message: 1120
 ```
 
 ```
-## 2017-05-17 16:11:11.688: got message: 1160
+## 2017-09-26 09:46:32.156: got message: 1160
 ```
 
 ```
-## 2017-05-17 16:11:11.739: got message: 963
+## 2017-09-26 09:46:32.208: got message: 963
 ```
 
 ```
-## 2017-05-17 16:11:11.789: got message: 1210
+## 2017-09-26 09:46:32.257: got message: 1210
 ```
 
 ```
-## 2017-05-17 16:11:11.839: got message: 1160
+## 2017-09-26 09:46:32.307: got message: 1160
 ```
 
 ```
-## 2017-05-17 16:11:11.889: got message: 1160
+## 2017-09-26 09:46:32.357: got message: 1160
 ```
 
 ```
-## 2017-05-17 16:11:11.939: got message: 813
+## 2017-09-26 09:46:32.408: got message: 813
 ```
 
 ```
-## 2017-05-17 16:11:11.990: got message: 1230
+## 2017-09-26 09:46:32.458: got message: 1230
 ```
 
 ```
-## 2017-05-17 16:11:12.040: got message: 1370
+## 2017-09-26 09:46:32.508: got message: 1370
 ```
 
 ```
-## 2017-05-17 16:11:12.090: got message: 1140
+## 2017-09-26 09:46:32.558: got message: 1140
 ```
 
 ```
-## 2017-05-17 16:11:12.140: got message: 995
+## 2017-09-26 09:46:32.609: got message: 995
 ```
 
 ```
-## 2017-05-17 16:11:12.190: got message: 935
+## 2017-09-26 09:46:32.659: got message: 935
 ```
 
 ```
-## 2017-05-17 16:11:12.240: got message: 1110
+## 2017-09-26 09:46:32.709: got message: 1110
 ```
 
 ```
-## 2017-05-17 16:11:12.291: got message: 994
+## 2017-09-26 09:46:32.760: got message: 994
 ```
 
 ```
-## 2017-05-17 16:11:12.341: got message: 1020
+## 2017-09-26 09:46:32.810: got message: 1020
 ```
 
 ```
-## 2017-05-17 16:11:12.391: got message: 960
+## 2017-09-26 09:46:32.860: got message: 960
 ```
 
 ```
-## 2017-05-17 16:11:12.441: got message: 1180
+## 2017-09-26 09:46:32.911: got message: 1180
 ```
 
 ```
-## 2017-05-17 16:11:12.491: got message: 799
+## 2017-09-26 09:46:32.961: got message: 799
 ```
 
 ```
-## 2017-05-17 16:11:12.542: got message: 958
+## 2017-09-26 09:46:33.011: got message: 958
 ```
 
 ```
-## 2017-05-17 16:11:12.592: got message: 1140
+## 2017-09-26 09:46:33.062: got message: 1140
 ```
 
 ```
-## 2017-05-17 16:11:12.594: got message: goodbye
+## 2017-09-26 09:46:33.062: got message: goodbye
 ```
 
 
 
 The timestamps in the printed output show when the message was
-recieved (with fractional seconds so that this is more obvious
+received (with fractional seconds so that this is more obvious
 since this only takes ~1s to complete).
 
 The `res` object contains all the values, including the "goodbye"
@@ -768,7 +768,7 @@ For a better version of this, see
 
 # Scripts
 
-Redis allows storing and evaluting Lua scripts on the redis server.
+Redis allows storing and evaluating Lua scripts on the redis server.
 At this point it's all getting a bit meta (using R to tell Redis to
 call another dynamic language that drives Redis) but this can be
 very useful - especially in avoiding race conditions (because a

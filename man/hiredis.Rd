@@ -18,7 +18,7 @@ environment variable \code{REDIS_URL}).  For
 \code{hiredis}.}
 
 \item{version}{Version of the interface to generate.  If given as
-a string ot numeric version, then only commands that exist up to
+a string to numeric version, then only commands that exist up to
 that version will be included.  If given as \code{TRUE}, then we
 will query the Redis server (with \code{INFO}) and extract the
 version number that way.}

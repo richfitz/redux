@@ -1,4 +1,4 @@
-##' Primarily used for pipeling, the \code{redis} object produces
+##' Primarily used for pipelining, the \code{redis} object produces
 ##' commands the same way that the main \code{\link{redis_api}}
 ##' objects do.  If passed in as arguments to the \code{pipeline}
 ##' method (where supported) these commands will then be pipelined.

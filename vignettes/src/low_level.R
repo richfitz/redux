@@ -51,7 +51,7 @@ unserialize(con$command(c("GET", "foo")))
 ## Elements of a list command can be:
 
 ## * Character vectors of any length
-## * Integer vectors of any length (convered to character)
+## * Integer vectors of any length (converted to character)
 ## * Logical vectors of any length (converted to integer then to character)
 ## * A list of raw vectors (note this generates a nested list)
 
@@ -112,7 +112,7 @@ con$pipeline(list(
 ##   parent frame
 
 ## The callback function must take a single argument; this will be the
-## recieved message with named elements `type` (which will be
+## received message with named elements `type` (which will be
 ## message), `channel` (the name of the channel) and `value` (the
 ## message contents).  If `pattern` was `TRUE`, then an additional
 ## element `pattern` will be present (see the Redis docs).  The

@@ -59,7 +59,7 @@ r$GET("mykey")
 ## accept objects serialised to strings or to byte streams, and the
 ## functions the `object_to_bin` and `object_to_string` functions can
 ## help here, serialising the objects to binary and string
-## represenations.  (Alternatively you can do this yourself using
+## representations.  (Alternatively you can do this yourself using
 ## `serialize`.)
 obj <- redux::object_to_bin(1:10)
 obj
@@ -91,7 +91,7 @@ redux::string_to_object(r$GET("mylist"))
 ## This gives you all the power of Redis, but you will have to
 ## manually serialise/deserialise all complicated R objects (i.e.,
 ## everything other than logicals, numbers or strings).  Similarly,
-## you are responsible for type coersion/deserialisation when
+## you are responsible for type coercion/deserialisation when
 ## retrieving data at the other end.
 
 ## Note that you are not restricted to using serialised R objects as
@@ -111,7 +111,7 @@ r$RPUSH("mylist2", 1:10)
 ## elements long).  There are lots of commands for operating on lists.
 ## For example, you can do things like;
 
-## * get an element by its index (note tht this uses C-style base-0
+## * get an element by its index (note that this uses C-style base-0
 ## indexing for consistency with the `Redis` documentation rather than
 ## R's semantics)
 r$LINDEX("mylist2", 1)
@@ -176,7 +176,7 @@ r$pipeline(
 ## it](http://redis.io/topics/pipelining) because there are a few
 ## restrictions and cautions.
 
-## Generating very large numbers (or variable nubmers) of commands
+## Generating very large numbers (or variable numbers) of commands
 ## with the above interface will be difficult because `pipeline` uses
 ## the dots argument.  Instead, you can pass a list of commands to the
 ## `.commands` argument of `pipeline`:
@@ -236,7 +236,7 @@ res <- r$subscribe("mychannel",
 
 ## *NOTE*: you need to be careful here - `hiredis` internally uses a
 ## blocking read which cannot be interrupted with Ctrl-C once started
-## unless a message is recieved on the channels being listened to!
+## unless a message is received on the channels being listened to!
 
 ## To test this out, we need a second process that will publish to the
 ## channel (or we'll wait forever).  This function will publish the
@@ -260,7 +260,7 @@ system2(file.path(R.home("bin"), "Rscript"), path_to_publisher,
 
 ## to start the publisher.
 
-## Let's add a little debgging information to the transform function,
+## Let's add a little debugging information to the transform function,
 ## and set the subscriber off:
 transform <- function(x) {
   message(format(Sys.time(), "%Y-%m-%d %H:%M:%OS3"),
@@ -278,7 +278,7 @@ res <- r$subscribe("mychannel",
 file.remove(path_to_publisher)
 
 ## The timestamps in the printed output show when the message was
-## recieved (with fractional seconds so that this is more obvious
+## received (with fractional seconds so that this is more obvious
 ## since this only takes ~1s to complete).
 
 ## The `res` object contains all the values, including the "goodbye"
@@ -333,7 +333,7 @@ obj[[2]] == obj2[[2]]
 
 ## # Scripts
 
-## Redis allows storing and evaluting Lua scripts on the redis server.
+## Redis allows storing and evaluating Lua scripts on the redis server.
 ## At this point it's all getting a bit meta (using R to tell Redis to
 ## call another dynamic language that drives Redis) but this can be
 ## very useful - especially in avoiding race conditions (because a

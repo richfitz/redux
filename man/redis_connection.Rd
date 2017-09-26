@@ -29,7 +29,7 @@ The returned list has elements, all of which are functions:
 \item{\code{config()}}{The configuration information}
 
 \item{\code{reconnect()}}{Attempt reconnection of a connection
-that has been closed, through serialisation/deserialiation or
+that has been closed, through serialisation/deserialisation or
 through loss of internet connection.}
 
 \item{command(cmd)}{Run a Redis command.  The format of this
@@ -41,7 +41,7 @@ command will be documented elsewhere.}
 channel or pattern specifying channels.  Here, \code{channel} must
 be a character vector, \code{pattern} a logical indicating if
 \code{channel} should be interpreted as a pattern, \code{callback}
-is a function to apply to each recieved message, returning
+is a function to apply to each received message, returning
 \code{TRUE} when subscription should stop, and \code{envir} is the
 environment in which to evaluate \code{callback}.  See below.}
 
@@ -51,7 +51,7 @@ environment in which to evaluate \code{callback}.  See below.}
 
 
   The callback function must take a single argument; this will be
-  the recieved message with named elements \code{type} (which will
+  the received message with named elements \code{type} (which will
   be message), \code{channel} (the name of the channel) and
   \code{value} (the message contents).  If \code{pattern} was
   \code{TRUE}, then an additional element \code{pattern} will be
