@@ -8,6 +8,7 @@ test_that("redis_api", {
 })
 
 test_that("storr_redis_api", {
+  skip_if_no_redis()
   st <- storr_redis_api(rand_str(), redux::hiredis())
   on.exit(st$destroy())
   expect_is(st, "storr")
