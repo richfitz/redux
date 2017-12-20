@@ -70,7 +70,7 @@ SEXP redis_check_command(SEXP cmd) {
         // skip the duplicate step too.  I'll need to make sure that
         // this works reasonably well in terms of upstream code.
         if (!dup) {
-          if (NAMED(cmd) > 0) {
+          if (MAYBE_REFERENCED(cmd)) {
             cmd = PROTECT(shallow_duplicate(cmd));
             np++;
           }
