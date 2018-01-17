@@ -3,15 +3,12 @@
 \name{storr_redis_api}
 \alias{storr_redis_api}
 \alias{driver_redis_api}
-\alias{driver_hiredis}
 \title{Redis object cache driver}
 \usage{
 storr_redis_api(prefix, con, hash_algorithm = NULL,
   default_namespace = "objects")
 
 driver_redis_api(prefix, con, hash_algorithm = NULL)
-
-driver_hiredis(prefix, config = NULL, hash_algorithm = NULL)
 }
 \arguments{
 \item{prefix}{Prefix for keys.  We'll generate a number of keys
@@ -19,8 +16,10 @@ that start with this string.  Probably terminating the string
 with a punctuation character (e.g., ":") will make created
 strings nicer to deal with.}
 
-\item{con}{A \code{redis_api} connection object, as created by the
-redux or rrlite packages.}
+\item{con}{A \code{redis_api} connection object, as created by
+redux.  Alternatively if passing in a \code{redis_config}
+object, a list, or \code{NULL} this will be passed through to
+\code{hiredis} to create a new connection.}
 
 \item{hash_algorithm}{Name of the hash algorithm to use.  Possible
 values are "md5", "sha1", and others supported by
@@ -28,9 +27,6 @@ values are "md5", "sha1", and others supported by
 "md5".}
 
 \item{default_namespace}{Default namespace (see \code{\link{storr}}).}
-
-\item{config}{Hiredis configuration, passed through to
-\code{\link{hiredis}}}
 }
 \description{
 Redis object cache driver

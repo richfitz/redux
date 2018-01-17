@@ -6,8 +6,10 @@
 ##'   with a punctuation character (e.g., ":") will make created
 ##'   strings nicer to deal with.
 ##'
-##' @param con A \code{redis_api} connection object, as created by the
-##'   redux or rrlite packages.
+##' @param con A \code{redis_api} connection object, as created by
+##'   redux.  Alternatively if passing in a \code{redis_config}
+##'   object, a list, or \code{NULL} this will be passed through to
+##'   \code{hiredis} to create a new connection.
 ##'
 ##' @param hash_algorithm Name of the hash algorithm to use.  Possible
 ##'   values are "md5", "sha1", and others supported by
@@ -26,24 +28,17 @@ storr_redis_api <- function(prefix, con, hash_algorithm = NULL,
 ##' @export
 ##' @rdname storr_redis_api
 driver_redis_api <- function(prefix, con, hash_algorithm = NULL) {
-  assert_is(con, "redis_api")
-  R6_driver_redis_api$new(prefix, con, hash_algorithm)
-}
-
-##' @export
-##' @rdname storr_redis_api
-##' @param config Hiredis configuration, passed through to
-##'   \code{\link{hiredis}}
-##' @importFrom storr join_key_namespace
-driver_hiredis <- function(prefix, config = NULL, hash_algorithm = NULL) {
-  if (inherits(con, "redis_config") ||
-      is.null(config) ||
-      is.list(config)) {
-    con <- hiredis(config = config)
-  } else {
-    stop("Invalid input for 'config'")
+  if (!inherits(con, "redis_api")) {
+    if (inherits(con, "redis_config") ||
+        is.null(con) ||
+        is.list(con)) {
+      con <- hiredis(config = con)
+    } else {
+      stop(
+        "Invalid input for 'con': expected redis connection or configuration")
+    }
   }
-  driver_redis_api(prefix, con, hash_algorithm = NULL)
+  R6_driver_redis_api$new(prefix, con, hash_algorithm)
 }
 
 R6_driver_redis_api <- R6::R6Class(
