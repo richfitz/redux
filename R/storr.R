@@ -73,7 +73,7 @@ R6_driver_redis_api <- R6::R6Class(
     },
 
     mget_hash = function(key, namespace) {
-      dat <- join_key_namespace(key, namespace)
+      dat <- storr::join_key_namespace(key, namespace)
       if (dat$n == 0L) {
         return(character(0))
       }
