@@ -15,6 +15,8 @@ As well as supporting Redis commands, `redux` supports:
 * **subscriptions**: create a simple blocking subscribe client, applying a callback function to every message received.
 * **error handling**: Every Redis error becomes an  R error.
 
+`redux` also provides a driver for [`storr`](https://cran.r-project.org/package=storr), allowing easy exchange of R objects between computers.
+
 ## Usage
 
 Create a hiredis object:
