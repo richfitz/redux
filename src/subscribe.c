@@ -93,7 +93,10 @@ SEXP redux_redis_unsubscribe(SEXP extPtr, SEXP channel, SEXP pattern) {
   SEXP ret = PROTECT(redis_reply_to_sexp(reply, true));
   freeReplyObject(reply);
   if (n_discarded > 0) {
-    setAttrib(ret, mkString("n_discarded"), ScalarInteger(n_discarded));
+    SEXP key = PROTECT(mkString("n_discarded"));
+    SEXP val = PROTECT(ScalarInteger(n_discarded));
+    setAttrib(ret, key, val);
+    UNPROTECT(2);
   }
   UNPROTECT(3);
   return ret;
