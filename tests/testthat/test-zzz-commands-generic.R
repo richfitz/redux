@@ -2,7 +2,7 @@ context("commands - generic")
 
 test_that("DEL", {
   skip_if_cmd_unsupported("DEL")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   on.exit(con$DEL(c(key1, key2)))
@@ -13,7 +13,7 @@ test_that("DEL", {
 
 test_that("DUMP", {
   skip_if_cmd_unsupported("DUMP")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -23,7 +23,7 @@ test_that("DUMP", {
 
 test_that("EXISTS", {
   skip_if_cmd_unsupported("EXISTS")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   key3 <- rand_str()
@@ -38,7 +38,7 @@ test_that("EXISTS", {
 
 test_that("EXPIRE", {
   skip_if_cmd_unsupported("EXPIRE")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -51,7 +51,7 @@ test_that("EXPIRE", {
 
 test_that("EXPIREAT", {
   skip_if_cmd_unsupported("EXPIREAT")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -64,7 +64,7 @@ test_that("EXPIREAT", {
 test_that("KEYS", {
   skip_if_cmd_unsupported("KEYS")
   skip_if_not_isolated_redis() # KEYS should not be used on production dbs
-  con <- hiredis()
+  con <- test_hiredis_connection()
   keys <- c("one", "two", "three", "four")
   on.exit(con$DEL(keys))
   con$MSET(keys, 1:4)
@@ -80,8 +80,8 @@ test_that("KEYS", {
 
 test_that("MOVE", {
   skip_if_cmd_unsupported("MOVE")
-  con0 <- hiredis()
-  con1 <- hiredis(redis_config(db = 1))
+  con0 <- test_hiredis_connection()
+  con1 <- test_hiredis_connection(redis_config(db = 1))
   key <- rand_str()
   on.exit({
     con0$DEL(key)
@@ -96,7 +96,7 @@ test_that("MOVE", {
 
 test_that("OBJECT", {
   skip_if_cmd_unsupported("OBJECT")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -108,7 +108,7 @@ test_that("OBJECT", {
 
 test_that("PERSIST", {
   skip_if_cmd_unsupported("PERSIST")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -121,7 +121,7 @@ test_that("PERSIST", {
 
 test_that("PEXPIRE", {
   skip_if_cmd_unsupported("PEXPIRE")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -133,7 +133,7 @@ test_that("PEXPIRE", {
 
 test_that("PEXPIREAT", {
   skip_if_cmd_unsupported("PEXPIREAT")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -145,7 +145,7 @@ test_that("PEXPIREAT", {
 
 test_that("PTTL", {
   skip_if_cmd_unsupported("PTTL")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -156,7 +156,7 @@ test_that("PTTL", {
 
 test_that("RANDOMKEY", {
   skip_if_cmd_unsupported("RANDOMKEY")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
   con$SET(key, "hello")
@@ -165,7 +165,7 @@ test_that("RANDOMKEY", {
 
 test_that("RENAME", {
   skip_if_cmd_unsupported("RENAME")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   on.exit(con$DEL(c(key1, key2)))
@@ -177,7 +177,7 @@ test_that("RENAME", {
 
 test_that("RENAMENX", {
   skip_if_cmd_unsupported("RENAMENX")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   on.exit(con$DEL(c(key1, key2)))
@@ -190,7 +190,7 @@ test_that("RENAMENX", {
 
 test_that("RESTORE", {
   skip_if_cmd_unsupported("RESTORE")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -212,7 +212,7 @@ test_that("TOUCH:prep", {
 
 test_that("TOUCH:run", {
   skip_if_cmd_unsupported("TOUCH")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   on.exit(con$DEL(c(key1, key2)))
@@ -224,7 +224,7 @@ test_that("TOUCH:run", {
 
 test_that("TTL", {
   skip_if_cmd_unsupported("TTL")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -235,7 +235,7 @@ test_that("TTL", {
 
 test_that("TYPE", {
   skip_if_cmd_unsupported("TYPE")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   key3 <- rand_str()
@@ -259,7 +259,7 @@ test_that("UNLINK:prep", {
 
 test_that("UNLINK:run", {
   skip_if_cmd_unsupported("UNLINK")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   key3 <- rand_str()
@@ -273,7 +273,7 @@ test_that("UNLINK:run", {
 
 test_that("WAIT", {
   skip_if_cmd_unsupported("WAIT")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
   con$SET(key, "bar")

@@ -2,7 +2,7 @@ context("commands - list")
 
 test_that("BLPOP", {
   skip_if_cmd_unsupported("BLPOP")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   on.exit(con$DEL(c(key1, key2)))
@@ -14,7 +14,7 @@ test_that("BLPOP", {
 
 test_that("BRPOP", {
   skip_if_cmd_unsupported("BRPOP")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   on.exit(con$DEL(c(key1, key2)))
@@ -26,7 +26,7 @@ test_that("BRPOP", {
 
 test_that("BRPOPLPUSH", {
   skip_if_cmd_unsupported("BRPOPLPUSH")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   on.exit(con$DEL(c(key1, key2)))
@@ -41,7 +41,7 @@ test_that("BRPOPLPUSH", {
 
 test_that("LINDEX", {
   skip_if_cmd_unsupported("LINDEX")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -54,7 +54,7 @@ test_that("LINDEX", {
 
 test_that("LINSERT", {
   skip_if_cmd_unsupported("LINSERT")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -67,7 +67,7 @@ test_that("LINSERT", {
 
 test_that("LLEN", {
   skip_if_cmd_unsupported("LLEN")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -78,7 +78,7 @@ test_that("LLEN", {
 
 test_that("LPOP", {
   skip_if_cmd_unsupported("LPOP")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -91,7 +91,7 @@ test_that("LPOP", {
 
 test_that("LPUSH", {
   skip_if_cmd_unsupported("LPUSH")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -102,7 +102,7 @@ test_that("LPUSH", {
 
 test_that("LPUSHX", {
   skip_if_cmd_unsupported("LPUSHX")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   on.exit(con$DEL(c(key1, key2)))
@@ -116,7 +116,7 @@ test_that("LPUSHX", {
 
 test_that("LRANGE", {
   skip_if_cmd_unsupported("LRANGE")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -131,7 +131,7 @@ test_that("LRANGE", {
 
 test_that("LREM", {
   skip_if_cmd_unsupported("LREM")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -145,7 +145,7 @@ test_that("LREM", {
 
 test_that("LSET", {
   skip_if_cmd_unsupported("LSET")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -159,7 +159,7 @@ test_that("LSET", {
 
 test_that("LTRIM", {
   skip_if_cmd_unsupported("LTRIM")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -172,7 +172,7 @@ test_that("LTRIM", {
 
 test_that("RPOP", {
   skip_if_cmd_unsupported("RPOP")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -185,7 +185,7 @@ test_that("RPOP", {
 
 test_that("RPOPLPUSH", {
   skip_if_cmd_unsupported("RPOPLPUSH")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   on.exit(con$DEL(c(key1, key2)))
@@ -200,7 +200,7 @@ test_that("RPOPLPUSH", {
 
 test_that("RPUSH", {
   skip_if_cmd_unsupported("RPUSH")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -211,7 +211,7 @@ test_that("RPUSH", {
 
 test_that("RPUSHX", {
   skip_if_cmd_unsupported("RPUSHX")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   on.exit(con$DEL(c(key1, key2)))

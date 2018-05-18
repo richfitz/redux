@@ -2,7 +2,7 @@ context("commands - hash")
 
 test_that("HDEL", {
   skip_if_cmd_unsupported("HDEL")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -13,7 +13,7 @@ test_that("HDEL", {
 
 test_that("HEXISTS", {
   skip_if_cmd_unsupported("HEXISTS")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -24,7 +24,7 @@ test_that("HEXISTS", {
 
 test_that("HGET", {
   skip_if_cmd_unsupported("HGET")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -35,7 +35,7 @@ test_that("HGET", {
 
 test_that("HGETALL", {
   skip_if_cmd_unsupported("HGETALL")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -51,7 +51,7 @@ test_that("HGETALL", {
 
 test_that("HINCRBY", {
   skip_if_cmd_unsupported("HINCRBY")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -63,7 +63,7 @@ test_that("HINCRBY", {
 
 test_that("HINCRBYFLOAT", {
   skip_if_cmd_unsupported("HINCRBYFLOAT")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -76,7 +76,7 @@ test_that("HINCRBYFLOAT", {
 
 test_that("HKEYS", {
   skip_if_cmd_unsupported("HKEYS")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -87,7 +87,7 @@ test_that("HKEYS", {
 
 test_that("HLEN", {
   skip_if_cmd_unsupported("HLEN")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -98,7 +98,7 @@ test_that("HLEN", {
 
 test_that("HMGET", {
   skip_if_cmd_unsupported("HMGET")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -110,7 +110,7 @@ test_that("HMGET", {
 
 test_that("HMSET", {
   skip_if_cmd_unsupported("HMSET")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -121,7 +121,7 @@ test_that("HMSET", {
 
 test_that("HSET", {
   skip_if_cmd_unsupported("HSET")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -131,7 +131,7 @@ test_that("HSET", {
 
 test_that("HSETNX", {
   skip_if_cmd_unsupported("HSETNX")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -148,7 +148,7 @@ test_that("HSTRLEN:prep", {
 
 test_that("HSTRLEN:run", {
   skip_if_cmd_unsupported("HSTRLEN")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -160,7 +160,7 @@ test_that("HSTRLEN:run", {
 
 test_that("HVALS", {
   skip_if_cmd_unsupported("HVALS")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 

@@ -2,7 +2,7 @@ context("commands - hyperloglog")
 
 test_that("PFADD", {
   skip_if_cmd_unsupported("PFADD")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -12,7 +12,7 @@ test_that("PFADD", {
 
 test_that("PFCOUNT", {
   skip_if_cmd_unsupported("PFCOUNT")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -24,7 +24,7 @@ test_that("PFCOUNT", {
 
 test_that("PFMERGE", {
   skip_if_cmd_unsupported("PFMERGE")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
   key3 <- rand_str()

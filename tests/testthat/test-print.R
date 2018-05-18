@@ -7,8 +7,7 @@ test_that("redis_commands", {
 })
 
 test_that("redis_api", {
-  skip_if_no_redis()
-  con <- hiredis()
+  con <- test_hiredis_connection()
   str <- capture_output(print(con))
   expect_match(str, "redis_api")
   expect_match(str, "PING")

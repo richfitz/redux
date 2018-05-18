@@ -22,7 +22,7 @@ test_that("low level", {
     }
   }
 
-  con <- hiredis()
+  con <- test_hiredis_connection()
   env <- environment()
   con$.subscribe(ch, FALSE, callback, env)
 
@@ -52,7 +52,7 @@ test_that("higher level", {
     x$value > 0.8
   }
 
-  con <- hiredis()
+  con <- test_hiredis_connection()
   vals <- con$subscribe(ch, transform = transform, terminate = terminate)
   expect_gt(length(vals), 0)
 
@@ -69,7 +69,7 @@ test_that("higher level: collect n", {
   dat <- start_publisher(ch)
   on.exit(file.remove(dat$filename))
 
-  con <- hiredis()
+  con <- test_hiredis_connection()
   vals <- con$subscribe(ch, collect = TRUE, n = 5)
 
   expect_equal(length(vals), 5)
@@ -86,7 +86,7 @@ test_that("pattern", {
   filename <- vcapply(dat, "[[", "filename")
   on.exit(file.remove(filename))
 
-  con <- hiredis()
+  con <- test_hiredis_connection()
   vals <- con$subscribe("foo*", pattern = TRUE, collect = TRUE, n = 20)
 
   expect_equal(length(vals), 20)
@@ -173,7 +173,7 @@ test_that("error cases", {
     }
   }
 
-  con <- hiredis()
+  con <- test_hiredis_connection()
   env <- environment()
   expect_error(con$.subscribe(NULL, FALSE, callback, env),
                "channel must be character")

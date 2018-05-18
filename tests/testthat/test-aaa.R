@@ -1,8 +1,7 @@
 context("redux (basic test)")
 
 test_that("use", {
-  skip_if_no_redis()
-  r <- hiredis()
+  r <- test_hiredis_connection()
   expect_equal(r$PING(), redis_status("PONG"))
   key <- "redisapi-test:foo"
   expect_equal(r$SET(key, "bar"), redis_status("OK"))

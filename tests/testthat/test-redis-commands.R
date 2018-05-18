@@ -18,8 +18,7 @@ test_that("Filter", {
   expect_equal(length(filter_redis_commands(tmp, as.character(mv))),
                length(tmp))
 
-  skip_if_no_redis()
-  con <- hiredis()
+  con <- test_hiredis_connection()
   v <- redis_version(con)
   ans1 <- filter_redis_commands(tmp, TRUE, con$command)
   ans2 <- filter_redis_commands(tmp, v)

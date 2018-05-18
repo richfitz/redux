@@ -1,8 +1,7 @@
 context("scan")
 
 test_that("scan", {
-  skip_if_no_redis()
-  con <- hiredis()
+  con <- test_hiredis_connection()
   prefix <- rand_str(prefix = "scan:")
   keys <- character(0)
   for (i in seq_len(10)) {
@@ -27,8 +26,7 @@ test_that("scan", {
 })
 
 test_that("HSCAN", {
-  skip_if_no_redis()
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -47,8 +45,7 @@ test_that("HSCAN", {
 })
 
 test_that("SSCAN", {
-  skip_if_no_redis()
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -60,8 +57,7 @@ test_that("SSCAN", {
 })
 
 test_that("ZSCAN", {
-  skip_if_no_redis()
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -79,8 +75,7 @@ test_that("error conditions", {
   expect_error(scan_find(NULL, "foo"),
                "con must be a redis_api object")
 
-  skip_if_no_redis()
-  con <- hiredis()
+  con <- test_hiredis_connection()
   expect_error(scan_find(con, "foo", type = "HSCAN"),
                "key must be given when using HSCAN")
 })

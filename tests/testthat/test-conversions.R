@@ -21,8 +21,7 @@ test_that("difficult conversions", {
 })
 
 test_that("raw detection", {
-  skip_if_no_redis()
-  con <- hiredis()
+  con <- test_hiredis_connection()
   on.exit(con$DEL("key"))
 
   d <- as.raw(c(1L, 5L, 127L, 0L, 99L))
@@ -47,8 +46,7 @@ test_that("raw detection", {
 ## Redis stores integers as strings, so make sure that TRUE/FALSE
 ## store as 1 / 0
 test_that("logical", {
-  skip_if_no_redis()
-  con <- hiredis()
+  con <- test_hiredis_connection()
   on.exit(con$DEL("key"))
 
   con$SET("key", TRUE)
@@ -63,8 +61,7 @@ test_that("logical", {
 })
 
 test_that("invalid argument types", {
-  skip_if_no_redis()
-  con <- hiredis()
+  con <- test_hiredis_connection()
   on.exit(con$DEL("key"))
   ## TODO: this error message is _useless_ as it refers to the
   ## low-level list used internally to hold arguments and not the
@@ -74,8 +71,7 @@ test_that("invalid argument types", {
 })
 
 test_that("long integers", {
-  skip_if_no_redis()
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 

@@ -12,7 +12,7 @@ test_that("GEOADD:prep", {
 
 test_that("GEOADD:run", {
   skip_if_cmd_unsupported("GEOADD")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -35,7 +35,7 @@ test_that("GEOHASH:prep", {
 
 test_that("GEOHASH:run", {
   skip_if_cmd_unsupported("GEOHASH")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -57,7 +57,7 @@ test_that("GEOPOS:prep", {
 
 test_that("GEOPOS:run", {
   skip_if_cmd_unsupported("GEOPOS")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -78,7 +78,7 @@ test_that("GEODIST:prep", {
 
 test_that("GEODIST:run", {
   skip_if_cmd_unsupported("GEODIST")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -103,7 +103,7 @@ test_that("GEORADIUS:prep", {
 
 test_that("GEORADIUS:run", {
   skip_if_cmd_unsupported("GEORADIUS")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 
@@ -142,7 +142,7 @@ test_that("GEORADIUSBYMEMBER:run", {
 
 test_that("GEORADIUSBYMEMBER:run", {
   skip_if_cmd_unsupported("GEORADIUSBYMEMBER")
-  con <- hiredis()
+  con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
 

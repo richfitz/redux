@@ -2,6 +2,9 @@ language: R
 sudo: false
 cache: packages
 
+env:
+  - REDUX_TEST_USE_REDIS=true
+
 matrix:
   include:
     - os: linux
