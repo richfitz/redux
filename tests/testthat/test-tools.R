@@ -54,7 +54,7 @@ test_that("from_redis_hash", {
   skip_if_no_redis()
   con <- hiredis()
 
-  key <- digest::digest(Sys.time())
+  key <- rand_str()
   fields <- letters[1:5]
   vals <- 1:5
   con$HMSET(key, fields, vals)
