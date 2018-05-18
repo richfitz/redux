@@ -1,10 +1,10 @@
 ## Helpers that will be used by both redux and rrlite (possibly after
 ## translation).
 skip_if_no_redis <- function() {
+  skip_on_cran()
   if (redis_available()) {
     return()
   }
-  skip_on_cran()
   testthat::skip("Redis is not available")
 }
 
