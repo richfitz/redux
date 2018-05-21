@@ -7,7 +7,8 @@ test_hiredis_connection <- function(...) {
 ## translation).
 skip_if_no_redis <- function(...) {
   testthat::skip_on_cran()
-  if (redis_available(...)) {
+  if (identical(Sys.getenv("REDUX_TEST_USE_REDIS"), "true") &&
+      redis_available(...)) {
     return()
   }
   testthat::skip("Redis is not available")
