@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/richfitz/redux.svg?branch=master)](https://travis-ci.org/richfitz/redux)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/richfitz/redux?branch=master&svg=true)](https://ci.appveyor.com/project/richfitz/redux)
 [![codecov.io](https://codecov.io/github/richfitz/redux/coverage.svg?branch=master)](https://codecov.io/github/richfitz/redux?branch=master)
+[![](http://www.r-pkg.org/badges/version/redux)](https://cran.r-project.org/package=redux)
 
 `redux` provides an inteface to Redis.  Two interfaces are provided; a low level interface (allowing execution of arbitrary Redis commands with almost no interface) and a high-level interface with an API that matches all of the several hundred Redis commands.
 
