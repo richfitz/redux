@@ -67,12 +67,10 @@ vignettes:
 	rm -f vignettes/redux.Rmd vignettes/low_level.Rmd
 	make vignettes_install
 
-staticdocs:
-	@mkdir -p inst/staticdocs
-	Rscript -e "library(methods); staticdocs::build_site()"
-	rm -f vignettes/*.html
-	@rmdir inst/staticdocs
-website: staticdocs
+pkgdown:
+	${RSCRIPT} -e "library(methods); pkgdown::build_site()"
+
+website: pkgdown
 	./update_web.sh
 
 .PHONY: all compile_dll doc clean test install vignettes

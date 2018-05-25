@@ -2,7 +2,8 @@ Package: redux
 Title: R Bindings to 'hiredis'
 Version: 1.1.0
 Author: Rich FitzJohn
-Maintainer: Rich FitzJohn <rich.fitzjohn@gmail.com>
+Authors@R: c(person("Rich", "FitzJohn", role = c("aut", "cre"),
+    email = "rich.fitzjohn@gmail.com"))
 Description: A 'hiredis' wrapper that includes support for
     transactions, pipelining, blocking subscription, serialisation of
     all keys and values, 'Redis' error handling with R errors.
