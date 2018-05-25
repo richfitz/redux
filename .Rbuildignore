@@ -19,3 +19,4 @@
 ^\.valgrind_ignore$
 ^autobrew$
 ^src/redux\.so\.dSYM$
+^docs$
