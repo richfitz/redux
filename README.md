@@ -4,6 +4,7 @@
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![R build status](https://github.com/richfitz/redux/workflows/R-CMD-check/badge.svg)](https://github.com/richfitz/redux/actions)
 [![codecov.io](https://codecov.io/github/richfitz/redux/coverage.svg?branch=master)](https://codecov.io/github/richfitz/redux?branch=master)
+[![](https://www.r-pkg.org/badges/version/redux)](https://cran.r-project.org/package=redux)
 <!-- badges: end -->
 
 `redux` provides an interface to Redis.  Two interfaces are provided; a low level interface (allowing execution of arbitrary Redis commands with almost no interface) and a high-level interface with an API that matches all of the several hundred Redis commands.
