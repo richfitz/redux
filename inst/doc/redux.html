@@ -12,7 +12,7 @@
 
 <meta name="author" content="Rich FitzJohn" />
 
-<meta name="date" content="2017-09-26" />
+<meta name="date" content="2018-05-25" />
 
 <title>Using Redis with redux</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Using Redis with redux</h1>
 <h4 class="author"><em>Rich FitzJohn</em></h4>
-<h4 class="date"><em>2017-09-26</em></h4>
+<h4 class="date"><em>2018-05-25</em></h4>
 
 
 
@@ -109,13 +109,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The value for most arguments must be a string or will be coerced into one; clearly this is not going to be suitable for most R objects. The solution is to <em>serialise</em> the R object. <code>redux</code> can accept objects serialised to strings or to byte streams, and the functions the <code>object_to_bin</code> and <code>object_to_string</code> functions can help here, serialising the objects to binary and string representations. (Alternatively you can do this yourself using <code>serialize</code>.)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">obj &lt;-<span class="st"> </span>redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>)
 obj</code></pre></div>
-<pre><code>##  [1] 42 0a 02 00 00 00 03 03 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
+<pre><code>##  [1] 42 0a 02 00 00 00 01 04 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
 ## [24] 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06 00 00 00
 ## [47] 07 00 00 00 08 00 00 00 09 00 00 00 0a 00 00 00</code></pre>
 <p>or</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">str &lt;-<span class="st"> </span>redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>)
 str</code></pre></div>
-<pre><code>## [1] &quot;A\n2\n197379\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
+<pre><code>## [1] &quot;A\n2\n197633\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
 <p>The binary serialisation is faster, smaller, and preserves all the bits of floating point numbers. The string version might be preferable where having only strings in the database is wanted. The binary serialisation is compatible with the same approach used in <code>RcppRedis</code>, though it is never done automatically.</p>
 <p>These values can be deserialised:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">bin_to_object</span>(obj)</code></pre></div>
@@ -126,7 +126,7 @@ str</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, redux::<span class="kw">object_to_bin</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>)</code></pre></div>
-<pre><code>##  [1] 42 0a 02 00 00 00 03 03 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
+<pre><code>##  [1] 42 0a 02 00 00 00 01 04 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
 ## [24] 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06 00 00 00
 ## [47] 07 00 00 00 08 00 00 00 09 00 00 00 0a 00 00 00</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">bin_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre></div>
@@ -135,7 +135,7 @@ str</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">SET</span>(<span class="st">&quot;mylist&quot;</span>, redux::<span class="kw">object_to_string</span>(<span class="dv">1</span>:<span class="dv">10</span>))</code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;A\n2\n197379\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
+<pre><code>## [1] &quot;A\n2\n197633\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redux::<span class="kw">string_to_object</span>(r$<span class="kw">GET</span>(<span class="st">&quot;mylist&quot;</span>))</code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>This gives you all the power of Redis, but you will have to manually serialise/deserialise all complicated R objects (i.e., everything other than logicals, numbers or strings). Similarly, you are responsible for type coercion/deserialisation when retrieving data at the other end.</p>
@@ -221,7 +221,7 @@ str</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dat &lt;-<span class="st"> </span>r$<span class="kw">LRANGE</span>(<span class="st">&quot;mylist2&quot;</span>, <span class="dv">0</span>, <span class="dv">2</span>)
 dat</code></pre></div>
 <pre><code>## [[1]]
-## [1] &quot;A\n2\n197379\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;
+## [1] &quot;A\n2\n197633\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n&quot;
 ##
 ## [[2]]
 ## [1] &quot;carrot&quot;
@@ -329,27 +329,27 @@ r$<span class="kw">PUBLISH</span>(<span class="st">&quot;mychannel&quot;</span>,
                    <span class="dt">transform =</span> transform,
                    <span class="dt">terminate =</span> function(x) <span class="kw">identical</span>(x, <span class="st">&quot;goodbye&quot;</span>),
                    <span class="dt">n =</span> <span class="dv">100</span>)</code></pre></div>
-<pre><code>## 2017-09-26 09:46:32.106: got message: 1120</code></pre>
-<pre><code>## 2017-09-26 09:46:32.156: got message: 1160</code></pre>
-<pre><code>## 2017-09-26 09:46:32.208: got message: 963</code></pre>
-<pre><code>## 2017-09-26 09:46:32.257: got message: 1210</code></pre>
-<pre><code>## 2017-09-26 09:46:32.307: got message: 1160</code></pre>
-<pre><code>## 2017-09-26 09:46:32.357: got message: 1160</code></pre>
-<pre><code>## 2017-09-26 09:46:32.408: got message: 813</code></pre>
-<pre><code>## 2017-09-26 09:46:32.458: got message: 1230</code></pre>
-<pre><code>## 2017-09-26 09:46:32.508: got message: 1370</code></pre>
-<pre><code>## 2017-09-26 09:46:32.558: got message: 1140</code></pre>
-<pre><code>## 2017-09-26 09:46:32.609: got message: 995</code></pre>
-<pre><code>## 2017-09-26 09:46:32.659: got message: 935</code></pre>
-<pre><code>## 2017-09-26 09:46:32.709: got message: 1110</code></pre>
-<pre><code>## 2017-09-26 09:46:32.760: got message: 994</code></pre>
-<pre><code>## 2017-09-26 09:46:32.810: got message: 1020</code></pre>
-<pre><code>## 2017-09-26 09:46:32.860: got message: 960</code></pre>
-<pre><code>## 2017-09-26 09:46:32.911: got message: 1180</code></pre>
-<pre><code>## 2017-09-26 09:46:32.961: got message: 799</code></pre>
-<pre><code>## 2017-09-26 09:46:33.011: got message: 958</code></pre>
-<pre><code>## 2017-09-26 09:46:33.062: got message: 1140</code></pre>
-<pre><code>## 2017-09-26 09:46:33.062: got message: goodbye</code></pre>
+<pre><code>## 2018-05-25 17:29:29.348: got message: 1120</code></pre>
+<pre><code>## 2018-05-25 17:29:29.402: got message: 1160</code></pre>
+<pre><code>## 2018-05-25 17:29:29.454: got message: 963</code></pre>
+<pre><code>## 2018-05-25 17:29:29.509: got message: 1210</code></pre>
+<pre><code>## 2018-05-25 17:29:29.561: got message: 1160</code></pre>
+<pre><code>## 2018-05-25 17:29:29.617: got message: 1160</code></pre>
+<pre><code>## 2018-05-25 17:29:29.672: got message: 813</code></pre>
+<pre><code>## 2018-05-25 17:29:29.726: got message: 1230</code></pre>
+<pre><code>## 2018-05-25 17:29:29.777: got message: 1370</code></pre>
+<pre><code>## 2018-05-25 17:29:29.828: got message: 1140</code></pre>
+<pre><code>## 2018-05-25 17:29:29.884: got message: 995</code></pre>
+<pre><code>## 2018-05-25 17:29:29.939: got message: 935</code></pre>
+<pre><code>## 2018-05-25 17:29:29.992: got message: 1110</code></pre>
+<pre><code>## 2018-05-25 17:29:30.042: got message: 994</code></pre>
+<pre><code>## 2018-05-25 17:29:30.095: got message: 1020</code></pre>
+<pre><code>## 2018-05-25 17:29:30.151: got message: 960</code></pre>
+<pre><code>## 2018-05-25 17:29:30.203: got message: 1180</code></pre>
+<pre><code>## 2018-05-25 17:29:30.256: got message: 799</code></pre>
+<pre><code>## 2018-05-25 17:29:30.308: got message: 958</code></pre>
+<pre><code>## 2018-05-25 17:29:30.362: got message: 1140</code></pre>
+<pre><code>## 2018-05-25 17:29:30.363: got message: goodbye</code></pre>
 <p>The timestamps in the printed output show when the message was received (with fractional seconds so that this is more obvious since this only takes ~1s to complete).</p>
 <p>The <code>res</code> object contains all the values, including the “goodbye” that was our end-of-stream message:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlist</span>(res)</code></pre></div>

@@ -42,21 +42,21 @@ check_all:
 clean:
 	rm -f src/*.o src/*.so
 
-vignettes/src/redux.Rmd: vignettes/src/redux.R
+vignettes_src/redux.Rmd: vignettes_src/redux.R
 	${RSCRIPT} -e 'library(sowsear); sowsear("$<", output="$@")'
 
-vignettes/redux.Rmd: vignettes/src/redux.Rmd
-	cd vignettes/src && ${RSCRIPT} -e 'knitr::knit("redux.Rmd")'
-	mv vignettes/src/redux.md $@
+vignettes/redux.Rmd: vignettes_src/redux.Rmd
+	cd vignettes_src && ${RSCRIPT} -e 'knitr::knit("redux.Rmd")'
+	mv vignettes_src/redux.md $@
 	sed -i.bak 's/[[:space:]]*$$//' $@
 	rm -f $@.bak
 
-vignettes/src/low_level.Rmd: vignettes/src/low_level.R
+vignettes_src/low_level.Rmd: vignettes_src/low_level.R
 	${RSCRIPT} -e 'library(sowsear); sowsear("$<", output="$@")'
 
-vignettes/low_level.Rmd: vignettes/src/low_level.Rmd
-	cd vignettes/src && ${RSCRIPT} -e 'knitr::knit("low_level.Rmd")'
-	mv vignettes/src/low_level.md $@
+vignettes/low_level.Rmd: vignettes_src/low_level.Rmd
+	cd vignettes_src && ${RSCRIPT} -e 'knitr::knit("low_level.Rmd")'
+	mv vignettes_src/low_level.md $@
 	sed -i.bak 's/[[:space:]]*$$//' $@
 	rm -f $@.bak
 
