@@ -5,7 +5,7 @@
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/richfitz/redux?branch=master&svg=true)](https://ci.appveyor.com/project/richfitz/redux)
 [![codecov.io](https://codecov.io/github/richfitz/redux/coverage.svg?branch=master)](https://codecov.io/github/richfitz/redux?branch=master)
 
-`redux` provides an inteface to Redis.  Two interfaces are provided; a low level interface (allowing execution of arbitrary Redis commands with almost no interface) and a high-level interface with an API that matches all of the several hundred Redis commands.
+`redux` provides an interface to Redis.  Two interfaces are provided; a low level interface (allowing execution of arbitrary Redis commands with almost no interface) and a high-level interface with an API that matches all of the several hundred Redis commands.
 
 As well as supporting Redis commands, `redux` supports:
 
