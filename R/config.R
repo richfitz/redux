@@ -70,7 +70,10 @@ redis_config <- function(..., config = list(...)) {
                 port = as.integer(Sys_getenv("REDIS_PORT", 6379L)),
                 path = NULL,
                 password = NULL,
-                db = NULL)
+                db = NULL,
+				CApath = Sys_getenv("REDIS_SSL_CA_PATH", NULL),
+				certPath = Sys_getenv("REDIS_SSL_CERT_PATH", NULL),
+				keyPath = Sys_getenv("REDIS_SSL_KEY_PATH", NULL))
   dots <- list(...)
   if (length(dots) > 0L && !identical(dots, config)) {
     warning("Ignoring dots in favour of config")

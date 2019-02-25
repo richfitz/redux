@@ -22,6 +22,36 @@ SEXP redux_redis_connect(SEXP host, SEXP port) {
   return extPtr;
 }
 
+SEXP redux_redis_connect_ssl(SEXP host, SEXP port, SEXP CApath, 
+                             SEXP CERTpath, SEXP KEYpath) {
+  redisContext *context = redisConnect(CHAR(STRING_ELT(host, 0)),
+                                       INTEGER(port)[0]);
+  if (context == NULL) {
+    error("Creating context failed catastrophically [tcp_ssl]"); // # nocov
+  }
+  if (context->err != 0) {
+    const char * errstr = string_duplicate(context->errstr);
+    redisFree(context);
+    error("Failed to create context: %s", errstr);
+  }
+  if (redisSecureConnection(context, 
+                            CHAR(STRING_ELT(CApath, 0)), 
+                            CHAR(STRING_ELT(CERTpath, 0)), 
+                            CHAR(STRING_ELT(KEYpath, 0)), 
+                            CHAR(STRING_ELT(host, 0))) != REDIS_OK) {
+        redisFree(context);
+        if (context->err != 0) {
+          const char * errstr_ssl = string_duplicate(context->errstr);
+          error("Failed to initialize SSL connection: %s\n", context->errstr);
+        }
+        error("Failed to initialize SSL connection\n");
+}
+  SEXP extPtr = PROTECT(R_MakeExternalPtr(context, host, R_NilValue));
+  R_RegisterCFinalizer(extPtr, redis_finalize);
+  UNPROTECT(1);
+  return extPtr;
+}
+
 SEXP redux_redis_connect_unix(SEXP path) {
   redisContext *context = redisConnectUnix(CHAR(STRING_ELT(path, 0)));
   if (context == NULL) {
