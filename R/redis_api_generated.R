@@ -55,6 +55,17 @@ redis_commands <- function(command) {
       assert_scalar2(timeout)
       command(list("BRPOPLPUSH", source, destination, timeout))
     },
+    BZPOPMIN = function(key, timeout) {
+      assert_scalar2(timeout)
+      command(list("BZPOPMIN", key, timeout))
+    },
+    BZPOPMAX = function(key, timeout) {
+      assert_scalar2(timeout)
+      command(list("BZPOPMAX", key, timeout))
+    },
+    CLIENT_ID = function() {
+      command(list("CLIENT", "ID"))
+    },
     CLIENT_KILL = function(ip_port = NULL, ID = NULL, TYPE = NULL, ADDR = NULL, SKIPME = NULL) {
       assert_scalar_or_null2(ip_port)
       assert_scalar_or_null2(ID)
@@ -63,8 +74,9 @@ redis_commands <- function(command) {
       assert_scalar_or_null2(SKIPME)
       command(list("CLIENT", "KILL", ip_port, cmd_command("ID", ID, FALSE), cmd_command("TYPE", TYPE, FALSE), cmd_command("ADDR", ADDR, FALSE), cmd_command("SKIPME", SKIPME, FALSE)))
     },
-    CLIENT_LIST = function() {
-      command(list("CLIENT", "LIST"))
+    CLIENT_LIST = function(TYPE = NULL) {
+      assert_match_value_or_null(TYPE, c("normal", "master", "replica", "pubsub"))
+      command(list("CLIENT", "LIST", cmd_command("TYPE", TYPE, FALSE)))
     },
     CLIENT_GETNAME = function() {
       command(list("CLIENT", "GETNAME"))
@@ -79,6 +91,11 @@ redis_commands <- function(command) {
     CLIENT_SETNAME = function(connection_name) {
       assert_scalar2(connection_name)
       command(list("CLIENT", "SETNAME", connection_name))
+    },
+    CLIENT_UNBLOCK = function(client_id, unblock_type = NULL) {
+      assert_scalar2(client_id)
+      assert_match_value_or_null(unblock_type, c("TIMEOUT", "ERROR"))
+      command(list("CLIENT", "UNBLOCK", client_id, unblock_type))
     },
     CLUSTER_ADDSLOTS = function(slot) {
       command(list("CLUSTER", "ADDSLOTS", slot))
@@ -146,6 +163,10 @@ redis_commands <- function(command) {
     CLUSTER_SLAVES = function(node_id) {
       assert_scalar2(node_id)
       command(list("CLUSTER", "SLAVES", node_id))
+    },
+    CLUSTER_REPLICAS = function(node_id) {
+      assert_scalar2(node_id)
+      command(list("CLUSTER", "REPLICAS", node_id))
     },
     CLUSTER_SLOTS = function() {
       command(list("CLUSTER", "SLOTS"))
@@ -236,11 +257,13 @@ redis_commands <- function(command) {
       assert_scalar2(timestamp)
       command(list("EXPIREAT", key, timestamp))
     },
-    FLUSHALL = function() {
-      command(list("FLUSHALL"))
+    FLUSHALL = function(async = NULL) {
+      assert_match_value_or_null(async, c("ASYNC"))
+      command(list("FLUSHALL", async))
     },
-    FLUSHDB = function() {
-      command(list("FLUSHDB"))
+    FLUSHDB = function(async = NULL) {
+      assert_match_value_or_null(async, c("ASYNC"))
+      command(list("FLUSHDB", async))
     },
     GEOADD = function(key, longitude, latitude, member) {
       assert_scalar2(key)
@@ -457,6 +480,26 @@ redis_commands <- function(command) {
       assert_scalar2(stop)
       command(list("LTRIM", key, start, stop))
     },
+    MEMORY_DOCTOR = function() {
+      command(list("MEMORY", "DOCTOR"))
+    },
+    MEMORY_HELP = function() {
+      command(list("MEMORY", "HELP"))
+    },
+    MEMORY_MALLOC_STATS = function() {
+      command(list("MEMORY", "MALLOC-STATS"))
+    },
+    MEMORY_PURGE = function() {
+      command(list("MEMORY", "PURGE"))
+    },
+    MEMORY_STATS = function() {
+      command(list("MEMORY", "STATS"))
+    },
+    MEMORY_USAGE = function(key, SAMPLES = NULL) {
+      assert_scalar2(key)
+      assert_scalar_or_null2(SAMPLES)
+      command(list("MEMORY", "USAGE", key, cmd_command("SAMPLES", SAMPLES, FALSE)))
+    },
     MGET = function(key) {
       command(list("MGET", key))
     },
@@ -569,12 +612,15 @@ redis_commands <- function(command) {
       assert_scalar2(newkey)
       command(list("RENAMENX", key, newkey))
     },
-    RESTORE = function(key, ttl, serialized_value, replace = NULL) {
+    RESTORE = function(key, ttl, serialized_value, replace = NULL, absttl = NULL, IDLETIME = NULL, FREQ = NULL) {
       assert_scalar2(key)
       assert_scalar2(ttl)
       assert_scalar2(serialized_value)
       assert_match_value_or_null(replace, c("REPLACE"))
-      command(list("RESTORE", key, ttl, serialized_value, replace))
+      assert_match_value_or_null(absttl, c("ABSTTL"))
+      assert_scalar_or_null2(IDLETIME)
+      assert_scalar_or_null2(FREQ)
+      command(list("RESTORE", key, ttl, serialized_value, replace, absttl, cmd_command("IDLETIME", IDLETIME, FALSE), cmd_command("FREQ", FREQ, FALSE)))
     },
     ROLE = function() {
       command(list("ROLE"))
@@ -636,13 +682,12 @@ redis_commands <- function(command) {
       assert_scalar2(index)
       command(list("SELECT", index))
     },
-    SET = function(key, value, EX = NULL, PX = NULL, condition = NULL) {
+    SET = function(key, value, expiration = NULL, condition = NULL) {
       assert_scalar2(key)
       assert_scalar2(value)
-      assert_scalar_or_null2(EX)
-      assert_scalar_or_null2(PX)
+      assert_match_value_or_null(expiration, c("EX seconds", "PX milliseconds"))
       assert_match_value_or_null(condition, c("NX", "XX"))
-      command(list("SET", key, value, cmd_command("EX", EX, FALSE), cmd_command("PX", PX, FALSE), condition))
+      command(list("SET", key, value, cmd_command("expiration", expiration, FALSE), condition))
     },
     SETBIT = function(key, offset, value) {
       assert_scalar2(key)
@@ -687,6 +732,11 @@ redis_commands <- function(command) {
       assert_scalar2(host)
       assert_scalar2(port)
       command(list("SLAVEOF", host, port))
+    },
+    REPLICAOF = function(host, port) {
+      assert_scalar2(host)
+      assert_scalar2(port)
+      command(list("REPLICAOF", host, port))
     },
     SLOWLOG = function(subcommand, argument = NULL) {
       assert_scalar2(subcommand)
@@ -740,6 +790,11 @@ redis_commands <- function(command) {
       assert_scalar2(destination)
       command(list("SUNIONSTORE", destination, key))
     },
+    SWAPDB = function(index, index_1) {
+      assert_scalar2(index)
+      assert_scalar2(index_1)
+      command(list("SWAPDB", index, index_1))
+    },
     SYNC = function() {
       command(list("SYNC"))
     },
@@ -766,10 +821,10 @@ redis_commands <- function(command) {
     UNWATCH = function() {
       command(list("UNWATCH"))
     },
-    WAIT = function(numslaves, timeout) {
-      assert_scalar2(numslaves)
+    WAIT = function(numreplicas, timeout) {
+      assert_scalar2(numreplicas)
       assert_scalar2(timeout)
-      command(list("WAIT", numslaves, timeout))
+      command(list("WAIT", numreplicas, timeout))
     },
     WATCH = function(key) {
       command(list("WATCH", key))
@@ -809,6 +864,16 @@ redis_commands <- function(command) {
       assert_scalar2(min)
       assert_scalar2(max)
       command(list("ZLEXCOUNT", key, min, max))
+    },
+    ZPOPMAX = function(key, count = NULL) {
+      assert_scalar2(key)
+      assert_scalar_or_null2(count)
+      command(list("ZPOPMAX", key, count))
+    },
+    ZPOPMIN = function(key, count = NULL) {
+      assert_scalar2(key)
+      assert_scalar_or_null2(count)
+      command(list("ZPOPMIN", key, count))
     },
     ZRANGE = function(key, start, stop, withscores = NULL) {
       assert_scalar2(key)
@@ -897,11 +962,12 @@ redis_commands <- function(command) {
       assert_match_value_or_null(AGGREGATE, c("SUM", "MIN", "MAX"))
       command(list("ZUNIONSTORE", destination, numkeys, key, cmd_command("WEIGHTS", WEIGHTS, TRUE), cmd_command("AGGREGATE", AGGREGATE, FALSE)))
     },
-    SCAN = function(cursor, MATCH = NULL, COUNT = NULL) {
+    SCAN = function(cursor, MATCH = NULL, COUNT = NULL, TYPE = NULL) {
       assert_scalar2(cursor)
       assert_scalar_or_null2(MATCH)
       assert_scalar_or_null2(COUNT)
-      command(list("SCAN", cursor, cmd_command("MATCH", MATCH, FALSE), cmd_command("COUNT", COUNT, FALSE)))
+      assert_scalar_or_null2(TYPE)
+      command(list("SCAN", cursor, cmd_command("MATCH", MATCH, FALSE), cmd_command("COUNT", COUNT, FALSE), cmd_command("TYPE", TYPE, FALSE)))
     },
     SSCAN = function(key, cursor, MATCH = NULL, COUNT = NULL) {
       assert_scalar2(key)
@@ -923,6 +989,95 @@ redis_commands <- function(command) {
       assert_scalar_or_null2(MATCH)
       assert_scalar_or_null2(COUNT)
       command(list("ZSCAN", key, cursor, cmd_command("MATCH", MATCH, FALSE), cmd_command("COUNT", COUNT, FALSE)))
+    },
+    XINFO = function(CONSUMERS = NULL, GROUPS = NULL, STREAM = NULL, help = NULL) {
+      assert_length_or_null(CONSUMERS, 2L)
+      assert_scalar_or_null2(GROUPS)
+      assert_scalar_or_null2(STREAM)
+      assert_match_value_or_null(help, c("HELP"))
+      command(list("XINFO", cmd_command("CONSUMERS", CONSUMERS, TRUE), cmd_command("GROUPS", GROUPS, FALSE), cmd_command("STREAM", STREAM, FALSE), help))
+    },
+    XADD = function(key, ID, field, string) {
+      assert_scalar2(key)
+      assert_scalar2(ID)
+      field <- cmd_interleave(field, string)
+      command(list("XADD", key, ID, field))
+    },
+    XTRIM = function(key, strategy, count, approx = NULL) {
+      assert_scalar2(key)
+      assert_match_value(strategy, c("MAXLEN"))
+      assert_match_value_or_null(approx, c("~"))
+      assert_scalar2(count)
+      command(list("XTRIM", key, strategy, approx, count))
+    },
+    XDEL = function(key, ID) {
+      assert_scalar2(key)
+      command(list("XDEL", key, ID))
+    },
+    XRANGE = function(key, start, end, COUNT = NULL) {
+      assert_scalar2(key)
+      assert_scalar2(start)
+      assert_scalar2(end)
+      assert_scalar_or_null2(COUNT)
+      command(list("XRANGE", key, start, end, cmd_command("COUNT", COUNT, FALSE)))
+    },
+    XREVRANGE = function(key, end, start, COUNT = NULL) {
+      assert_scalar2(key)
+      assert_scalar2(end)
+      assert_scalar2(start)
+      assert_scalar_or_null2(COUNT)
+      command(list("XREVRANGE", key, end, start, cmd_command("COUNT", COUNT, FALSE)))
+    },
+    XLEN = function(key) {
+      assert_scalar2(key)
+      command(list("XLEN", key))
+    },
+    XREAD = function(streams, key, ID, COUNT = NULL, BLOCK = NULL) {
+      assert_scalar_or_null2(COUNT)
+      assert_scalar_or_null2(BLOCK)
+      assert_match_value(streams, c("STREAMS"))
+      command(list("XREAD", cmd_command("COUNT", COUNT, FALSE), cmd_command("BLOCK", BLOCK, FALSE), streams, key, ID))
+    },
+    XGROUP = function(CREATE = NULL, SETID = NULL, DESTROY = NULL, DELCONSUMER = NULL) {
+      assert_length_or_null(CREATE, 3L)
+      assert_length_or_null(SETID, 3L)
+      assert_length_or_null(DESTROY, 2L)
+      assert_length_or_null(DELCONSUMER, 3L)
+      command(list("XGROUP", cmd_command("CREATE", CREATE, TRUE), cmd_command("SETID", SETID, TRUE), cmd_command("DESTROY", DESTROY, TRUE), cmd_command("DELCONSUMER", DELCONSUMER, TRUE)))
+    },
+    XREADGROUP = function(GROUP, streams, key, ID, COUNT = NULL, BLOCK = NULL, noack = NULL) {
+      assert_length(GROUP, 2L)
+      assert_scalar_or_null2(COUNT)
+      assert_scalar_or_null2(BLOCK)
+      assert_match_value_or_null(noack, c("NOACK"))
+      assert_match_value(streams, c("STREAMS"))
+      command(list("XREADGROUP", cmd_command("GROUP", GROUP, TRUE), cmd_command("COUNT", COUNT, FALSE), cmd_command("BLOCK", BLOCK, FALSE), noack, streams, key, ID))
+    },
+    XACK = function(key, group, ID) {
+      assert_scalar2(key)
+      assert_scalar2(group)
+      command(list("XACK", key, group, ID))
+    },
+    XCLAIM = function(key, group, consumer, min_idle_time, ID, IDLE = NULL, TIME = NULL, RETRYCOUNT = NULL, force = NULL, justid = NULL) {
+      assert_scalar2(key)
+      assert_scalar2(group)
+      assert_scalar2(consumer)
+      assert_scalar2(min_idle_time)
+      assert_scalar_or_null2(IDLE)
+      assert_scalar_or_null2(TIME)
+      assert_scalar_or_null2(RETRYCOUNT)
+      assert_match_value_or_null(force, c("FORCE"))
+      assert_match_value_or_null(justid, c("JUSTID"))
+      command(list("XCLAIM", key, group, consumer, min_idle_time, ID, cmd_command("IDLE", IDLE, FALSE), cmd_command("TIME", TIME, FALSE), cmd_command("RETRYCOUNT", RETRYCOUNT, FALSE), force, justid))
+    },
+    XPENDING = function(key, group, start = NULL, end = NULL, count = NULL, consumer = NULL) {
+      assert_scalar2(key)
+      assert_scalar2(group)
+      assert_scalar_or_null2(start)
+      assert_scalar_or_null2(end)
+      assert_scalar_or_null2(count)
+      assert_scalar_or_null2(consumer)
+      command(list("XPENDING", key, group, start, end, count, consumer))
     })
 }
 cmd_since <- numeric_version(c(
@@ -937,12 +1092,16 @@ cmd_since <- numeric_version(c(
   BLPOP = "2.0.0",
   BRPOP = "2.0.0",
   BRPOPLPUSH = "2.2.0",
+  BZPOPMAX = "5.0.0",
+  BZPOPMIN = "5.0.0",
   CLIENT_GETNAME = "2.6.9",
+  CLIENT_ID = "5.0.0",
   CLIENT_KILL = "2.4.0",
   CLIENT_LIST = "2.4.0",
   CLIENT_PAUSE = "2.9.50",
   CLIENT_REPLY = "3.2",
   CLIENT_SETNAME = "2.6.9",
+  CLIENT_UNBLOCK = "5.0.0",
   CLUSTER_ADDSLOTS = "3.0.0",
   CLUSTER_COUNT_FAILURE_REPORTS = "3.0.0",
   CLUSTER_COUNTKEYSINSLOT = "3.0.0",
@@ -954,6 +1113,7 @@ cmd_since <- numeric_version(c(
   CLUSTER_KEYSLOT = "3.0.0",
   CLUSTER_MEET = "3.0.0",
   CLUSTER_NODES = "3.0.0",
+  CLUSTER_REPLICAS = "5.0.0",
   CLUSTER_REPLICATE = "3.0.0",
   CLUSTER_RESET = "3.0.0",
   CLUSTER_SAVECONFIG = "3.0.0",
@@ -1027,6 +1187,12 @@ cmd_since <- numeric_version(c(
   LREM = "1.0.0",
   LSET = "1.0.0",
   LTRIM = "1.0.0",
+  MEMORY_DOCTOR = "4.0.0",
+  MEMORY_HELP = "4.0.0",
+  MEMORY_MALLOC_STATS = "4.0.0",
+  MEMORY_PURGE = "4.0.0",
+  MEMORY_STATS = "4.0.0",
+  MEMORY_USAGE = "4.0.0",
   MGET = "1.0.0",
   MIGRATE = "2.6.0",
   MONITOR = "1.0.0",
@@ -1054,6 +1220,7 @@ cmd_since <- numeric_version(c(
   READWRITE = "3.0.0",
   RENAME = "1.0.0",
   RENAMENX = "1.0.0",
+  REPLICAOF = "5.0.0",
   RESTORE = "2.6.0",
   ROLE = "2.8.12",
   RPOP = "1.0.0",
@@ -1094,6 +1261,7 @@ cmd_since <- numeric_version(c(
   SUBSCRIBE = "2.0.0",
   SUNION = "1.0.0",
   SUNIONSTORE = "1.0.0",
+  SWAPDB = "4.0.0",
   SYNC = "1.0.0",
   TIME = "2.6.0",
   TOUCH = "3.2.1",
@@ -1104,12 +1272,27 @@ cmd_since <- numeric_version(c(
   UNWATCH = "2.2.0",
   WAIT = "3.0.0",
   WATCH = "2.2.0",
+  XACK = "5.0.0",
+  XADD = "5.0.0",
+  XCLAIM = "5.0.0",
+  XDEL = "5.0.0",
+  XGROUP = "5.0.0",
+  XINFO = "5.0.0",
+  XLEN = "5.0.0",
+  XPENDING = "5.0.0",
+  XRANGE = "5.0.0",
+  XREAD = "5.0.0",
+  XREADGROUP = "5.0.0",
+  XREVRANGE = "5.0.0",
+  XTRIM = "5.0.0",
   ZADD = "1.2.0",
   ZCARD = "1.2.0",
   ZCOUNT = "2.0.0",
   ZINCRBY = "1.2.0",
   ZINTERSTORE = "2.0.0",
   ZLEXCOUNT = "2.8.9",
+  ZPOPMAX = "5.0.0",
+  ZPOPMIN = "5.0.0",
   ZRANGE = "1.2.0",
   ZRANGEBYLEX = "2.8.9",
   ZRANGEBYSCORE = "1.0.5",
