@@ -17,3 +17,5 @@ autobrew
 docs/
 doc
 Meta
+*.so
+*.o
