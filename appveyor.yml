@@ -12,9 +12,7 @@ install:
 
 # Adapt as necessary starting from here
 before_build:
-  - choco install redis-64
-  - redis-server --service-install
-  - redis-server --service-start
+  - choco install memurai-developer
 
 build_script:
   - travis-tool.sh install_deps
