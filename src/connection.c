@@ -24,6 +24,30 @@ SEXP redux_redis_connect(SEXP host, SEXP port) {
 
 SEXP redux_redis_connect_ssl(SEXP host, SEXP port, SEXP CApath, 
                              SEXP CERTpath, SEXP KEYpath) {
+
+  // hiredis SSL connection context and error var
+  redisSSLContext *redis_ssl_context;
+  redisSSLContextError *redis_ssl_error;
+
+  // Initialise OpenSSL
+  redisInitOpenSSL();
+
+  // Set up the SSL connection parameters
+  redis_ssl_context = redisCreateSSLContext(
+    CHAR(STRING_ELT(CApath, 0)), 
+    NULL, /* not providing path to trusted certs */
+    CHAR(STRING_ELT(CERTpath, 0)), 
+    CHAR(STRING_ELT(KEYpath, 0)), 
+    CHAR(STRING_ELT(host, 0)),
+    &redis_ssl_error);
+
+  if(redis_ssl_context != REDIS_OK) {
+    redisFree(redis_ssl_context);
+    error("Failed to create SSL context: %s\n",
+      redisSSLContextGetError(redis_ssl_error));
+  }
+
+  // Initiate a connection with redis
   redisContext *context = redisConnect(CHAR(STRING_ELT(host, 0)),
                                        INTEGER(port)[0]);
   if (context == NULL) {
@@ -32,20 +56,20 @@ SEXP redux_redis_connect_ssl(SEXP host, SEXP port, SEXP CApath,
   if (context->err != 0) {
     const char * errstr = string_duplicate(context->errstr);
     redisFree(context);
+    
     error("Failed to create context: %s", errstr);
   }
-  if (redisSecureConnection(context, 
-                            CHAR(STRING_ELT(CApath, 0)), 
-                            CHAR(STRING_ELT(CERTpath, 0)), 
-                            CHAR(STRING_ELT(KEYpath, 0)), 
-                            CHAR(STRING_ELT(host, 0))) != REDIS_OK) {
+
+  // Now we have a connection established, we can negotiate the SSL connection
+  if (redisInitiateSSLWithContext(context, redis_ssl_context) != REDIS_OK) {
         redisFree(context);
+        redisFree(redis_ssl_context);
         if (context->err != 0) {
           const char * errstr_ssl = string_duplicate(context->errstr);
           error("Failed to initialize SSL connection: %s\n", context->errstr);
         }
         error("Failed to initialize SSL connection\n");
-}
+  }
   SEXP extPtr = PROTECT(R_MakeExternalPtr(context, host, R_NilValue));
   R_RegisterCFinalizer(extPtr, redis_finalize);
   UNPROTECT(1);
