@@ -20,3 +20,4 @@
 ^autobrew$
 ^src/redux\.so\.dSYM$
 ^\.github$
+^scripts$
