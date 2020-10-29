@@ -10,8 +10,7 @@ test_that("impossible connection", {
 
 test_that("auth", {
   skip_if_no_redis()
-  expect_error(redis_connection(redis_config(password = "foo")),
-               "no password is set")
+  expect_error(redis_connection(redis_config(password = "foo")))
 })
 
 test_that("select db", {

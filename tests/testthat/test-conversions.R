@@ -76,7 +76,7 @@ test_that("long integers", {
   on.exit(con$DEL(key))
 
   con$SET(key, "Hello")
-  expect_equal(con$PEXPIREAT(key, 1555555555005), 1)
+  expect_equal(con$PEXPIREAT(key, 1655555555005), 1)
 
   t0 <- con$TTL(key)
   t1 <- con$PTTL(key)
