@@ -3,6 +3,7 @@ context("socket connection")
 test_that("socket connection", {
   skip_if_no_redis()
   skip_on_cran()
+  skip("Rethink this test")
   redis_server <- Sys.which("redis-server")
   if (redis_server == "") {
     skip("didn't find redis server")
