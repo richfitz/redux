@@ -22,6 +22,16 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v1
 
+      - name: Start Redis
+        uses: shogo82148/actions-setup-redis@v1
+        with:
+          redis-version: "4.x"
+
+      - name: "[macOS] system dependencies"
+        if: runner.os == 'macOS'
+        run: |
+          brew install hiredis
+
       - name: Query dependencies
         run: |
           install.packages('remotes')
