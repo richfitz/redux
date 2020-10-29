@@ -5,6 +5,9 @@
 redis_connect <- function(config) {
   if (config$scheme == "redis") {
     ptr <- redis_connect_tcp(config$host, config$port)
+  } else if (config$scheme == "rediss")  {
+	ptr <- redis_connect_tcp_ssl(config$host, config$port, config$CApath,
+			                     config$certPath, config$keyPath)
   } else {
     ptr <- redis_connect_unix(config$path)
   }
@@ -19,6 +22,11 @@ redis_connect <- function(config) {
 
 redis_connect_tcp <- function(host, port) {
   .Call(Credux_redis_connect, host, as.integer(port))
+}
+
+redis_connect_tcp_ssl <- function(host, port, CApath, certPath, keyPath) {
+	.Call(Credux_redis_connect_ssl, host, as.integer(port), 
+			CApath, certPath, keyPath)
 }
 
 redis_connect_unix <- function(path) {

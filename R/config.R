@@ -65,12 +65,15 @@ redis_config <- function(..., config = list(...)) {
   ##   2 arg and char/int, unnamed (assume host/port?)
   defaults <- list(
                 url = Sys_getenv("REDIS_URL", NULL),
-                scheme = "redis",
+                scheme = Sys_getenv("REDIS_CONNECTION_SCHEME", "redis"),
                 host = Sys_getenv("REDIS_HOST", "127.0.0.1"),
                 port = as.integer(Sys_getenv("REDIS_PORT", 6379L)),
                 path = NULL,
                 password = NULL,
-                db = NULL)
+                db = NULL,
+				CApath = Sys_getenv("REDIS_SSL_CA_PATH", NULL),
+				certPath = Sys_getenv("REDIS_SSL_CERT_PATH", NULL),
+				keyPath = Sys_getenv("REDIS_SSL_KEY_PATH", NULL))
   dots <- list(...)
   if (length(dots) > 0L && !identical(dots, config)) {
     warning("Ignoring dots in favour of config")
