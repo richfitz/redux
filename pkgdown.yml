@@ -1,7 +1,9 @@
-pandoc: 1.15.0.6
-pkgdown: 1.0.0
+pandoc: 2.7.3
+pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
-  low_level: low_level.html
   redux: redux.html
+  src/low_level: low_level.html
+  src/redux: redux.html
+last_built: 2020-10-30T11:03Z
 
