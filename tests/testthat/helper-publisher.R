@@ -8,7 +8,7 @@ time_checker <- function(timeout) {
 }
 
 start_publisher <- function(channel, dt = 0.02) {
-  testthat::skip_on_appveyor()
+  testthat::skip_on_os("windows")
   testthat::skip_on_cran()
   testthat::skip_if_not_installed("sys")
   skip_if_no_redis()

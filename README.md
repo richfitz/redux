@@ -1,9 +1,10 @@
 # redux
 
+<!-- badges: start -->
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Build Status](https://travis-ci.org/richfitz/redux.svg?branch=master)](https://travis-ci.org/richfitz/redux)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/richfitz/redux?branch=master&svg=true)](https://ci.appveyor.com/project/richfitz/redux)
+[![R build status](https://github.com/richfitz/redux/workflows/R-CMD-check/badge.svg)](https://github.com/richfitz/redux/actions)
 [![codecov.io](https://codecov.io/github/richfitz/redux/coverage.svg?branch=master)](https://codecov.io/github/richfitz/redux?branch=master)
+<!-- badges: end -->
 
 `redux` provides an interface to Redis.  Two interfaces are provided; a low level interface (allowing execution of arbitrary Redis commands with almost no interface) and a high-level interface with an API that matches all of the several hundred Redis commands.
 
@@ -63,7 +64,7 @@ To use the test suite, please set the environment variables
 
 - `NOT_CRAN=true`
 - `REDUX_TEST_USE_REDIS=true`
-- `REDUX_TEST_USE_REDIS_ISOLATED=true`
+- `REDUX_TEST_ISOLATED=true`
 
 The first two opt in to using redis _at all_, and the third activates commands that may be destructive or undesirable to use on a production server.
 
