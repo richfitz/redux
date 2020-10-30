@@ -64,7 +64,7 @@ To use the test suite, please set the environment variables
 
 - `NOT_CRAN=true`
 - `REDUX_TEST_USE_REDIS=true`
-- `REDUX_TEST_USE_REDIS_ISOLATED=true`
+- `REDUX_TEST_ISOLATED=true`
 
 The first two opt in to using redis _at all_, and the third activates commands that may be destructive or undesirable to use on a production server.
 

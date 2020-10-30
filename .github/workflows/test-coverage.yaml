@@ -16,7 +16,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       REDUX_TEST_USE_REDIS: true
-      REDUX_TEST_USE_REDIS_ISOLATED: true
+      REDUX_TEST_ISOLATED: true
     steps:
       - uses: actions/checkout@v2
 

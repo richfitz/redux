@@ -1,11 +1,5 @@
 context("commands - server")
 
-## TODO: These are not working terribly well on travis at the moment.
-## I need to add a few bits to disable a handful of commands and see
-## if I can get the tests to pass.  Then replace skipped tests with
-## calls to the command generation code to make sure that the
-## appropriate text is generated.
-
 ## Tested on the server
 test_that("CLIENT KILL", {
   expect_equal(redis_cmds$CLIENT_KILL(ID = "12", SKIPME = "yes"),
