@@ -8,14 +8,19 @@ test_that("socket connection", {
   if (redis_server == "") {
     skip("didn't find redis server")
   }
-  logfile <- tempfile("redis_")
-  socket <- tempfile("socket_")
+  tmp <- tempfile()
+  dir.create(tmp, FALSE, TRUE)
+  tmp <- normalizePath(tmp)
+
+  logfile <- file.path(tmp, "log")
+  socket <- file.path(tmp, "socket")
+
   system2(redis_server, c("--port", 0, "--unixsocket", socket),
           wait = FALSE, stdout = logfile, stderr = logfile)
   Sys.sleep(.5)
 
   if (!file.exists(socket)) {
-    ## This does leave a redis server running on a socket!
+    ## This might leave a redis server running on a socket!
     skip("Didn't start socket server")
   }
   config <- redis_config()
