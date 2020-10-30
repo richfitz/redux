@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">redux</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -57,10 +57,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/src/low_level.html">Low level implementation details</a>
-    </li>
-    <li>
-      <a href="../articles/src/redux.html">Using Redis with redux</a>
+      <a href="../articles/low_level.html">Low level implementation details</a>
     </li>
   </ul>
 </li>
@@ -92,7 +89,7 @@
       <h1 data-toc-skip>Using Redis with redux</h1>
                         <h4 class="author">Rich FitzJohn</h4>
             
-            <h4 class="date">2017-09-26</h4>
+            <h4 class="date">2020-10-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/richfitz/redux/blob/master/vignettes/redux.Rmd"><code>vignettes/redux.Rmd</code></a></small>
       <div class="hidden name"><code>redux.Rmd</code></div>
@@ -142,14 +139,17 @@
 <div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_bin</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
 <span class="va">obj</span></pre></div>
-<pre><code>##  [1] 42 0a 02 00 00 00 03 03 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
-## [24] 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06 00 00 00
-## [47] 07 00 00 00 08 00 00 00 09 00 00 00 0a 00 00 00</code></pre>
+<pre><code>##   [1] 42 0a 03 00 00 00 03 00 04 00 00 05 03 00 05 00 00 00 55 54 46 2d 38 ee 00
+##  [26] 00 00 02 00 00 00 01 00 00 00 09 00 04 00 0e 00 00 00 63 6f 6d 70 61 63 74
+##  [51] 5f 69 6e 74 73 65 71 02 00 00 00 01 00 00 00 09 00 04 00 04 00 00 00 62 61
+##  [76] 73 65 02 00 00 00 0d 00 00 00 01 00 00 00 0d 00 00 00 fe 00 00 00 0e 00 00
+## [101] 00 03 00 00 00 00 00 00 00 00 00 24 40 00 00 00 00 00 00 f0 3f 00 00 00 00
+## [126] 00 00 f0 3f fe 00 00 00</code></pre>
 <p>or</p>
 <div class="sourceCode" id="cb10"><pre class="downlit">
 <span class="va">str</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_string</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
 <span class="va">str</span></pre></div>
-<pre><code>## [1] "A\n2\n197379\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"</code></pre>
+<pre><code>## [1] "A\n3\n262147\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"</code></pre>
 <p>The binary serialisation is faster, smaller, and preserves all the bits of floating point numbers. The string version might be preferable where having only strings in the database is wanted. The binary serialisation is compatible with the same approach used in <code>RcppRedis</code>, though it is never done automatically.</p>
 <p>These values can be deserialised:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit">
@@ -164,9 +164,12 @@
 <pre><code>## [Redis: OK]</code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit">
 <span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mylist"</span><span class="op">)</span></pre></div>
-<pre><code>##  [1] 42 0a 02 00 00 00 03 03 03 00 00 03 02 00 0d 00 00 00 0a 00 00 00 01
-## [24] 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00 05 00 00 00 06 00 00 00
-## [47] 07 00 00 00 08 00 00 00 09 00 00 00 0a 00 00 00</code></pre>
+<pre><code>##   [1] 42 0a 03 00 00 00 03 00 04 00 00 05 03 00 05 00 00 00 55 54 46 2d 38 ee 00
+##  [26] 00 00 02 00 00 00 01 00 00 00 09 00 04 00 0e 00 00 00 63 6f 6d 70 61 63 74
+##  [51] 5f 69 6e 74 73 65 71 02 00 00 00 01 00 00 00 09 00 04 00 04 00 00 00 62 61
+##  [76] 73 65 02 00 00 00 0d 00 00 00 01 00 00 00 0d 00 00 00 fe 00 00 00 0e 00 00
+## [101] 00 03 00 00 00 00 00 00 00 00 00 24 40 00 00 00 00 00 00 f0 3f 00 00 00 00
+## [126] 00 00 f0 3f fe 00 00 00</code></pre>
 <div class="sourceCode" id="cb20"><pre class="downlit">
 <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">bin_to_object</a></span><span class="op">(</span><span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mylist"</span><span class="op">)</span><span class="op">)</span></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
@@ -176,7 +179,7 @@
 <pre><code>## [Redis: OK]</code></pre>
 <div class="sourceCode" id="cb24"><pre class="downlit">
 <span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mylist"</span><span class="op">)</span></pre></div>
-<pre><code>## [1] "A\n2\n197379\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"</code></pre>
+<pre><code>## [1] "A\n3\n262147\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"</code></pre>
 <div class="sourceCode" id="cb26"><pre class="downlit">
 <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">string_to_object</a></span><span class="op">(</span><span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mylist"</span><span class="op">)</span><span class="op">)</span></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
@@ -212,31 +215,31 @@
 <span class="va">r</span><span class="op">$</span><span class="fu">LRANGE</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span></pre></div>
 <pre><code>## [[1]]
 ## [1] "1"
-##
+## 
 ## [[2]]
 ## [1] "carrot"
-##
+## 
 ## [[3]]
 ## [1] "3"
-##
+## 
 ## [[4]]
 ## [1] "4"
-##
+## 
 ## [[5]]
 ## [1] "5"
-##
+## 
 ## [[6]]
 ## [1] "6"
-##
+## 
 ## [[7]]
 ## [1] "7"
-##
+## 
 ## [[8]]
 ## [1] "8"
-##
+## 
 ## [[9]]
 ## [1] "9"
-##
+## 
 ## [[10]]
 ## [1] "10"</code></pre>
 <ul>
@@ -246,10 +249,10 @@
 <span class="va">r</span><span class="op">$</span><span class="fu">LRANGE</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span></pre></div>
 <pre><code>## [[1]]
 ## [1] "1"
-##
+## 
 ## [[2]]
 ## [1] "carrot"
-##
+## 
 ## [[3]]
 ## [1] "3"</code></pre>
 <ul>
@@ -276,11 +279,11 @@
 <span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">$</span><span class="fu">LRANGE</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>
 <span class="va">dat</span></pre></div>
 <pre><code>## [[1]]
-## [1] "A\n2\n197379\n131840\n13\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
-##
+## [1] "A\n3\n262147\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"
+## 
 ## [[2]]
 ## [1] "carrot"
-##
+## 
 ## [[3]]
 ## [1] "3"</code></pre>
 <div class="sourceCode" id="cb54"><pre class="downlit">
@@ -288,10 +291,10 @@
 <span class="va">dat</span></pre></div>
 <pre><code>## [[1]]
 ##  [1]  1  2  3  4  5  6  7  8  9 10
-##
+## 
 ## [[2]]
 ## [1] "carrot"
-##
+## 
 ## [[3]]
 ## [1] "3"</code></pre>
 <p>As with all functions in the <code>redis_api</code> object, all functions and their arguments are described in the Redis documentation.</p>
@@ -308,7 +311,7 @@
   <span class="va">redis</span><span class="op">$</span><span class="fu">PING</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></pre></div>
 <pre><code>## [[1]]
 ## [Redis: PONG]
-##
+## 
 ## [[2]]
 ## [Redis: PONG]</code></pre>
 <p>Here, <code>redis</code> is a special object within the package that implements all the Redis commands but only formats them for use rather than sends them. The <code>pipeline</code> method collects these all up and sends them to the server in a single batch, with the result returned as a list.</p>
@@ -320,10 +323,10 @@
   c <span class="op">=</span> <span class="va">redis</span><span class="op">$</span><span class="fu">DEL</span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span><span class="op">)</span></pre></div>
 <pre><code>## $a
 ## [1] 1
-##
+## 
 ## $b
 ## [1] 2
-##
+## 
 ## $c
 ## [1] 1</code></pre>
 <p>here a variable “x” was incremented twice and then deleted.</p>
@@ -334,13 +337,13 @@
 <span class="va">r</span><span class="op">$</span><span class="fu">pipeline</span><span class="op">(</span>.commands <span class="op">=</span> <span class="va">cmds</span><span class="op">)</span></pre></div>
 <pre><code>## [[1]]
 ## [Redis: PONG]
-##
+## 
 ## [[2]]
 ## [Redis: PONG]
-##
+## 
 ## [[3]]
 ## [Redis: PONG]
-##
+## 
 ## [[4]]
 ## [Redis: PONG]</code></pre>
 </div>
@@ -396,33 +399,33 @@
                    transform <span class="op">=</span> <span class="va">transform</span>,
                    terminate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/identical.html">identical</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"goodbye"</span><span class="op">)</span>,
                    n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></pre></div>
-<pre><code>## 2017-09-26 09:46:32.106: got message: 1120</code></pre>
-<pre><code>## 2017-09-26 09:46:32.156: got message: 1160</code></pre>
-<pre><code>## 2017-09-26 09:46:32.208: got message: 963</code></pre>
-<pre><code>## 2017-09-26 09:46:32.257: got message: 1210</code></pre>
-<pre><code>## 2017-09-26 09:46:32.307: got message: 1160</code></pre>
-<pre><code>## 2017-09-26 09:46:32.357: got message: 1160</code></pre>
-<pre><code>## 2017-09-26 09:46:32.408: got message: 813</code></pre>
-<pre><code>## 2017-09-26 09:46:32.458: got message: 1230</code></pre>
-<pre><code>## 2017-09-26 09:46:32.508: got message: 1370</code></pre>
-<pre><code>## 2017-09-26 09:46:32.558: got message: 1140</code></pre>
-<pre><code>## 2017-09-26 09:46:32.609: got message: 995</code></pre>
-<pre><code>## 2017-09-26 09:46:32.659: got message: 935</code></pre>
-<pre><code>## 2017-09-26 09:46:32.709: got message: 1110</code></pre>
-<pre><code>## 2017-09-26 09:46:32.760: got message: 994</code></pre>
-<pre><code>## 2017-09-26 09:46:32.810: got message: 1020</code></pre>
-<pre><code>## 2017-09-26 09:46:32.860: got message: 960</code></pre>
-<pre><code>## 2017-09-26 09:46:32.911: got message: 1180</code></pre>
-<pre><code>## 2017-09-26 09:46:32.961: got message: 799</code></pre>
-<pre><code>## 2017-09-26 09:46:33.011: got message: 958</code></pre>
-<pre><code>## 2017-09-26 09:46:33.062: got message: 1140</code></pre>
-<pre><code>## 2017-09-26 09:46:33.062: got message: goodbye</code></pre>
+<pre><code>## 2020-10-30 14:18:02.281: got message: 1120</code></pre>
+<pre><code>## 2020-10-30 14:18:02.437: got message: 1160</code></pre>
+<pre><code>## 2020-10-30 14:18:02.484: got message: 963</code></pre>
+<pre><code>## 2020-10-30 14:18:02.635: got message: 1210</code></pre>
+<pre><code>## 2020-10-30 14:18:02.686: got message: 1160</code></pre>
+<pre><code>## 2020-10-30 14:18:02.737: got message: 1160</code></pre>
+<pre><code>## 2020-10-30 14:18:02.792: got message: 813</code></pre>
+<pre><code>## 2020-10-30 14:18:02.849: got message: 1230</code></pre>
+<pre><code>## 2020-10-30 14:18:02.907: got message: 1370</code></pre>
+<pre><code>## 2020-10-30 14:18:02.958: got message: 1140</code></pre>
+<pre><code>## 2020-10-30 14:18:03.102: got message: 995</code></pre>
+<pre><code>## 2020-10-30 14:18:03.283: got message: 935</code></pre>
+<pre><code>## 2020-10-30 14:18:03.337: got message: 1110</code></pre>
+<pre><code>## 2020-10-30 14:18:03.407: got message: 994</code></pre>
+<pre><code>## 2020-10-30 14:18:03.516: got message: 1020</code></pre>
+<pre><code>## 2020-10-30 14:18:03.567: got message: 960</code></pre>
+<pre><code>## 2020-10-30 14:18:03.723: got message: 1180</code></pre>
+<pre><code>## 2020-10-30 14:18:03.773: got message: 799</code></pre>
+<pre><code>## 2020-10-30 14:18:03.824: got message: 958</code></pre>
+<pre><code>## 2020-10-30 14:18:03.918: got message: 1140</code></pre>
+<pre><code>## 2020-10-30 14:18:03.919: got message: goodbye</code></pre>
 <p>The timestamps in the printed output show when the message was received (with fractional seconds so that this is more obvious since this only takes ~1s to complete).</p>
 <p>The <code>res</code> object contains all the values, including the “goodbye” that was our end-of-stream message:</p>
 <div class="sourceCode" id="cb90"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></pre></div>
-<pre><code>##  [1] "1120"    "1160"    "963"     "1210"    "1160"    "1160"    "813"
-##  [8] "1230"    "1370"    "1140"    "995"     "935"     "1110"    "994"
+<pre><code>##  [1] "1120"    "1160"    "963"     "1210"    "1160"    "1160"    "813"    
+##  [8] "1230"    "1370"    "1140"    "995"     "935"     "1110"    "994"    
 ## [15] "1020"    "960"     "1180"    "799"     "958"     "1140"    "goodbye"</code></pre>
 </div>
 <div id="potential-applications" class="section level1">
