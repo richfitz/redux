@@ -187,8 +187,8 @@ test_that("INCRBYFLOAT", {
   on.exit(con$DEL(key))
 
   con$SET(key, 10.50)
-  expect_equal(con$INCRBYFLOAT(key, 0.1), "10.6")
-  expect_equal(con$INCRBYFLOAT(key, -5), "5.6")
+  expect_equal(as.numeric(con$INCRBYFLOAT(key, 0.1)), 10.6)
+  expect_equal(as.numeric(con$INCRBYFLOAT(key, -5)), 5.6)
   con$SET(key, "5.0e3")
   expect_equal(con$INCRBYFLOAT(key, "2.0e2"), "5200")
 })
