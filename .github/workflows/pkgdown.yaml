@@ -44,6 +44,10 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
+      - name: Move real vignettes
+        run: |
+          cp vignettes_src/*.Rmd vignettes
+
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)

@@ -172,7 +172,7 @@ parse_redis_url <- function(url) {
   ## TODO: parse unix:// scheme
   assert_scalar_character(url)
   url <- URLdecode(url)
-  re <- "^([a-z]+://)?(:.+?@)?([[:alnum:].-]+)(:[0-9]+)?(/.+)?$"
+  re <- "^([a-z]+://)?(:.+?@)?([[:alnum:]._-]+)(:[0-9]+)?(/.+)?$"
   if (grepl(re, url)) {
     list(
       scheme = clean(sub("://$", "", sub(re, "\\1", url))),

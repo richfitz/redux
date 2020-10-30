@@ -11,10 +11,13 @@
 ^extra$
 ^windows$
 ^redux_.*\.tar\.gz$
-^vignettes/src$
+^vignettes_src$
 ^\.lintr$
 ^\.valgrind_ignore$
 ^autobrew$
 ^src/redux\.so\.dSYM$
 ^\.github$
 ^scripts$
+^docs$
+^doc$
+^Meta$

@@ -23,6 +23,11 @@ test_that("url parse", {
   expect_equal(parse_redis_url("redis://127.0.0.1:999"),
                f("127.0.0.1", scheme = "redis", port = 999L))
 
+  ## Allow underscores, even though they're not valid, because they
+  ## are useful in docker
+  expect_equal(parse_redis_url("redis://local_host"),
+               f("local_host", scheme = "redis"))
+
   ## Failures (not enough tests)
   expect_error(parse_redis_url(""), "Failed to parse URL")
 })
