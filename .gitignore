@@ -14,3 +14,5 @@ extra/redis-doc
 .valgrind_ignore
 src/redux.so.dSYM
 autobrew
+*.so
+*.o
