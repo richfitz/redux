@@ -121,9 +121,10 @@ hiredis_cmd <- function(x, standalone = FALSE) {
     stop("duplicate names")
   }
   ## The colon here is for CLIENT KILL
-  args$name <- gsub("[-:]", "_", args$name)
+  ## The space here is for count or RESET
+  args$name <- gsub("[-: ]", "_", args$name)
   if (any(grepl("[^A-Za-z0-9._]", args$name))) {
-    stop("invalid names")
+    stop("invalid names: ", paste(args$name, collapse = ", "))
   }
 
   is_optional <- is_field("optional", args)
