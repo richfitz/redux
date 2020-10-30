@@ -82,6 +82,7 @@ jobs:
           brew install hiredis
 
       - name: Move real vignettes
+        if: runner.os != 'windows'
         run: |
           cp vignettes_src/*.Rmd vignettes
 
