@@ -7,7 +7,7 @@ Description: A 'hiredis' wrapper that includes support for
     transactions, pipelining, blocking subscription, serialisation of
     all keys and values, 'Redis' error handling with R errors.
     Includes an automatically generated 'R6' interface to the full
-    'hiredis' 'API'.  Generated functions are faithful to the
+    'hiredis' API.  Generated functions are faithful to the
     'hiredis' documentation while attempting to match R's argument
     semantics.  Serialisation must be explicitly done by the user, but
     both binary and text-mode serialisation is supported.
