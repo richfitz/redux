@@ -3,6 +3,7 @@ on:
     branches:
       - main
       - master
+      - i37-gha
 
 name: pkgdown
 
