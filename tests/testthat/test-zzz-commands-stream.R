@@ -104,8 +104,9 @@ test_that("XINFO", {
     list("XINFO", NULL, NULL, list("STREAM", "mystream"), NULL))
   expect_equal(
     redis_cmds$XINFO(GROUPS = "mystream"),
-    list("XINFO", NULL, list("STREAM", "mystream"), NULL, NULL))
+    list("XINFO", NULL, list("GROUPS", "mystream"), NULL, NULL))
   expect_equal(
     redis_cmds$XINFO(CONSUMERS = c("mystream", "mygroup")),
-    list("XINFO", list("STREAM", "mystream", "mygroup"), NULL, NULL, NULL))
+    list("XINFO", list("CONSUMERS", c("mystream", "mygroup")),
+         NULL, NULL, NULL))
 })

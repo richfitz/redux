@@ -27,7 +27,7 @@ test_that("CLIENT PAUSE", {
 
 test_that("CLIENT REPLY", {
   expect_error(redis_cmds$CLIENT_REPLY("SKIP"),
-               "Do not use CLIENT_REPLY")
+               "Do not use CLIENT REPLY")
 })
 
 test_that("CLIENT SETNAME", {
