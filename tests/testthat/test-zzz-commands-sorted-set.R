@@ -328,3 +328,115 @@ test_that("ZINTERSTORE", {
   expect_equal(con$ZRANGE(key3, 0, -1, "WITHSCORES"),
                list("one", "5", "three", "9", "two", "10"))
 })
+
+test_that("ZINTER (mock)", {
+  expect_equal(
+    redis_cmds$ZINTER(2, c("key1", "key2")),
+    list("ZINTER", 2, c("key1", "key2"), NULL, NULL, NULL))
+  expect_equal(
+    redis_cmds$ZINTER(2, c("key1", "key2"), withscores = "WITHSCORES"),
+    list("ZINTER", 2, c("key1", "key2"), NULL, NULL, "WITHSCORES"))
+})
+
+test_that("ZINTER", {
+  skip_if_cmd_unsupported("ZINTER")
+  con <- test_hiredis_connection()
+  key1 <- rand_str()
+  key2 <- rand_str()
+  key3 <- rand_str()
+  on.exit(con$DEL(c(key1, key2, key3)))
+
+  con$ZADD(key1, 1, "one")
+  con$ZADD(key1, 2, "two")
+  con$ZADD(key2, 1, "one")
+  con$ZADD(key2, 2, "two")
+  con$ZADD(key2, 3, "three")
+
+  expect_equal(con$ZINTER(2, c(key1, key2)), list("one", "two"))
+  expect_equal(con$ZINTER(2, c(key1, key2), withscores = "WITHSCORES"),
+               list("one", "2", "two", "4"))
+})
+
+test_that("ZPOPMIN", {
+  skip_if_cmd_unsupported("ZPOPMIN")
+  con <- test_hiredis_connection()
+  key <- rand_str()
+  con$ZADD(key, 1, "one")
+  con$ZADD(key, 2, "two")
+  con$ZADD(key, 3, "three")
+  expect_equal(con$ZPOPMIN(key), list("one", "1"))
+})
+
+test_that("ZPOPMAX", {
+  skip_if_cmd_unsupported("ZPOPMAX")
+  con <- test_hiredis_connection()
+  key <- rand_str()
+  con$ZADD(key, 1, "one")
+  con$ZADD(key, 2, "two")
+  con$ZADD(key, 3, "three")
+  expect_equal(con$ZPOPMAX(key), list("three", "3"))
+})
+
+test_that("ZUNION (mock)", {
+  expect_equal(
+    redis_cmds$ZUNION(2, c("key1", "key2")),
+    list("ZUNION", 2, c("key1", "key2"), NULL, NULL, NULL))
+  expect_equal(
+    redis_cmds$ZUNION(2, c("key1", "key2"), withscores = "WITHSCORES"),
+    list("ZUNION", 2, c("key1", "key2"), NULL, NULL, "WITHSCORES"))
+})
+
+test_that("ZUNION", {
+  skip_if_cmd_unsupported("ZUNION")
+  con <- test_hiredis_connection()
+  key1 <- rand_str()
+  key2 <- rand_str()
+  key3 <- rand_str()
+  on.exit(con$DEL(c(key1, key2, key3)))
+
+  con$ZADD(key1, 1, "one")
+  con$ZADD(key1, 2, "two")
+  con$ZADD(key2, 1, "one")
+  con$ZADD(key2, 2, "two")
+  con$ZADD(key2, 3, "three")
+
+  expect_equal(con$ZUNION(2, c(key1, key2)),
+               list("one", "three", "two"))
+  expect_equal(con$ZUNION(2, c(key1, key2), withscores = "WITHSCORES"),
+               list("one", "2", "three", "3", "two", "4"))
+})
+
+test_that("ZMSCORE (mock)", {
+  expect_equal(redis_cmds$ZMSCORE("key", c("one", "two", "nofield")),
+               list("ZMSCORE", "key", c("one", "two", "nofield")))
+})
+
+test_that("ZMSCORE", {
+  skip_if_cmd_unsupported("ZMSCORE")
+  con <- test_hiredis_connection()
+  key <- rand_str()
+  con$ZADD(key, 1, "one")
+  con$ZADD(key, 2, "two")
+  expect_equal(con$ZMSCORE(key, c("one", "two", "nofield")),
+               list("1", "2", NULL))
+})
+
+test_that("BZPOPMIN", {
+  skip_if_cmd_unsupported("ZMSCORE")
+  con <- test_hiredis_connection()
+  key1 <- rand_str()
+  key2 <- rand_str()
+  con$ZADD(key1, c(0, 1, 2), c("a", "b", "c"))
+  expect_equal(con$BZPOPMIN(c(key1, key2), 10),
+               list(key1, "a", "0"))
+})
+
+test_that("BZPOPMAX", {
+  skip_if_cmd_unsupported("ZMSCORE")
+  con <- test_hiredis_connection()
+  key1 <- rand_str()
+  key2 <- rand_str()
+  con$ZADD(key1, c(0, 1, 2), c("a", "b", "c"))
+  expect_equal(con$BZPOPMAX(c(key1, key2), 10),
+               list(key1, "c", "2"))
+})

@@ -2,7 +2,8 @@ context("commands - connection")
 
 test_that("AUTH", {
   pw <- rand_str()
-  expect_equal(redis_cmds$AUTH(pw), list("AUTH", pw))
+  expect_equal(redis_cmds$AUTH(pw), list("AUTH", NULL, pw))
+  expect_equal(redis_cmds$AUTH(pw, "user"), list("AUTH", "user", pw))
 })
 
 test_that("ECHO", {

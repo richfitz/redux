@@ -29,8 +29,8 @@ test_that("GEOADD:run", {
 test_that("GEOHASH:prep", {
   key <- rand_str()
   nms <- c("Palermo", "Catania")
-  list(redis_cmds$GEOHASH(key, nms),
-       list("GEOHASH", key, nms))
+  expect_equal(redis_cmds$GEOHASH(key, nms),
+               list("GEOHASH", key, nms))
 })
 
 test_that("GEOHASH:run", {
