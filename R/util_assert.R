@@ -1,5 +1,5 @@
 assert_match_value <- function(x, choices, name = deparse(substitute(x))) {
-  assert_scalar_character(x)
+  assert_scalar_character(x, name = name)
   if (!(x %in% choices)) {
     stop(sprintf("%s must be one of %s", name,
                  paste(dQuote(choices), collapse = ", ")))
