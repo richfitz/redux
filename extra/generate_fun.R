@@ -68,7 +68,9 @@ hiredis_cmd <- function(x, standalone = FALSE) {
   is_grouped <- lengths(args$name) > 1L
 
   if (any(is_command)) {
-    if(is.null(args$name)) args$name = args$command
+    if (is.null(args$name)) {
+      args$name <- args$command
+    }
     
     j <- is_command & !(is_grouped & is_multiple)
     args$name_orig <- args$name
@@ -78,7 +80,7 @@ hiredis_cmd <- function(x, standalone = FALSE) {
   }
   
   if (any(duplicated(args$name))) {
-    args$name = make.unique(args$name, sep = "_")
+    stop("Duplicated names")
   }
   
   if (any(args$variadic)) {
