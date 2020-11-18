@@ -1,3 +1,7 @@
+## redux WIP
+
+* Adds `ZPOPMAX`, `ZPOPMIN`, and the blocking variants (`BZ*`)
+
 ## redux 1.1.1
 
 * More relaxed, though technically incorrect, URL parsing that allows undercores in the host name - useful for docker containers (#20).

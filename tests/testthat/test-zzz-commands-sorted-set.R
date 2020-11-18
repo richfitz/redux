@@ -16,6 +16,23 @@ test_that("ZADD", {
                     "two", "2", "three", "3"))
 })
 
+test_that("BZPOPMAX/MIN", {
+  skip_if_cmd_unsupported("BZPOPMAX")
+  skip_if_cmd_unsupported("BZPOPMIN")
+  con <- test_hiredis_connection()
+  key <- rand_str()
+  on.exit(con$DEL(key))
+
+  expect_equal(con$ZADD(key, 0:2, c("a", "b", "c")), 3)
+  expect_equal(con$BZPOPMAX(key, 0), list(key, "c", "2"))
+  expect_equal(con$BZPOPMIN(key, 0), list(key, "a", "0"))
+  expect_equal(con$BZPOPMAX(key, 0), list(key, "b", "1"))
+
+  st <- system.time(res <- con$BZPOPMAX(key, 1))
+  expect_null(res)
+  expect_true(abs(st["elapsed"] - 1) < 1) # crude
+})
+
 test_that("ZCARD", {
   skip_if_cmd_unsupported("ZCARD")
   con <- test_hiredis_connection()
@@ -102,6 +119,21 @@ test_that("ZLEXCOUNT", {
   con$ZADD(key, c(0, 0), c("f", "g"))
   expect_equal(con$ZLEXCOUNT(key, "-", "+"), 7L)
   expect_equal(con$ZLEXCOUNT(key, "[b", "[f"), 5L)
+})
+
+test_that("ZPOPMAX/MIN", {
+  skip_if_cmd_unsupported("ZPOPMAX")
+  skip_if_cmd_unsupported("ZPOPMIN")
+  con <- test_hiredis_connection()
+  key <- rand_str()
+  on.exit(con$DEL(key))
+
+  expect_equal(con$ZADD(key, 1:3, c("one", "two", "three")), 3)
+  expect_equal(con$ZPOPMAX(key), list("three", "3"))
+  expect_equal(con$ZPOPMIN(key), list("one", "1"))
+  expect_equal(con$ZPOPMAX(key), list("two", "2"))
+  expect_equal(con$ZPOPMAX(key), list())
+  expect_equal(con$ZPOPMIN(key), list())
 })
 
 test_that("ZRANGE", {

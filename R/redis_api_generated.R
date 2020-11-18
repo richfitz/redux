@@ -55,6 +55,15 @@ redis_commands <- function(command) {
       assert_scalar2(timeout)
       command(list("BRPOPLPUSH", source, destination, timeout))
     },
+    BZPOPMIN = function(key, timeout) {
+      assert_scalar2(timeout)
+      command(list("BZPOPMIN", key, timeout))
+    },
+    BZPOPMAX = function(key, timeout) {
+      assert_scalar2(key)
+      assert_scalar2(timeout)
+      command(list("BZPOPMAX", key, timeout))
+    },
     CLIENT_KILL = function(ip_port = NULL, ID = NULL, TYPE = NULL, ADDR = NULL, SKIPME = NULL) {
       assert_scalar_or_null2(ip_port)
       assert_scalar_or_null2(ID)
@@ -810,6 +819,14 @@ redis_commands <- function(command) {
       assert_scalar2(max)
       command(list("ZLEXCOUNT", key, min, max))
     },
+    ZPOPMIN = function(key) {
+      assert_scalar2(key)
+      command(list("ZPOPMIN", key))
+    },
+    ZPOPMAX = function(key) {
+      assert_scalar2(key)
+      command(list("ZPOPMAX", key))
+    },
     ZRANGE = function(key, start, stop, withscores = NULL) {
       assert_scalar2(key)
       assert_scalar2(start)
@@ -937,6 +954,8 @@ cmd_since <- numeric_version(c(
   BLPOP = "2.0.0",
   BRPOP = "2.0.0",
   BRPOPLPUSH = "2.2.0",
+  BZPOPMAX = "5.0.0",
+  BZPOPMIN = "5.0.0",
   CLIENT_GETNAME = "2.6.9",
   CLIENT_KILL = "2.4.0",
   CLIENT_LIST = "2.4.0",
@@ -1110,6 +1129,8 @@ cmd_since <- numeric_version(c(
   ZINCRBY = "1.2.0",
   ZINTERSTORE = "2.0.0",
   ZLEXCOUNT = "2.8.9",
+  ZPOPMAX = "5.0.0",
+  ZPOPMIN = "5.0.0",
   ZRANGE = "1.2.0",
   ZRANGEBYLEX = "2.8.9",
   ZRANGEBYSCORE = "1.0.5",
