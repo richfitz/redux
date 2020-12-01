@@ -422,7 +422,7 @@ test_that("ZMSCORE", {
 })
 
 test_that("BZPOPMIN", {
-  skip_if_cmd_unsupported("ZMSCORE")
+  skip_if_cmd_unsupported("BZPOPMIN")
   con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
@@ -432,7 +432,7 @@ test_that("BZPOPMIN", {
 })
 
 test_that("BZPOPMAX", {
-  skip_if_cmd_unsupported("ZMSCORE")
+  skip_if_cmd_unsupported("BZPOPMAX")
   con <- test_hiredis_connection()
   key1 <- rand_str()
   key2 <- rand_str()
