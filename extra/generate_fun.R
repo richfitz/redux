@@ -242,6 +242,10 @@ read_commands <- function() {
   ## Filter commands for releasedness:
   ok <- !vlapply(cmds, function(x) is.null(x$since))
   cmds <- cmds[ok]
+
+  ## Drop the redis stream (X*) commands:
+  cmds <- cmds[!vlapply(cmds, function(x) x$group == "stream")]
+
   for (i in seq_along(cmds)) {
     cmds[[i]]$name <- names(cmds)[[i]]
     cmds[[i]]$name_r <- clean_name(cmds[[i]]$name)

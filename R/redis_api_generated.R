@@ -1123,96 +1123,6 @@ redis_commands <- function(command) {
       assert_scalar_or_null2(COUNT)
       command(list("ZSCAN", key, cursor, cmd_command("MATCH", MATCH, FALSE), cmd_command("COUNT", COUNT, FALSE)))
     },
-    XINFO = function(CONSUMERS = NULL, GROUPS = NULL, STREAM = NULL, help = NULL) {
-      assert_length_or_null(CONSUMERS, 2L)
-      assert_scalar_or_null2(GROUPS)
-      assert_scalar_or_null2(STREAM)
-      assert_match_value_or_null(help, c("HELP"))
-      command(list("XINFO", cmd_command("CONSUMERS", CONSUMERS, TRUE), cmd_command("GROUPS", GROUPS, FALSE), cmd_command("STREAM", STREAM, FALSE), help))
-    },
-    XADD = function(key, ID, field, value) {
-      assert_scalar2(key)
-      assert_scalar2(ID)
-      field <- cmd_interleave(field, value)
-      command(list("XADD", key, ID, field))
-    },
-    XTRIM = function(key, strategy, count, approx = NULL) {
-      assert_scalar2(key)
-      assert_match_value(strategy, c("MAXLEN"))
-      assert_match_value_or_null(approx, c("~"))
-      assert_scalar2(count)
-      command(list("XTRIM", key, strategy, approx, count))
-    },
-    XDEL = function(key, ID) {
-      assert_scalar2(key)
-      command(list("XDEL", key, ID))
-    },
-    XRANGE = function(key, start, end, COUNT = NULL) {
-      assert_scalar2(key)
-      assert_scalar2(start)
-      assert_scalar2(end)
-      assert_scalar_or_null2(COUNT)
-      command(list("XRANGE", key, start, end, cmd_command("COUNT", COUNT, FALSE)))
-    },
-    XREVRANGE = function(key, end, start, COUNT = NULL) {
-      assert_scalar2(key)
-      assert_scalar2(end)
-      assert_scalar2(start)
-      assert_scalar_or_null2(COUNT)
-      command(list("XREVRANGE", key, end, start, cmd_command("COUNT", COUNT, FALSE)))
-    },
-    XLEN = function(key) {
-      assert_scalar2(key)
-      command(list("XLEN", key))
-    },
-    XREAD = function(streams, key, id, COUNT = NULL, BLOCK = NULL) {
-      assert_scalar_or_null2(COUNT)
-      assert_scalar_or_null2(BLOCK)
-      assert_match_value(streams, c("STREAMS"))
-      command(list("XREAD", cmd_command("COUNT", COUNT, FALSE), cmd_command("BLOCK", BLOCK, FALSE), streams, key, id))
-    },
-    XGROUP = function(CREATE = NULL, SETID = NULL, DESTROY = NULL, CREATECONSUMER = NULL, DELCONSUMER = NULL) {
-      assert_length_or_null(CREATE, 3L)
-      assert_length_or_null(SETID, 3L)
-      assert_length_or_null(DESTROY, 2L)
-      assert_length_or_null(CREATECONSUMER, 3L)
-      assert_length_or_null(DELCONSUMER, 3L)
-      command(list("XGROUP", cmd_command("CREATE", CREATE, TRUE), cmd_command("SETID", SETID, TRUE), cmd_command("DESTROY", DESTROY, TRUE), cmd_command("CREATECONSUMER", CREATECONSUMER, TRUE), cmd_command("DELCONSUMER", DELCONSUMER, TRUE)))
-    },
-    XREADGROUP = function(GROUP, streams, key, ID, COUNT = NULL, BLOCK = NULL, noack = NULL) {
-      assert_length(GROUP, 2L)
-      assert_scalar_or_null2(COUNT)
-      assert_scalar_or_null2(BLOCK)
-      assert_match_value_or_null(noack, c("NOACK"))
-      assert_match_value(streams, c("STREAMS"))
-      command(list("XREADGROUP", cmd_command("GROUP", GROUP, TRUE), cmd_command("COUNT", COUNT, FALSE), cmd_command("BLOCK", BLOCK, FALSE), noack, streams, key, ID))
-    },
-    XACK = function(key, group, ID) {
-      assert_scalar2(key)
-      assert_scalar2(group)
-      command(list("XACK", key, group, ID))
-    },
-    XCLAIM = function(key, group, consumer, min_idle_time, ID, IDLE = NULL, TIME = NULL, RETRYCOUNT = NULL, force = NULL, justid = NULL) {
-      assert_scalar2(key)
-      assert_scalar2(group)
-      assert_scalar2(consumer)
-      assert_scalar2(min_idle_time)
-      assert_scalar_or_null2(IDLE)
-      assert_scalar_or_null2(TIME)
-      assert_scalar_or_null2(RETRYCOUNT)
-      assert_match_value_or_null(force, c("FORCE"))
-      assert_match_value_or_null(justid, c("JUSTID"))
-      command(list("XCLAIM", key, group, consumer, min_idle_time, ID, cmd_command("IDLE", IDLE, FALSE), cmd_command("TIME", TIME, FALSE), cmd_command("RETRYCOUNT", RETRYCOUNT, FALSE), force, justid))
-    },
-    XPENDING = function(key, group, start = NULL, end = NULL, count = NULL, consumer = NULL) {
-      assert_scalar2(key)
-      assert_scalar2(group)
-      assert_scalar_or_null2(start)
-      assert_scalar_or_null2(end)
-      assert_scalar_or_null2(count)
-      assert_scalar_or_null2(consumer)
-      command(list("XPENDING", key, group, start, end, count, consumer))
-    },
     LATENCY_DOCTOR = function() {
       command(list("LATENCY", "DOCTOR"))
     },
@@ -1461,19 +1371,6 @@ cmd_since <- numeric_version(c(
   UNWATCH = "2.2.0",
   WAIT = "3.0.0",
   WATCH = "2.2.0",
-  XACK = "5.0.0",
-  XADD = "5.0.0",
-  XCLAIM = "5.0.0",
-  XDEL = "5.0.0",
-  XGROUP = "5.0.0",
-  XINFO = "5.0.0",
-  XLEN = "5.0.0",
-  XPENDING = "5.0.0",
-  XRANGE = "5.0.0",
-  XREAD = "5.0.0",
-  XREADGROUP = "5.0.0",
-  XREVRANGE = "5.0.0",
-  XTRIM = "5.0.0",
   ZADD = "1.2.0",
   ZCARD = "1.2.0",
   ZCOUNT = "2.0.0",
