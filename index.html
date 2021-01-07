@@ -46,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -75,7 +75,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/richfitz/redux/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -116,11 +116,11 @@
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
 <p>Create a hiredis object:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="reference/hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="reference/hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>The hiredis object is a hiredis object with many (<em>many</em> methods), each corresponding to a different Redis command.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="va">r</span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span>
 <span class="co">## &lt;redis_api&gt;</span>
 <span class="co">##   Redis commands:</span>
 <span class="co">##     APPEND: function</span>
@@ -138,7 +138,7 @@
 <span class="co">##     pipeline: function</span>
 <span class="co">##     reconnect: function</span>
 <span class="co">##     subscribe: function</span>
-<span class="co">##     type: function</span></pre></div>
+<span class="co">##     type: function</span></code></pre></div>
 <p>All the methods are available from this object; for example to set “foo” to “bar”, use:</p>
 <pre><code>r$SET("foo", "bar")</code></pre>
 <p>See the package vignette for more information (<code><a href="articles/redux.html">vignette("redux")</a></code>) or <a href="https://richfitz.github.io/redux/vignettes/redux.html" class="uri">https://richfitz.github.io/redux/vignettes/redux.html</a></p>
@@ -158,11 +158,11 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Install from CRAN with</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"redux"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"redux"</span><span class="op">)</span></code></pre></div>
 <p>or install the development version with</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"richfitz/redux"</span>, upgrade <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"richfitz/redux"</span>, upgrade <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="see-also" class="section level2">
 <h2 class="hasAnchor">

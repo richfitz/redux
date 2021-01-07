@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -68,7 +68,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/richfitz/redux/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -82,14 +82,13 @@
 
       
 
-      </header><script src="redux_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="redux_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="redux_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="redux_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Using Redis with redux</h1>
                         <h4 class="author">Rich FitzJohn</h4>
             
-            <h4 class="date">2020-10-30</h4>
+            <h4 class="date">2021-01-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/richfitz/redux/blob/master/vignettes/redux.Rmd"><code>vignettes/redux.Rmd</code></a></small>
       <div class="hidden name"><code>redux.Rmd</code></div>
@@ -101,12 +100,12 @@
 <p><code>redux</code> provides a full interface to the Redis API; it provides a hiredis driver wrapped in R and uses this to expose all 199 Redis commands as a set of user-friendly R functions that do basic error checking.</p>
 <p>It is possible to build user-friendly applications on top of this, for example <a href="https://github.com/richfitz/storr"><code>storr</code></a> which provides a content-addressable object store, and <a href="https://github.com/traitecoevo/rrqueue"><code>rrqueue</code></a> / <a href="https://github.com/richfitz/rrq"><code>rrq</code></a> which implement a scalable queuing system.</p>
 <p>The main entry point for creating a <code>redis_api</code> object is the <code>hiredis</code> function:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>By default, it will connect to a database running on the local machine (<code>127.0.0.1</code>) and port 6379. To connect to a different host, or to specify a password, initial database, or to use a socket connection, use the command .</p>
 <p>The <code>redis_api</code> object is an <a href="https://github.com/wch/R6"><code>R6</code></a> class with <em>many</em> methods, each corresponding to a different Redis command.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="va">r</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span></code></pre></div>
 <pre><code>## &lt;redis_api&gt;
 ##   Redis commands:
 ##     APPEND: function
@@ -126,19 +125,19 @@
 ##     subscribe: function
 ##     type: function</code></pre>
 <p>For example, <code>SET</code> and <code>GET</code>:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">SET</span><span class="op">(</span><span class="st">"mykey"</span>, <span class="st">"mydata"</span><span class="op">)</span> <span class="co"># set the key "mykey" to the value "mydata"</span></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">SET</span><span class="op">(</span><span class="st">"mykey"</span>, <span class="st">"mydata"</span><span class="op">)</span> <span class="co"># set the key "mykey" to the value "mydata"</span></code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mykey"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mykey"</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "mydata"</code></pre>
 <div id="serialisation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#serialisation" class="anchor"></a>Serialisation</h1>
 <p>The value for most arguments must be a string or will be coerced into one; clearly this is not going to be suitable for most R objects. The solution is to <em>serialise</em> the R object. <code>redux</code> can accept objects serialised to strings or to byte streams, and the functions the <code>object_to_bin</code> and <code>object_to_string</code> functions can help here, serialising the objects to binary and string representations. (Alternatively you can do this yourself using <code>serialize</code>.)</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_bin</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
-<span class="va">obj</span></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_bin</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
+<span class="va">obj</span></code></pre></div>
 <pre><code>##   [1] 42 0a 03 00 00 00 03 00 04 00 00 05 03 00 05 00 00 00 55 54 46 2d 38 ee 00
 ##  [26] 00 00 02 00 00 00 01 00 00 00 09 00 04 00 0e 00 00 00 63 6f 6d 70 61 63 74
 ##  [51] 5f 69 6e 74 73 65 71 02 00 00 00 01 00 00 00 09 00 04 00 04 00 00 00 62 61
@@ -146,73 +145,73 @@
 ## [101] 00 03 00 00 00 00 00 00 00 00 00 24 40 00 00 00 00 00 00 f0 3f 00 00 00 00
 ## [126] 00 00 f0 3f fe 00 00 00</code></pre>
 <p>or</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="va">str</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_string</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
-<span class="va">str</span></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">str</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_string</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
+<span class="va">str</span></code></pre></div>
 <pre><code>## [1] "A\n3\n262147\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"</code></pre>
 <p>The binary serialisation is faster, smaller, and preserves all the bits of floating point numbers. The string version might be preferable where having only strings in the database is wanted. The binary serialisation is compatible with the same approach used in <code>RcppRedis</code>, though it is never done automatically.</p>
 <p>These values can be deserialised:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">bin_to_object</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">bin_to_object</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">string_to_object</a></span><span class="op">(</span><span class="va">str</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">string_to_object</a></span><span class="op">(</span><span class="va">str</span><span class="op">)</span></code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>So:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">SET</span><span class="op">(</span><span class="st">"mylist"</span>, <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_bin</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">SET</span><span class="op">(</span><span class="st">"mylist"</span>, <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_bin</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mylist"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mylist"</span><span class="op">)</span></code></pre></div>
 <pre><code>##   [1] 42 0a 03 00 00 00 03 00 04 00 00 05 03 00 05 00 00 00 55 54 46 2d 38 ee 00
 ##  [26] 00 00 02 00 00 00 01 00 00 00 09 00 04 00 0e 00 00 00 63 6f 6d 70 61 63 74
 ##  [51] 5f 69 6e 74 73 65 71 02 00 00 00 01 00 00 00 09 00 04 00 04 00 00 00 62 61
 ##  [76] 73 65 02 00 00 00 0d 00 00 00 01 00 00 00 0d 00 00 00 fe 00 00 00 0e 00 00
 ## [101] 00 03 00 00 00 00 00 00 00 00 00 24 40 00 00 00 00 00 00 f0 3f 00 00 00 00
 ## [126] 00 00 f0 3f fe 00 00 00</code></pre>
-<div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">bin_to_object</a></span><span class="op">(</span><span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mylist"</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">bin_to_object</a></span><span class="op">(</span><span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mylist"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>Using string serialisation is similar:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">SET</span><span class="op">(</span><span class="st">"mylist"</span>, <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_string</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">SET</span><span class="op">(</span><span class="st">"mylist"</span>, <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_string</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
-<div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mylist"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mylist"</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "A\n3\n262147\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"</code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit">
-<span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">string_to_object</a></span><span class="op">(</span><span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mylist"</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">string_to_object</a></span><span class="op">(</span><span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"mylist"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>This gives you all the power of Redis, but you will have to manually serialise/deserialise all complicated R objects (i.e., everything other than logicals, numbers or strings). Similarly, you are responsible for type coercion/deserialisation when retrieving data at the other end.</p>
 <p>Note that you are not restricted to using serialised R objects as values; you can use them as keys; this is perfectly valid:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">SET</span><span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_bin</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>, <span class="st">"mydata"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">SET</span><span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_bin</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>, <span class="st">"mydata"</span><span class="op">)</span></code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
-<div class="sourceCode" id="cb30"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_bin</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_bin</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "mydata"</code></pre>
 <p>Beyond <code>GET</code> / <code>SET</code> / <code>DEL</code>, Redis offers potentially better ways of holding things like lists using its native data types. For example;</p>
-<div class="sourceCode" id="cb32"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">RPUSH</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">RPUSH</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 10</code></pre>
 <p>(the returned value <code>10</code> indicates that the list “mylist2” is 10 elements long). There are lots of commands for operating on lists. For example, you can do things like;</p>
 <ul>
 <li>get an element by its index (note that this uses C-style base-0 indexing for consistency with the <code>Redis</code> documentation rather than R’s semantics)</li>
 </ul>
-<div class="sourceCode" id="cb34"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">LINDEX</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">1</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">LINDEX</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">1</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "2"</code></pre>
 <ul>
 <li>set an element by its index</li>
 </ul>
-<div class="sourceCode" id="cb36"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">LSET</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">1</span>, <span class="st">"carrot"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">LSET</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">1</span>, <span class="st">"carrot"</span><span class="op">)</span></code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
 <ul>
 <li>get all of a list:</li>
 </ul>
-<div class="sourceCode" id="cb38"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">LRANGE</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">LRANGE</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
 <pre><code>## [[1]]
 ## [1] "1"
 ## 
@@ -245,8 +244,8 @@
 <ul>
 <li>or part of it:</li>
 </ul>
-<div class="sourceCode" id="cb40"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">LRANGE</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">LRANGE</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <pre><code>## [[1]]
 ## [1] "1"
 ## 
@@ -258,26 +257,26 @@
 <ul>
 <li>pop elements off the front or back</li>
 </ul>
-<div class="sourceCode" id="cb42"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">LLEN</span><span class="op">(</span><span class="st">"mylist2"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">LLEN</span><span class="op">(</span><span class="st">"mylist2"</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 10</code></pre>
-<div class="sourceCode" id="cb44"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">LPOP</span><span class="op">(</span><span class="st">"mylist2"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">LPOP</span><span class="op">(</span><span class="st">"mylist2"</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "1"</code></pre>
-<div class="sourceCode" id="cb46"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">RPOP</span><span class="op">(</span><span class="st">"mylist2"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">RPOP</span><span class="op">(</span><span class="st">"mylist2"</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "10"</code></pre>
-<div class="sourceCode" id="cb48"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">LLEN</span><span class="op">(</span><span class="st">"mylist2"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">LLEN</span><span class="op">(</span><span class="st">"mylist2"</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 8</code></pre>
 <p>Of course, each element of the list can be an R object if you run it through <code>object_to_string</code>:</p>
-<div class="sourceCode" id="cb50"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">LPUSH</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_string</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">LPUSH</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_string</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 9</code></pre>
 <p>but you’ll be responsible for converting that back (and detecting / knowing that this needs doing)</p>
-<div class="sourceCode" id="cb52"><pre class="downlit">
-<span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">$</span><span class="fu">LRANGE</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>
-<span class="va">dat</span></pre></div>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">$</span><span class="fu">LRANGE</span><span class="op">(</span><span class="st">"mylist2"</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>
+<span class="va">dat</span></code></pre></div>
 <pre><code>## [[1]]
 ## [1] "A\n3\n262147\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"
 ## 
@@ -286,9 +285,9 @@
 ## 
 ## [[3]]
 ## [1] "3"</code></pre>
-<div class="sourceCode" id="cb54"><pre class="downlit">
-<span class="va">dat</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">string_to_object</a></span><span class="op">(</span><span class="va">dat</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-<span class="va">dat</span></pre></div>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">string_to_object</a></span><span class="op">(</span><span class="va">dat</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="va">dat</span></code></pre></div>
 <pre><code>## [[1]]
 ##  [1]  1  2  3  4  5  6  7  8  9 10
 ## 
@@ -304,11 +303,11 @@
 <a href="#pipelining" class="anchor"></a>Pipelining</h1>
 <p>Every command set to Redis costs a round trip; even over the loopback interface this can be expensive if done a very large number of times. Redis offers two ways of minimising this problem; pipelining and lua scripting. redux supports both.</p>
 <p>To pipeline, use the <code>pipeline</code> method of the <code>hiredis</code> object:</p>
-<div class="sourceCode" id="cb56"><pre class="downlit">
-<span class="va">redis</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="va"><a href="../reference/redis.html">redis</a></span>
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">redis</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="va"><a href="../reference/redis.html">redis</a></span>
 <span class="va">r</span><span class="op">$</span><span class="fu">pipeline</span><span class="op">(</span>
   <span class="va">redis</span><span class="op">$</span><span class="fu">PING</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">redis</span><span class="op">$</span><span class="fu">PING</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></pre></div>
+  <span class="va">redis</span><span class="op">$</span><span class="fu">PING</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [[1]]
 ## [Redis: PONG]
 ## 
@@ -316,11 +315,11 @@
 ## [Redis: PONG]</code></pre>
 <p>Here, <code>redis</code> is a special object within the package that implements all the Redis commands but only formats them for use rather than sends them. The <code>pipeline</code> method collects these all up and sends them to the server in a single batch, with the result returned as a list.</p>
 <p>If arguments are named, then the return value is named:</p>
-<div class="sourceCode" id="cb58"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">pipeline</span><span class="op">(</span>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">pipeline</span><span class="op">(</span>
   a <span class="op">=</span> <span class="va">redis</span><span class="op">$</span><span class="fu">INCR</span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span>,
   b <span class="op">=</span> <span class="va">redis</span><span class="op">$</span><span class="fu">INCR</span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span>,
-  c <span class="op">=</span> <span class="va">redis</span><span class="op">$</span><span class="fu">DEL</span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span><span class="op">)</span></pre></div>
+  c <span class="op">=</span> <span class="va">redis</span><span class="op">$</span><span class="fu">DEL</span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## $a
 ## [1] 1
 ## 
@@ -332,9 +331,9 @@
 <p>here a variable “x” was incremented twice and then deleted.</p>
 <p>If you use pipelining you should read the <a href="http://redis.io/topics/pipelining">Redis page on it</a> because there are a few restrictions and cautions.</p>
 <p>Generating very large numbers (or variable numbers) of commands with the above interface will be difficult because <code>pipeline</code> uses the dots argument. Instead, you can pass a list of commands to the <code>.commands</code> argument of <code>pipeline</code>:</p>
-<div class="sourceCode" id="cb60"><pre class="downlit">
-<span class="va">cmds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="va">redis</span><span class="op">$</span><span class="fu">PING</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="va">r</span><span class="op">$</span><span class="fu">pipeline</span><span class="op">(</span>.commands <span class="op">=</span> <span class="va">cmds</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">cmds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="va">redis</span><span class="op">$</span><span class="fu">PING</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<span class="va">r</span><span class="op">$</span><span class="fu">pipeline</span><span class="op">(</span>.commands <span class="op">=</span> <span class="va">cmds</span><span class="op">)</span></code></pre></div>
 <pre><code>## [[1]]
 ## [Redis: PONG]
 ## 
@@ -351,8 +350,8 @@
 <h1 class="hasAnchor">
 <a href="#subscriptions" class="anchor"></a>Subscriptions</h1>
 <p>On top of the key/value store aspect of Redis, it also offers a publisher/subscriber model. Publishing with <code>redux</code> is straightforward; use the <code>PUBLISH</code> method:</p>
-<div class="sourceCode" id="cb62"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">PUBLISH</span><span class="op">(</span><span class="st">"mychannel"</span>, <span class="st">"hello"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">PUBLISH</span><span class="op">(</span><span class="st">"mychannel"</span>, <span class="st">"hello"</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 0</code></pre>
 <p>The return value here is the number of subscribers to that channel; in our case zero!</p>
 <p>The <code>SUBSCRIBE</code> method should not be used as the client cannot deal with messages directly (it is disabled in the interface to prevent this).</p>
@@ -367,63 +366,63 @@
 <li><p>envir: environment in which to evaluate <code>transform</code> and <code>terminate</code>.</p></li>
 </ul>
 <p>That all sounds a lot more complicated it really is. To collect all messages on the <code>"mychannel"</code> channel, stopping after 100 messages or a message reading exactly “goodbye” you would write:</p>
-<div class="sourceCode" id="cb64"><pre class="downlit">
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">$</span><span class="fu">subscribe</span><span class="op">(</span><span class="st">"mychannel"</span>,
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">$</span><span class="fu">subscribe</span><span class="op">(</span><span class="st">"mychannel"</span>,
                    transform <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">$</span><span class="va">value</span>,
                    terminate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/identical.html">identical</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"goodbye"</span><span class="op">)</span>,
-                   n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></pre></div>
+                   n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></code></pre></div>
 <p><em>NOTE</em>: you need to be careful here - <code>hiredis</code> internally uses a blocking read which cannot be interrupted with Ctrl-C once started unless a message is received on the channels being listened to!</p>
 <p>To test this out, we need a second process that will publish to the channel (or we’ll wait forever). This function will publish the first 20 values out of the Nile data set.</p>
-<div class="sourceCode" id="cb65"><pre class="downlit">
-<span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="va">Nile</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html">Sys.sleep</a></span><span class="op">(</span><span class="fl">.05</span><span class="op">)</span>
   <span class="va">r</span><span class="op">$</span><span class="fu">PUBLISH</span><span class="op">(</span><span class="st">"mychannel"</span>, <span class="va">i</span><span class="op">)</span>
 <span class="op">}</span>
-<span class="va">r</span><span class="op">$</span><span class="fu">PUBLISH</span><span class="op">(</span><span class="st">"mychannel"</span>, <span class="st">"goodbye"</span><span class="op">)</span></pre></div>
+<span class="va">r</span><span class="op">$</span><span class="fu">PUBLISH</span><span class="op">(</span><span class="st">"mychannel"</span>, <span class="st">"goodbye"</span><span class="op">)</span></code></pre></div>
 <p>This file is at <code>path_to_publisher</code> (in R’s temporary directory) and can be run with:</p>
-<div class="sourceCode" id="cb66"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/system2.html">system2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Rhome.html">R.home</a></span><span class="op">(</span><span class="st">"bin"</span><span class="op">)</span>, <span class="st">"Rscript"</span><span class="op">)</span>, <span class="va">path_to_publisher</span>,
-        wait <span class="op">=</span> <span class="cn">FALSE</span>, stdout <span class="op">=</span> <span class="cn">FALSE</span>, stderr <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/system2.html">system2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Rhome.html">R.home</a></span><span class="op">(</span><span class="st">"bin"</span><span class="op">)</span>, <span class="st">"Rscript"</span><span class="op">)</span>, <span class="va">path_to_publisher</span>,
+        wait <span class="op">=</span> <span class="cn">FALSE</span>, stdout <span class="op">=</span> <span class="cn">FALSE</span>, stderr <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p>to start the publisher.</p>
 <p>Let’s add a little debugging information to the transform function, and set the subscriber off:</p>
-<div class="sourceCode" id="cb67"><pre class="downlit">
-<span class="va">transform</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">transform</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"%Y-%m-%d %H:%M:%OS3"</span><span class="op">)</span>,
           <span class="st">": got message: "</span>,
           <span class="va">x</span><span class="op">$</span><span class="va">value</span><span class="op">)</span>
   <span class="va">x</span><span class="op">$</span><span class="va">value</span>
-<span class="op">}</span></pre></div>
-<div class="sourceCode" id="cb68"><pre class="downlit">
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">$</span><span class="fu">subscribe</span><span class="op">(</span><span class="st">"mychannel"</span>,
+<span class="op">}</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">$</span><span class="fu">subscribe</span><span class="op">(</span><span class="st">"mychannel"</span>,
                    transform <span class="op">=</span> <span class="va">transform</span>,
                    terminate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/identical.html">identical</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"goodbye"</span><span class="op">)</span>,
-                   n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></pre></div>
-<pre><code>## 2020-10-30 14:18:02.281: got message: 1120</code></pre>
-<pre><code>## 2020-10-30 14:18:02.437: got message: 1160</code></pre>
-<pre><code>## 2020-10-30 14:18:02.484: got message: 963</code></pre>
-<pre><code>## 2020-10-30 14:18:02.635: got message: 1210</code></pre>
-<pre><code>## 2020-10-30 14:18:02.686: got message: 1160</code></pre>
-<pre><code>## 2020-10-30 14:18:02.737: got message: 1160</code></pre>
-<pre><code>## 2020-10-30 14:18:02.792: got message: 813</code></pre>
-<pre><code>## 2020-10-30 14:18:02.849: got message: 1230</code></pre>
-<pre><code>## 2020-10-30 14:18:02.907: got message: 1370</code></pre>
-<pre><code>## 2020-10-30 14:18:02.958: got message: 1140</code></pre>
-<pre><code>## 2020-10-30 14:18:03.102: got message: 995</code></pre>
-<pre><code>## 2020-10-30 14:18:03.283: got message: 935</code></pre>
-<pre><code>## 2020-10-30 14:18:03.337: got message: 1110</code></pre>
-<pre><code>## 2020-10-30 14:18:03.407: got message: 994</code></pre>
-<pre><code>## 2020-10-30 14:18:03.516: got message: 1020</code></pre>
-<pre><code>## 2020-10-30 14:18:03.567: got message: 960</code></pre>
-<pre><code>## 2020-10-30 14:18:03.723: got message: 1180</code></pre>
-<pre><code>## 2020-10-30 14:18:03.773: got message: 799</code></pre>
-<pre><code>## 2020-10-30 14:18:03.824: got message: 958</code></pre>
-<pre><code>## 2020-10-30 14:18:03.918: got message: 1140</code></pre>
-<pre><code>## 2020-10-30 14:18:03.919: got message: goodbye</code></pre>
+                   n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></code></pre></div>
+<pre><code>## 2021-01-07 07:56:35.223: got message: 1120</code></pre>
+<pre><code>## 2021-01-07 07:56:35.277: got message: 1160</code></pre>
+<pre><code>## 2021-01-07 07:56:35.441: got message: 963</code></pre>
+<pre><code>## 2021-01-07 07:56:35.492: got message: 1210</code></pre>
+<pre><code>## 2021-01-07 07:56:35.644: got message: 1160</code></pre>
+<pre><code>## 2021-01-07 07:56:35.742: got message: 1160</code></pre>
+<pre><code>## 2021-01-07 07:56:35.792: got message: 813</code></pre>
+<pre><code>## 2021-01-07 07:56:35.956: got message: 1230</code></pre>
+<pre><code>## 2021-01-07 07:56:36.050: got message: 1370</code></pre>
+<pre><code>## 2021-01-07 07:56:36.124: got message: 1140</code></pre>
+<pre><code>## 2021-01-07 07:56:36.311: got message: 995</code></pre>
+<pre><code>## 2021-01-07 07:56:36.362: got message: 935</code></pre>
+<pre><code>## 2021-01-07 07:56:36.495: got message: 1110</code></pre>
+<pre><code>## 2021-01-07 07:56:36.545: got message: 994</code></pre>
+<pre><code>## 2021-01-07 07:56:36.624: got message: 1020</code></pre>
+<pre><code>## 2021-01-07 07:56:36.675: got message: 960</code></pre>
+<pre><code>## 2021-01-07 07:56:36.740: got message: 1180</code></pre>
+<pre><code>## 2021-01-07 07:56:36.791: got message: 799</code></pre>
+<pre><code>## 2021-01-07 07:56:36.860: got message: 958</code></pre>
+<pre><code>## 2021-01-07 07:56:37.026: got message: 1140</code></pre>
+<pre><code>## 2021-01-07 07:56:37.027: got message: goodbye</code></pre>
 <p>The timestamps in the printed output show when the message was received (with fractional seconds so that this is more obvious since this only takes ~1s to complete).</p>
 <p>The <code>res</code> object contains all the values, including the “goodbye” that was our end-of-stream message:</p>
-<div class="sourceCode" id="cb90"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></code></pre></div>
 <pre><code>##  [1] "1120"    "1160"    "963"     "1210"    "1160"    "1160"    "813"    
 ##  [8] "1230"    "1370"    "1140"    "995"     "935"     "1110"    "994"    
 ## [15] "1020"    "960"     "1180"    "799"     "958"     "1140"    "goodbye"</code></pre>
@@ -433,17 +432,17 @@
 <a href="#potential-applications" class="anchor"></a>Potential applications</h1>
 <p>Because <code>redux</code> exposes all of Redis, you can roll your own data structures.</p>
 <p>First, a generator object that sets up a new list at <code>key</code> within the database <code>r</code>.</p>
-<div class="sourceCode" id="cb92"><pre class="downlit">
-<span class="va">rlist</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span>, <span class="va">key</span> <span class="op">=</span> <span class="st">"rlist"</span>, <span class="va">r</span> <span class="op">=</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">rlist</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span>, <span class="va">key</span> <span class="op">=</span> <span class="st">"rlist"</span>, <span class="va">r</span> <span class="op">=</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>, <span class="fu">redux</span><span class="fu">::</span><span class="va"><a href="../reference/object_to_string.html">object_to_string</a></span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>
   <span class="va">r</span><span class="op">$</span><span class="fu">RPUSH</span><span class="op">(</span><span class="va">key</span>, <span class="va">dat</span><span class="op">)</span>
   <span class="va">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">r</span>, key <span class="op">=</span> <span class="va">key</span><span class="op">)</span>
   <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">ret</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"rlist"</span>
   <span class="va">ret</span>
-<span class="op">}</span></pre></div>
+<span class="op">}</span></code></pre></div>
 <p>Then some S3 methods that work with this object. I’ve only implemented <code>length</code> and <code><a href="https://rdrr.io/r/base/Extract.html">[[</a></code>, but <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> would be useful here too as would <code>print</code>.</p>
-<div class="sourceCode" id="cb93"><pre class="downlit">
-<span class="va">length.rlist</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">length.rlist</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">x</span><span class="op">$</span><span class="va">r</span><span class="op">$</span><span class="fu">LLEN</span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">key</span><span class="op">)</span>
 <span class="op">}</span>
 
@@ -454,24 +453,24 @@
 <span class="va">`[[&lt;-.rlist`</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">i</span>, <span class="va">value</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">x</span><span class="op">$</span><span class="va">r</span><span class="op">$</span><span class="fu">LSET</span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">key</span>, <span class="va">i</span> <span class="op">-</span> <span class="fl">1L</span>, <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/object_to_string.html">object_to_string</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span>
   <span class="va">x</span>
-<span class="op">}</span></pre></div>
+<span class="op">}</span></code></pre></div>
 <p>Then we have this weird object we can add things to.</p>
-<div class="sourceCode" id="cb94"><pre class="downlit">
-<span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">rlist</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span> <span class="co"># 10</span></pre></div>
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">rlist</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span> <span class="co"># 10</span></code></pre></div>
 <pre><code>## [1] 10</code></pre>
-<div class="sourceCode" id="cb96"><pre class="downlit">
-<span class="va">obj</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span></pre></div>
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">obj</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span></code></pre></div>
 <pre><code>## [1] 3</code></pre>
-<div class="sourceCode" id="cb98"><pre class="downlit">
-<span class="va">obj</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"an element"</span>
-<span class="va">obj</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span></pre></div>
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">obj</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"an element"</span>
+<span class="va">obj</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span></code></pre></div>
 <pre><code>## [1] "an element"</code></pre>
 <p>The object has reference semantics so that assignment does <em>not</em> make a copy:</p>
-<div class="sourceCode" id="cb100"><pre class="downlit">
-<span class="va">obj2</span> <span class="op">&lt;-</span> <span class="va">obj</span>
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">obj2</span> <span class="op">&lt;-</span> <span class="va">obj</span>
 <span class="va">obj2</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">obj2</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span> <span class="fl">2</span>
-<span class="va">obj</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">==</span> <span class="va">obj2</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></pre></div>
+<span class="va">obj</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">==</span> <span class="va">obj2</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <p>For a better version of this, see <a href="https://github.com/richfitz/storr">storr</a> which does similar things to implement “<a href="http://htmlpreview.github.io/?https://raw.githubusercontent.com/richfitz/storr/master/inst/doc/storr.html#lists-and-indexable-serialisation">indexable serialisation</a>”</p>
 </div>
@@ -480,36 +479,36 @@
 <a href="#scripts" class="anchor"></a>Scripts</h1>
 <p>Redis allows storing and evaluating Lua scripts on the redis server. At this point it’s all getting a bit meta (using R to tell Redis to call another dynamic language that drives Redis) but this can be very useful - especially in avoiding race conditions (because a script is atomic) and avoiding roundtrips.</p>
 <p>Describing how to write Lua scripts is out of scope for this document but is a bit fiddly. Here is a trivial one that returns the value of a key:</p>
-<div class="sourceCode" id="cb102"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">SET</span><span class="op">(</span><span class="st">"key"</span>, <span class="st">"a"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">SET</span><span class="op">(</span><span class="st">"key"</span>, <span class="st">"a"</span><span class="op">)</span></code></pre></div>
 <pre><code>## [Redis: OK]</code></pre>
-<div class="sourceCode" id="cb104"><pre class="downlit">
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">$</span><span class="fu">EVAL</span><span class="op">(</span><span class="st">"return redis.call('get', 'key')"</span>, <span class="fl">1L</span>, <span class="st">"key"</span>, <span class="cn">NULL</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">$</span><span class="fu">EVAL</span><span class="op">(</span><span class="st">"return redis.call('get', 'key')"</span>, <span class="fl">1L</span>, <span class="st">"key"</span>, <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
 <p>This can also be run by pushing the script into Redis and referring to it by SHA:</p>
-<div class="sourceCode" id="cb105"><pre class="downlit">
-<span class="va">sha</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">$</span><span class="fu">SCRIPT_LOAD</span><span class="op">(</span><span class="st">"return redis.call('get', 'key')"</span><span class="op">)</span>
-<span class="va">r</span><span class="op">$</span><span class="fu">SCRIPT_EXISTS</span><span class="op">(</span><span class="va">sha</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sha</span> <span class="op">&lt;-</span> <span class="va">r</span><span class="op">$</span><span class="fu">SCRIPT_LOAD</span><span class="op">(</span><span class="st">"return redis.call('get', 'key')"</span><span class="op">)</span>
+<span class="va">r</span><span class="op">$</span><span class="fu">SCRIPT_EXISTS</span><span class="op">(</span><span class="va">sha</span><span class="op">)</span></code></pre></div>
 <pre><code>## [[1]]
 ## [1] 1</code></pre>
 <p>and calling it like so:</p>
-<div class="sourceCode" id="cb107"><pre class="downlit">
-<span class="va">r</span><span class="op">$</span><span class="fu">EVALSHA</span><span class="op">(</span><span class="va">sha</span>, <span class="fl">1</span>, <span class="st">"key"</span>, <span class="cn">NULL</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">r</span><span class="op">$</span><span class="fu">EVALSHA</span><span class="op">(</span><span class="va">sha</span>, <span class="fl">1</span>, <span class="st">"key"</span>, <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "a"</code></pre>
 <p>A more interesting example, setting, incrementing and getting a key (this is all do-able with redis commands)</p>
-<div class="sourceCode" id="cb109"><pre class="downlit">
-<span class="va">lua</span> <span class="op">&lt;-</span> <span class="st">'
+<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">lua</span> <span class="op">&lt;-</span> <span class="st">'
   local keyname = KEYS[1]
   local value = ARGV[1]
   redis.call("SET", keyname, value)
   redis.call("INCR", keyname)
-  return redis.call("GET", keyname)'</span></pre></div>
+  return redis.call("GET", keyname)'</span></code></pre></div>
 <p>With the <code>redis_scripts</code> wrapper you can give friendly names to a script:</p>
-<div class="sourceCode" id="cb110"><pre class="downlit">
-<span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/redis_scripts.html">redis_scripts</a></span><span class="op">(</span><span class="va">r</span>, set_and_incr <span class="op">=</span> <span class="va">lua</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/redis_scripts.html">redis_scripts</a></span><span class="op">(</span><span class="va">r</span>, set_and_incr <span class="op">=</span> <span class="va">lua</span><span class="op">)</span></code></pre></div>
 <p>And then call them by name:</p>
-<div class="sourceCode" id="cb111"><pre class="downlit">
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">obj</span><span class="op">(</span><span class="st">"set_and_incr"</span>, <span class="st">"foo"</span>, <span class="st">"10"</span><span class="op">)</span>
-<span class="va">res</span></pre></div>
+<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">obj</span><span class="op">(</span><span class="st">"set_and_incr"</span>, <span class="st">"foo"</span>, <span class="st">"10"</span><span class="op">)</span>
+<span class="va">res</span></code></pre></div>
 <pre><code>## [1] "11"</code></pre>
 </div>
 <div id="getting-help" class="section level1">
