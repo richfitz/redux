@@ -35,6 +35,12 @@ assert_character <- function(x, name = deparse(substitute(x))) {
   }
 }
 
+assert_numeric <- function(x, name = deparse(substitute(x))) {
+  if (!is.numeric(x)) {
+    stop(sprintf("'%s' must be numeric", name), call. = FALSE)
+  }
+}
+
 assert_logical <- function(x, name = deparse(substitute(x))) {
   if (!is.logical(x)) {
     stop(sprintf("%s must be logical", name), call. = FALSE)
@@ -138,4 +144,26 @@ warn_unknown <- function(name, defn, known) {
                    name, paste(unknown, collapse = ", "))
     warning(msg, immediate. = TRUE, call. = FALSE)
   }
+}
+
+assert_scalar_positive_integer <- function(x, zero_ok = FALSE,
+                                           name = deparse(substitute(x))) {
+  assert_scalar(x, name)
+  assert_nonmissing(x, name)
+  assert_integer_like(x, name)
+  if (x < if (zero_ok) 0 else 1) {
+    stop(sprintf("'%s' must be a positive integer", name), call. = FALSE)
+  }
+}
+
+assert_integer_like <- function(x, name = deparse(substitute(x))) {
+  if (!isTRUE(all.equal(as.integer(x), x))) {
+    stop(sprintf("'%s' must be integer-like", name))
+  }
+}
+
+assert_scalar_numeric <- function(x, name = deparse(substitute(x))) {
+  assert_scalar(x, name)
+  assert_numeric(x, name)
+  assert_nonmissing(x, name)
 }

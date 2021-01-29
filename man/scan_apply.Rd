@@ -6,8 +6,15 @@
 \alias{scan_find}
 \title{Iterate over keys using SCAN}
 \usage{
-scan_apply(con, callback, pattern = NULL, ..., count = NULL,
-  type = "SCAN", key = NULL)
+scan_apply(
+  con,
+  callback,
+  pattern = NULL,
+  ...,
+  count = NULL,
+  type = "SCAN",
+  key = NULL
+)
 
 scan_del(con, pattern, count = NULL, type = "SCAN", key = NULL)
 

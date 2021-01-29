@@ -41,5 +41,3 @@ start_publisher <- function(channel, dt = 0.02) {
   }
   list(pid = pid, filename = filename, log = log)
 }
-
-`%||%` <- function(a, b) if (is.null(a)) b else a

@@ -50,6 +50,18 @@ test_that("assertions work", {
 
   expect_error(assert_is(NULL, "function"),
                "must be a function")
+
+  expect_silent(assert_numeric(1))
+  expect_error(assert_numeric(TRUE),
+               "must be numeric")
+
+  expect_silent(assert_integer_like(1))
+  expect_error(assert_integer_like(1.2),
+               "must be integer-like")
+
+  expect_silent(assert_scalar_positive_integer(1))
+  expect_error(assert_scalar_positive_integer(-1),
+               "must be a positive integer")
 })
 
 test_that("hiredis_function", {

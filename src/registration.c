@@ -4,6 +4,7 @@
 #include "connection.h"
 #include "conversions.h"
 #include "subscribe.h"
+#include "heartbeat_interface.h"
 #include <R_ext/Rdynload.h>
 #include <Rversion.h>
 
@@ -17,6 +18,11 @@ static const R_CallMethodDef callMethods[] = {
 
   {"Credux_redis_subscribe",     (DL_FUNC) &redux_redis_subscribe,      5},
   {"Credux_redis_unsubscribe",   (DL_FUNC) &redux_redis_unsubscribe,    3},
+
+  // The heartbeat
+  {"Cheartbeat_create",          (DL_FUNC) &r_heartbeat_create,        10},
+  {"Cheartbeat_stop",            (DL_FUNC) &r_heartbeat_stop,           4},
+  {"Cheartbeat_running",         (DL_FUNC) &r_heartbeat_running,        1},
 
   // Used in testing only:
   {"Credis_flatten_command",     (DL_FUNC) &redis_flatten_command,      1},

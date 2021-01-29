@@ -28,3 +28,7 @@ capture_args <- function(f, name) {
 str_drop_start <- function(x, sub) {
   substr(x, nchar(sub) + 1L, nchar(x))
 }
+
+`%||%` <- function(a, b) {
+  if (is.null(a)) b else a
+}

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+curl -L -o src/tinycthread.c https://raw.githubusercontent.com/tinycthread/tinycthread/master/source/tinycthread.c
+curl -L -o src/tinycthread.h https://raw.githubusercontent.com/tinycthread/tinycthread/master/source/tinycthread.h

@@ -40,7 +40,7 @@ check_all:
 	${RSCRIPT} -e "rcmdcheck::rcmdcheck(args = c('--as-cran', '--no-manual'))"
 
 clean:
-	rm -f src/*.o src/*.so
+	rm -f src/*.o src/*.so src/*.dll src/*.gcov src/*.gcda src/*.gcno
 
 vignettes/redux.Rmd: vignettes_src/redux.Rmd
 	cd vignettes_src && ${RSCRIPT} -e 'knitr::knit("redux.Rmd")'
