@@ -1,5 +1,5 @@
 #ifndef REDUX_HEARTBEAT_INTERFACE_H
-#define REDUXHEARTBEAT_INTERFACE_H
+#define REDUX_HEARTBEAT_INTERFACE_H
 
 #include <R.h>
 #include <Rinternals.h>
