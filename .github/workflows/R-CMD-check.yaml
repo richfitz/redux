@@ -92,6 +92,12 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
+      - name: Install self
+        if: runner.os == 'Windows'
+        run: |
+          install.packages(".", repos=NULL, type="source")
+        shell: Rscript {0}
+
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
