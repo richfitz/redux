@@ -1,0 +1,65 @@
+---
+title: "Detect exited processes with heartbeat"
+author: "Rich FitzJohn"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Detect exited processes with heartbeat}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+Redis is popular to create job queues due to its `BLPOPRPUSH` (and more recently `BLMOVE`) commands. To do this reliably though it is helpful to be able to detect existed workers. One strategy for detecting this is to use a [dead man's switch](https://en.wikipedia.org/wiki/Dead_man%27s_switch); that is something that we notice when it *stops* happening for any reason.
+
+We can use another Redis command `EXPIRE` to implement this. On our worker process we create some Redis key with a "time to live" specified and periodically using `EXPIRE` to refresh that key. If the key is still there then we have heard from our process within its "time to live" period. If the worker process dies for any reason (loss of network, machine reboot, process crashing - any reason at all) this key will expire and we will be able to detect it and take action.
+
+To do this we need to first decide on a key; you can use any key you want, though this key should not already exist.
+
+```{r}
+key <- "rrq:heartbeat:vignette"
+```
+
+Then start the heartbeat process from your worker. The second argument is the "period" of the heartbeat - normally this could be set quite a bit higher (e.g., 60s or more) as loss of workers is likely to be rare enough that you can wait around for it. You can pass any redis connection information via the `config` argument (see `redux::hiredis`)
+
+```{r}
+h <- redux::heartbeat(key, 2)
+h
+```
+
+Once the key is created, your other processes can monitor for the existence of the key
+
+```{r}
+con <- redux::hiredis()
+con$EXISTS(key)
+```
+
+By default, the key *value* will contain the expiry of the key, in seconds
+
+```{r}
+con$GET(key)
+```
+
+You can also use
+
+```{r}
+con$TTL(key)
+con$PTTL(key)
+```
+
+to get the remaining time-to-live in seconds and milliseconds.
+
+It is important that the worker retains a copy of the heartbeat object (here `h`) as once it goes out of scope it is subject to garbage collection and once deleted it will remove the key.  Otherwise if the worker stops unexpectedly the key will eventually expire and `con$EXISTS(key)` will return `"0"` and `con$GET(key)` will return `NULL`.
+
+```{r, include = FALSE}
+h$stop()
+```
+
+## Advanced use
+
+It is possible for another process to send a ["signal"](https://en.wikipedia.org/wiki/Signal_(IPC)) to a process that is running a heartbeat. Support for this is somewhat platform dependent, but a `SIGKILL` signal should always work. For example, to kill our worker process we might send:
+
+```r
+redux::heartbeat_send_signal(con, key, tools::SIGKILL)
+```
+
+This will work even whre the worker process is on another machine or if it is running a calculation. You can also send `tools::SIGINT`, though this will kill the process on windows.

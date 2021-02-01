@@ -54,7 +54,13 @@ vignettes/low_level.Rmd: vignettes_src/low_level.Rmd
 	sed -i.bak 's/[[:space:]]*$$//' $@
 	rm -f $@.bak
 
-vignettes_install: vignettes/redux.Rmd vignettes/low_level.Rmd
+vignettes/heartbeat.Rmd: vignettes_src/heartbeat.Rmd
+	cd vignettes_src && ${RSCRIPT} -e 'knitr::knit("heartbeat.Rmd")'
+	mv vignettes_src/heartbeat.md $@
+	sed -i.bak 's/[[:space:]]*$$//' $@
+	rm -f $@.bak
+
+vignettes_install: vignettes/redux.Rmd vignettes/low_level.Rmd vignettes/heartbeat.Rmd
 	${RSCRIPT} -e 'library(methods); devtools::build_vignettes()'
 
 vignettes:
