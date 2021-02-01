@@ -11,11 +11,11 @@ heartbeat_send_signal(con, key, signal)
 
 \item{key}{The heartbeat key}
 
-\item{signal}{A signal to send (e.g. `tools::SIGINT` or
-`tools::SIGKILL`)}
+\item{signal}{A signal to send (e.g. \code{tools::SIGINT} or
+\code{tools::SIGKILL})}
 }
 \description{
-Sends a signal to a heartbeat process that is using key `key`
+Sends a signal to a heartbeat process that is using key \code{key}
 }
 \examples{
 if (redux::redis_available()) {

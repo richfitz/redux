@@ -22,7 +22,7 @@ bin_to_object(bin)
 
 \item{xdr}{Use the big-endian representation?  Unlike,
 \code{\link{serialize}} this is disabled here by default as it
-is a bit faster (~ 20%, saving about 1 microsecond of a 5
+is a bit faster (~ 20\%, saving about 1 microsecond of a 5
 microsecond roundtrip for a serialization of 100 doubles)}
 
 \item{bin}{A binary vector to convert back to an R object}

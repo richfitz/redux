@@ -32,5 +32,6 @@ Suggests:
     sys,
     testthat
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Encoding: UTF-8

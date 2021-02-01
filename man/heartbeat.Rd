@@ -25,10 +25,10 @@ heartbeat(
 expiry time, so the time since last heartbeat can be computed.}
 
 \item{config}{Configuration parameters passed through to
-[redux::redis_config].  Provide as either a named list or a
-`redis_config` object.  This allows host, port, password,
+\link{redis_config}.  Provide as either a named list or a
+\code{redis_config} object.  This allows host, port, password,
 db, etc all to be set.  Socket connections (i.e., using
-`path` to access Redis over a socket) are not currently
+\code{path} to access Redis over a socket) are not currently
 supported.}
 
 \item{start}{Should the heartbeat be started immediately?}
@@ -40,23 +40,22 @@ generally left alone.}
 }
 \description{
 Create a heartbeat instance.  This can be used by running
-`obj$start()` which will reset the TTL (Time To Live) on `key` every
-`period` seconds (don't set this too high).  If the R process
-dies, then the key will expire after `3 * period` seconds (or
-set `expire`) and another application can tell that this R
+\code{obj$start()} which will reset the TTL (Time To Live) on \code{key} every
+\code{period} seconds (don't set this too high).  If the R process
+dies, then the key will expire after \code{3 * period} seconds (or
+set \code{expire}) and another application can tell that this R
 instance has died.
 }
 \details{
 The heartbeat object has three methods:
+\itemize{
+\item \code{is_running()} which returns \code{TRUE} or
+\code{FALSE} if the heartbeat is/is not running.
+\item \code{start()} which starts a heartbeat
+\item \code{stop()} which requests a stop for the heartbeat
+}
 
-* `is_running()` which returns `TRUE` or
-  `FALSE` if the heartbeat is/is not running.
-
-* `start()` which starts a heartbeat
-
-* `stop()` which requests a stop for the heartbeat
-
-Heavily inspired by the `doRedis` package.
+Heavily inspired by the \code{doRedis} package.
 }
 \examples{
 
