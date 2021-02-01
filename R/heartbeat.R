@@ -192,7 +192,7 @@ heartbeat_ <- R6::R6Class(
         sprintf("  - key: %s", private$key),
         sprintf("  - period: %d", private$period),
         sprintf("  - expire: %d", private$expire),
-        sprintf("  - redis:%s",
+        sprintf("  - redis:\n%s",
                 paste0("      ", capture.output(print(private$config))[-1],
                        collapse = "\n")))
     }
