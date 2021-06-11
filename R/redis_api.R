@@ -1,7 +1,9 @@
 ##' Create a Redis API object.  This function is designed to be used
 ##' from other packages, and not designed to be used directly by
 ##' users.
+##'
 ##' @title Create a Redis API object
+##'
 ##' @param x An object that defines at least the function
 ##'   \code{command} capable of processing commands in the appropriate
 ##'   form.
@@ -10,6 +12,7 @@
 ##'   a numeric version (or something that can be coerced into one.
 ##'   If given as \code{TRUE}, then we query the Redis server for its
 ##'   version and generate only commands supported by the server.
+##'
 ##' @importFrom R6 R6Class
 ##' @export
 redis_api <- function(x, version = NULL) {
@@ -20,44 +23,60 @@ R6_redis_api <- R6::R6Class(
   "redis_api",
   lock_class = FALSE,
   lock_objects = FALSE,
+
+  private = list(
+    .pipeline = NULL,
+    .subscribe = NULL,
+    .version = NULL
+  ),
+
   public = list(
     config = NULL,
     type = NULL,
     reconnect = NULL,
     command = NULL,
-    .pipeline = NULL,
-    .subscribe = NULL,
-    .command = NULL,
+
     initialize = function(x, version) {
       self$command <- hiredis_function("command", x)
       self$config <- hiredis_function("config", x)
       self$reconnect <- hiredis_function("reconnect", x)
-      self$.pipeline <- hiredis_function("pipeline", x)
-      self$.subscribe <- hiredis_function("subscribe", x)
+      private$.pipeline <- hiredis_function("pipeline", x)
+      private$.subscribe <- hiredis_function("subscribe", x)
       self$type <- function() attr(x, "type", exact = TRUE)
       redis <- filter_redis_commands(redis_commands(self$command),
                                      version, self$command)
       for (el in names(redis)) {
         self[[el]] <- redis[[el]]
       }
+
       lockEnvironment(self)
     },
+
     pipeline = function(..., .commands = list(...)) {
-      ret <- self$.pipeline(.commands)
+      ret <- private$.pipeline(.commands)
       if (!is.null(names(.commands))) {
         names(ret) <- names(.commands)
       }
       ret
     },
+
     subscribe = function(channel, transform = NULL, terminate = NULL,
                        collect = TRUE, n = Inf, pattern = FALSE,
                        envir = parent.frame()) {
       assert_scalar_logical(pattern)
       collector <- make_collector(collect)
       callback <- make_callback(transform, terminate, collector$add, n)
-      self$.subscribe(channel, pattern, callback, envir)
+      private$.subscribe(channel, pattern, callback, envir)
       collector$get()
-    }))
+    },
+
+    version = function() {
+      if (is.null(private$.version)) {
+        private$.version <- parse_info(self$command("INFO"))$redis_version
+      }
+      private$.version
+    }
+  ))
 
 ## Functions used to build the redis_api interface or to run it:
 hiredis_function <- function(name, obj, required = FALSE) {

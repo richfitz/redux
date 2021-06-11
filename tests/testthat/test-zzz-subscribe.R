@@ -24,7 +24,8 @@ test_that("low level", {
 
   con <- test_hiredis_connection()
   env <- environment()
-  con$.subscribe(ch, FALSE, callback, env)
+  subscribe <- con[[".__enclos_env__"]]$private$.subscribe
+  subscribe(ch, FALSE, callback, env)
 
   expect_gt(length(vals), 0)
 
@@ -175,14 +176,16 @@ test_that("error cases", {
 
   con <- test_hiredis_connection()
   env <- environment()
-  expect_error(con$.subscribe(NULL, FALSE, callback, env),
+  subscribe <- con[[".__enclos_env__"]]$private$.subscribe
+
+  expect_error(subscribe(NULL, FALSE, callback, env),
                "channel must be character")
-  expect_error(con$.subscribe(character(), FALSE, callback, env),
+  expect_error(subscribe(character(), FALSE, callback, env),
                "At least one channel must be given")
-  expect_error(con$.subscribe(ch, NULL, callback, env),
+  expect_error(subscribe(ch, NULL, callback, env),
                "pattern must be a scalar")
-  expect_error(con$.subscribe(ch, FALSE, NULL, env),
+  expect_error(subscribe(ch, FALSE, NULL, env),
                "callback must be a function")
-  expect_error(con$.subscribe(ch, FALSE, callback, NULL),
+  expect_error(subscribe(ch, FALSE, callback, NULL),
                "envir must be a environment")
 })

@@ -1,6 +1,6 @@
 Package: redux
 Title: R Bindings to 'hiredis'
-Version: 1.1.1
+Version: 1.1.2
 Authors@R: c(person("Rich", "FitzJohn", role = c("aut", "cre"),
     email = "rich.fitzjohn@gmail.com"))
 Description: A 'hiredis' wrapper that includes support for
@@ -13,7 +13,6 @@ Description: A 'hiredis' wrapper that includes support for
     both binary and text-mode serialisation is supported.
 SystemRequirements: hiredis
 License: GPL-2
-LazyData: true
 URL: https://github.com/richfitz/redux
 BugReports: https://github.com/richfitz/redux/issues
 Depends:
