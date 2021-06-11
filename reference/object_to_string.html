@@ -76,7 +76,7 @@ Redis (which expects a string)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">redux</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -179,7 +179,7 @@ microsecond roundtrip for a serialization of 100 doubles)</p></td>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='va'>s</span> <span class='op'>&lt;-</span> <span class='fu'>object_to_string</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span>
 <span class='va'>s</span>
-</div><div class='output co'>#&gt; [1] "A\n3\n262147\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"</div><div class='input'><span class='fu'>string_to_object</span><span class='op'>(</span><span class='va'>s</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "A\n3\n262400\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"</div><div class='input'><span class='fu'>string_to_object</span><span class='op'>(</span><span class='va'>s</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='fu'>string_to_object</span><span class='op'>(</span><span class='va'>s</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] TRUE</div></pre>
   </div>
