@@ -24,7 +24,8 @@ test_that("low level", {
 
   con <- test_hiredis_connection()
   env <- environment()
-  con$.subscribe(ch, FALSE, callback, env)
+  subscribe <- con[[".__enclos_env__"]]$private$.subscribe
+  subscribe(ch, FALSE, callback, env)
 
   expect_gt(length(vals), 0)
 
