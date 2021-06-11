@@ -13,7 +13,6 @@ Description: A 'hiredis' wrapper that includes support for
     both binary and text-mode serialisation is supported.
 SystemRequirements: hiredis
 License: GPL-2
-LazyData: true
 URL: https://github.com/richfitz/redux
 BugReports: https://github.com/richfitz/redux/issues
 Depends:
