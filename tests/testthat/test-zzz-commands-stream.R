@@ -19,6 +19,14 @@ test_that("XADD", {
 })
 
 
+test_that("XADD - mock", {
+  expect_equal(
+    unlist(redis_cmds$XADD("stream", "*", c("name", "surname"),
+                      c("Sara", "OConnor"))),
+    c("XADD", "stream", "*", "name", "Sara", "surname", "OConnor"))
+})
+
+
 test_that("XDEL", {
   skip_if_cmd_unsupported("XDEL")
   con <- test_hiredis_connection()
@@ -34,6 +42,12 @@ test_that("XDEL", {
 })
 
 
+test_that("XDEL - mock", {
+  expect_equal(unlist(redis_cmds$XDEL("stream", "id")),
+               c("XDEL", "stream", "id"))
+})
+
+
 test_that("XLEN", {
   skip_if_cmd_unsupported("XLEN")
   con <- test_hiredis_connection()
@@ -42,6 +56,12 @@ test_that("XLEN", {
   id2 <- con$XADD(stream, "*", "b", 2)
   id3 <- con$XADD(stream, "*", "c", 3)
   expect_equal(con$XLEN(stream), 3)
+})
+
+
+test_that("XLEN - mock", {
+  expect_equal(unlist(redis_cmds$XLEN("stream")),
+               c("XLEN", "stream"))
 })
 
 
