@@ -53,10 +53,6 @@ rand_str <- function(len = 8, prefix = "") {
          paste(sample(c(LETTERS, letters, 0:9), len), collapse = ""))
 }
 
-vcapply <- function(X, FUN, ...) {
-  vapply(X, FUN, character(1), ...)
-}
-
 sys_setenv <- function(...) {
   vars <- names(list(...))
   prev <- vapply(vars, Sys.getenv, "", NA_character_)

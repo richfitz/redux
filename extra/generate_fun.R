@@ -68,13 +68,21 @@ hiredis_cmd <- function(x, standalone = FALSE) {
   is_grouped <- lengths(args$name) > 1L
 
   if (any(is_command)) {
+    if (is.null(args$name)) {
+      args$name <- args$command
+    }
+    
     j <- is_command & !(is_grouped & is_multiple)
     args$name_orig <- args$name
     args$command_length <- viapply(args$name, length)
     args$name[j] <- args$command[j]
     is_grouped <- viapply(args$name, length) > 1L
   }
-
+  
+  if (any(duplicated(args$name))) {
+    stop("Duplicated names")
+  }
+  
   if (any(args$variadic)) {
     args$command_length[args$variadic] <- 2
   }
@@ -115,9 +123,10 @@ hiredis_cmd <- function(x, standalone = FALSE) {
     stop("duplicate names")
   }
   ## The colon here is for CLIENT KILL
-  args$name <- gsub("[-:]", "_", args$name)
+  ## The space here is for count or RESET
+  args$name <- gsub("[-: ]", "_", args$name)
   if (any(grepl("[^A-Za-z0-9._]", args$name))) {
-    stop("invalid names")
+    stop("invalid names: ", paste(args$name, collapse = ", "))
   }
 
   is_optional <- is_field("optional", args)
@@ -194,9 +203,33 @@ hiredis_cmd <- function(x, standalone = FALSE) {
     run <- sprintf(
       'stop("Do not use %s(); see subscribe() instead (lower-case)")', name)
   }
-  if (name == "CLIENT REPLY") {
+  if (name %in% c("CLIENT REPLY", "PSYNC")) {
     check <- group <- NULL
-    run <- 'stop("Do not use CLIENT_REPLY; not supported with this client")'
+    run <- sprintf('stop("Do not use %s; not supported with this client")',
+                   name)
+  }
+  if (name %in% paste("CLIENT", c("CACHING", "GETREDIR", "TRACKING"))) {
+    ## Don't allow use of any client-side caching related functions as
+    ## they do nothing useful.
+    check <- group <- NULL
+    run <- sprintf('stop("Do not use %s; not supported with this client")',
+                   name)
+  }
+  if (name == "HELLO") {
+    ## TODO: we *could* support this
+    ## https://github.com/redis/hiredis/issues/648
+    ##
+    ## though there would be other changes required for the package in
+    ## terms of the types of responses that we get back:
+    ## * check hiredis library version before using
+    ## * high-level connection interface should support this
+    check <- group <- NULL
+    run <- 'stop("Do not use HELLO; RESP3 not supported with this client")'
+  }
+  if (name == "LOLWUT") {
+    run <- c(sprintf("res <- %s", run),
+             "message(trimws(res))",
+             "invisible(res)")
   }
 
   fn_body <- paste(indent(c(check, group, run)), collapse = "\n")

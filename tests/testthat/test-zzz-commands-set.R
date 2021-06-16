@@ -225,3 +225,19 @@ test_that("SUNIONSTORE", {
 })
 
 ## SSCAN in the scan tests
+
+test_that("SMISMEMBER (mock)", {
+  expect_equal(redis_cmds$SMISMEMBER("key", c("one", "two")),
+               list("SMISMEMBER", "key", c("one", "two")))
+})
+
+test_that("SMISMEMBER", {
+  skip_if_cmd_unsupported("SMISMEMBER")
+  con <- test_hiredis_connection()
+  key <- rand_str()
+  on.exit(con$DEL(key))
+
+  con$SADD(key, "one")
+  con$SADD(key, "two")
+  expect_equal(con$SMISMEMBER(key, c("one", "notamember")), list(1, 0))
+})

@@ -60,6 +60,7 @@ SEXP redis_check_command(SEXP cmd) {
         // and FALSE -> "0", rather than to "TRUE"/"FALSE".
         el = PROTECT(coerceVector(el, INTSXP));
         np++;
+        // fall through
       case INTSXP:
       case REALSXP:
         el = PROTECT(coerceVector(el, STRSXP));

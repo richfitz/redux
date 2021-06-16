@@ -17,3 +17,8 @@ autobrew
 docs/
 doc
 Meta
+*.so
+*.o
+*.gcov
+*.gcda
+*.gcno

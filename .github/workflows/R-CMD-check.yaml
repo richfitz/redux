@@ -46,7 +46,7 @@ jobs:
         if: runner.os != 'Windows'
         uses: shogo82148/actions-setup-redis@v1
         with:
-          redis-version: "4.x"
+          redis-version: "6.x"
 
       - name: Start Redis (windows)
         if: runner.os == 'Windows'

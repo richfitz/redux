@@ -287,7 +287,8 @@ test_that("MIGRATE", {
   timeout <- 5000
   keys <- letters
   expect_equal(redis_cmds$MIGRATE(ip, port, "", db, timeout,  KEYS = letters),
-               list("MIGRATE", ip, port, "", db, timeout, NULL, NULL,
+               list("MIGRATE", ip, port, "", db, timeout,
+                    NULL, NULL, NULL, NULL,
                     list("KEYS", keys)))
 })
 
