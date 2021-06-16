@@ -6,8 +6,8 @@ test_that("GEOADD:prep", {
   y <- c(38.115556, 37.502669)
   nms <- c("Palermo", "Catania")
 
-  expect_equal(redis_cmds$GEOADD(key, x, y, nms),
-               list("GEOADD", key, c(rbind(x, y, nms))))
+  expect_equal(unlist(redis_cmds$GEOADD(key, x, y, nms)),
+               c("GEOADD", key, rbind(x, y, nms)))
 })
 
 test_that("GEOADD:run", {

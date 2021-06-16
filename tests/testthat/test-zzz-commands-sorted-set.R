@@ -11,7 +11,7 @@ test_that("ZADD", {
   expect_equal(con$ZADD(key, 1, "one"), 1)
   expect_equal(con$ZADD(key, 1, "uno"), 1)
   expect_equal(con$ZADD(key, c(2, 3), c("two", "three")), 2)
-  expect_equal(con$ZRANGE(key, 0, -1, "WITHSCORES"),
+  expect_equal(con$ZRANGE(key, 0, -1, withscores = "WITHSCORES"),
                list("one", "1", "uno", "1",
                     "two", "2", "three", "3"))
 })
@@ -68,7 +68,7 @@ test_that("ZINCRBY", {
   ## * ZRANGEBYSCORE: withscores
   ## * ZREVRANGE: withscores
   ## * ZREVRANGEBYSCORE: withscores
-  expect_equal(con$ZRANGE(key, 0, -1, "WITHSCORES"),
+  expect_equal(con$ZRANGE(key, 0, -1, withscores = "WITHSCORES"),
                list("two", "2", "one", "3"))
 })
 
@@ -86,7 +86,7 @@ test_that("ZINTERSTORE", {
   con$ZADD(key2, 2, "two")
   con$ZADD(key2, 3, "three")
   expect_equal(con$ZINTERSTORE(key3, 2, c(key1, key2), c(2, 3)), 2)
-  expect_equal(con$ZRANGE(key3, 0, -1, "WITHSCORES"),
+  expect_equal(con$ZRANGE(key3, 0, -1, withscores = "WITHSCORES"),
                list("one", "5", "two", "10"))
 })
 
@@ -115,7 +115,7 @@ test_that("ZRANGE", {
   expect_equal(con$ZRANGE(key, 0, -1), list("one", "two", "three"))
   expect_equal(con$ZRANGE(key, 2, 3), list("three"))
   expect_equal(con$ZRANGE(key, -2, -1), list("two", "three"))
-  expect_equal(con$ZRANGE(key, 0, 1, "WITHSCORES"),
+  expect_equal(con$ZRANGE(key, 0, 1, withscores = "WITHSCORES"),
                list("one", "1", "two", "2"))
 })
 
@@ -194,7 +194,7 @@ test_that("ZREM", {
   con$ZADD(key, 3, "three")
 
   expect_equal(con$ZREM(key, "two"), 1)
-  expect_equal(con$ZRANGE(key, 0, -1, "WITHSCORES"),
+  expect_equal(con$ZRANGE(key, 0, -1, withscores = "WITHSCORES"),
                list("one", "1", "three", "3"))
 })
 
@@ -226,7 +226,7 @@ test_that("ZREMRANGEBYRANK", {
   con$ZADD(key, 3, "three")
 
   expect_equal(con$ZREMRANGEBYRANK(key, 0, 1), 2)
-  expect_equal(con$ZRANGE(key, 0, -1, "WITHSCORES"),
+  expect_equal(con$ZRANGE(key, 0, -1, withscores = "WITHSCORES"),
                list("three", "3"))
 })
 
@@ -241,7 +241,7 @@ test_that("ZREMRANGEBYSCORE", {
   con$ZADD(key, 3, "three")
 
   expect_equal(con$ZREMRANGEBYSCORE(key, "-inf", "(2"), 1)
-  expect_equal(con$ZRANGE(key, 0, -1, "WITHSCORES"),
+  expect_equal(con$ZRANGE(key, 0, -1, withscores = "WITHSCORES"),
                list("two", "2", "three", "3"))
 })
 
@@ -325,7 +325,7 @@ test_that("ZINTERSTORE", {
   con$ZADD(key2, 3, "three")
 
   expect_equal(con$ZUNIONSTORE(key3, 2, c(key1, key2), c(2, 3)), 3)
-  expect_equal(con$ZRANGE(key3, 0, -1, "WITHSCORES"),
+  expect_equal(con$ZRANGE(key3, 0, -1, withscores = "WITHSCORES"),
                list("one", "5", "three", "9", "two", "10"))
 })
 

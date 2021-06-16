@@ -2,18 +2,21 @@ context("commands - server")
 
 ## Tested on the server
 test_that("CLIENT KILL", {
-  expect_equal(redis_cmds$CLIENT_KILL(ID = "12", SKIPME = "yes"),
-               list("CLIENT", "KILL", NULL, list("ID", "12"),
-                    NULL, NULL, NULL, list("SKIPME", "yes")))
-  expect_equal(redis_cmds$CLIENT_KILL(ID = "11", SKIPME = "no"),
-               list("CLIENT", "KILL", NULL, list("ID", "11"),
-                    NULL, NULL, NULL, list("SKIPME", "no")))
+  expect_equal(
+    unlist(redis_cmds$CLIENT_KILL(ID = "12", SKIPME = "yes")),
+    c("CLIENT", "KILL", "ID", "12", "SKIPME", "yes"))
+  expect_equal(
+    unlist(redis_cmds$CLIENT_KILL(ID = "11", SKIPME = "no")),
+    c("CLIENT", "KILL", "ID", "11", "SKIPME", "no"))
 })
 
 test_that("CLIENT LIST", {
-  expect_equal(redis_cmds$CLIENT_LIST(), list("CLIENT", "LIST", NULL))
-  expect_equal(redis_cmds$CLIENT_LIST("normal"),
-               list("CLIENT", "LIST", list("TYPE", "normal")))
+  expect_equal(
+    unlist(redis_cmds$CLIENT_LIST()),
+    c("CLIENT", "LIST"))
+  expect_equal(
+    unlist(redis_cmds$CLIENT_LIST("normal")),
+    c("CLIENT", "LIST", "TYPE", "normal"))
 })
 
 test_that("CLIENT GETNAME", {
@@ -21,8 +24,9 @@ test_that("CLIENT GETNAME", {
 })
 
 test_that("CLIENT PAUSE", {
-  expect_equal(redis_cmds$CLIENT_PAUSE(1000),
-               list("CLIENT", "PAUSE", 1000))
+  expect_equal(
+    unlist(redis_cmds$CLIENT_PAUSE(1000)),
+    c("CLIENT", "PAUSE", 1000))
 })
 
 test_that("CLIENT REPLY", {
@@ -102,16 +106,18 @@ test_that("DBSIZE", {
 })
 
 test_that("FLUSHALL", {
-  expect_equal(redis_cmds$FLUSHALL(), list("FLUSHALL", NULL))
-  expect_equal(redis_cmds$FLUSHALL("ASYNC"), list("FLUSHALL", "ASYNC"))
-  expect_error(redis_cmds$FLUSHALL("SYNC"),
+  expect_equal(unlist(redis_cmds$FLUSHALL()),
+               "FLUSHALL")
+  expect_equal(unlist(redis_cmds$FLUSHALL("ASYNC")),
+               c("FLUSHALL", "ASYNC"))
+  expect_error(redis_cmds$FLUSHALL("other"),
                "async must be one of")
 })
 
 test_that("FLUSHDB", {
   expect_equal(redis_cmds$FLUSHDB(), list("FLUSHDB", NULL))
   expect_equal(redis_cmds$FLUSHDB("ASYNC"), list("FLUSHDB", "ASYNC"))
-  expect_error(redis_cmds$FLUSHDB("SYNC"),
+  expect_error(redis_cmds$FLUSHDB("other"),
                "async must be one of")
 })
 
