@@ -110,3 +110,66 @@ test_that("XINFO", {
     list("XINFO", list("CONSUMERS", c("mystream", "mygroup")),
          NULL, NULL, NULL))
 })
+
+
+test_that("XTRIM", {
+  expect_equal(
+    unlist(redis_cmds$XTRIM("mystream", "MAXLEN", 1000)),
+    c("XTRIM", "mystream", "MAXLEN", 1000))
+  expect_equal(
+    unlist(redis_cmds$XTRIM("mystream", "MAXLEN", 1000, "~")),
+    c("XTRIM", "mystream", "MAXLEN", "~", "1000"))
+
+  ## not yet supported, in 6.2.x only
+  ## expect_equal(
+  ##   unlist(redis_cmds$XTRIM("mystream", "MINID", 649085820)),
+  ##   c("XTRIM", "mystream", "MINID", 649085820))
+})
+
+
+test_that("XREVRANGE", {
+  expect_equal(
+    unlist(redis_cmds$XREVRANGE("somestream", "+", "-")),
+    c("XREVRANGE", "somestream", "+", "-"))
+  expect_equal(
+    unlist(redis_cmds$XREVRANGE("somestream", "+", "-", COUNT = 1)),
+    c("XREVRANGE", "somestream", "+", "-", "COUNT", 1))
+})
+
+
+test_that("XREAD", {
+  expect_equal(
+    unlist(redis_cmds$XREAD("STREAMS", "mystream", 0, COUNT = 2)),
+    c("XREAD", "COUNT", "2", "STREAMS", "mystream", "0"))
+  expect_equal(
+    unlist(redis_cmds$XREAD("STREAMS", c("mystream", "writers"),
+                            c("0-0", "0-0"), COUNT = 2)),
+    c("XREAD", "COUNT", "2", "STREAMS", "mystream", "writers", "0-0", "0-0"))
+  expect_equal(
+    unlist(redis_cmds$XREAD("STREAMS", "mystream", "$", COUNT = 100,
+                            BLOCK = 5000)),
+    c("XREAD", "COUNT", "100", "BLOCK", "5000", "STREAMS", "mystream", "$"))
+})
+
+
+test_that("XREADGROUP", {
+  expect_equal(
+    unlist(redis_cmds$XREADGROUP(c("mygroup", "Alice"), "STREAMS", "mystream",
+                                 ">", COUNT = 1)),
+    c("XREADGROUP", "GROUP", "mygroup", "Alice", "COUNT", "1", "STREAMS",
+      "mystream", ">"))
+})
+
+
+test_that("XPENDING", {
+  expect_equal(
+    unlist(redis_cmds$XPENDING("mystream", "group55")),
+    c("XPENDING", "mystream", "group55"))
+  expect_equal(
+    unlist(redis_cmds$XPENDING("mystream", "group55", "-", "+", 10)),
+    c("XPENDING", "mystream", "group55", "-", "+", 10))
+  expect_equal(
+    unlist(redis_cmds$XPENDING("mystream", "group55", "-", "+", 10,
+                               "consumer-123")),
+    c("XPENDING", "mystream", "group55", "-", "+", 10, "consumer-123"))
+})
