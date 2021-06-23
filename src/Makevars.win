@@ -1,6 +1,6 @@
 # -*- makefile -*-
 PKG_CPPFLAGS=-I../windows/hiredis-1.0.0/include/hiredis -DSTRICT_R_HEADERS
-PKG_LIBS=-L../windows/hiredis-1.0.0/lib${R_ARCH} -lhiredis -lws2_32
+PKG_LIBS=-L../windows/hiredis-1.0.0/lib${R_ARCH}${CRT} -lhiredis -lws2_32
 
 all: clean winlibs
 
