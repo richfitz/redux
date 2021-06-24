@@ -88,7 +88,7 @@
       <h1 data-toc-skip>Using Redis with redux</h1>
                         <h4 class="author">Rich FitzJohn</h4>
             
-            <h4 class="date">2021-06-11</h4>
+            <h4 class="date">2021-06-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/richfitz/redux/blob/master/vignettes/redux.Rmd"><code>vignettes/redux.Rmd</code></a></small>
       <div class="hidden name"><code>redux.Rmd</code></div>
@@ -399,27 +399,27 @@
                    transform <span class="op">=</span> <span class="va">transform</span>,
                    terminate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/identical.html">identical</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"goodbye"</span><span class="op">)</span>,
                    n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></code></pre></div>
-<pre><code>## 2021-06-11 11:26:41.865: got message: 1120</code></pre>
-<pre><code>## 2021-06-11 11:26:41.919: got message: 1160</code></pre>
-<pre><code>## 2021-06-11 11:26:41.966: got message: 963</code></pre>
-<pre><code>## 2021-06-11 11:26:42.017: got message: 1210</code></pre>
-<pre><code>## 2021-06-11 11:26:42.194: got message: 1160</code></pre>
-<pre><code>## 2021-06-11 11:26:42.334: got message: 1160</code></pre>
-<pre><code>## 2021-06-11 11:26:42.385: got message: 813</code></pre>
-<pre><code>## 2021-06-11 11:26:42.437: got message: 1230</code></pre>
-<pre><code>## 2021-06-11 11:26:42.505: got message: 1370</code></pre>
-<pre><code>## 2021-06-11 11:26:42.677: got message: 1140</code></pre>
-<pre><code>## 2021-06-11 11:26:42.852: got message: 995</code></pre>
-<pre><code>## 2021-06-11 11:26:42.905: got message: 935</code></pre>
-<pre><code>## 2021-06-11 11:26:43.067: got message: 1110</code></pre>
-<pre><code>## 2021-06-11 11:26:43.181: got message: 994</code></pre>
-<pre><code>## 2021-06-11 11:26:43.283: got message: 1020</code></pre>
-<pre><code>## 2021-06-11 11:26:43.385: got message: 960</code></pre>
-<pre><code>## 2021-06-11 11:26:43.507: got message: 1180</code></pre>
-<pre><code>## 2021-06-11 11:26:43.558: got message: 799</code></pre>
-<pre><code>## 2021-06-11 11:26:43.691: got message: 958</code></pre>
-<pre><code>## 2021-06-11 11:26:43.854: got message: 1140</code></pre>
-<pre><code>## 2021-06-11 11:26:43.855: got message: goodbye</code></pre>
+<pre><code>## 2021-06-24 09:07:15.816: got message: 1120</code></pre>
+<pre><code>## 2021-06-24 09:07:15.900: got message: 1160</code></pre>
+<pre><code>## 2021-06-24 09:07:16.020: got message: 963</code></pre>
+<pre><code>## 2021-06-24 09:07:16.198: got message: 1210</code></pre>
+<pre><code>## 2021-06-24 09:07:16.252: got message: 1160</code></pre>
+<pre><code>## 2021-06-24 09:07:16.326: got message: 1160</code></pre>
+<pre><code>## 2021-06-24 09:07:16.437: got message: 813</code></pre>
+<pre><code>## 2021-06-24 09:07:16.517: got message: 1230</code></pre>
+<pre><code>## 2021-06-24 09:07:16.622: got message: 1370</code></pre>
+<pre><code>## 2021-06-24 09:07:16.693: got message: 1140</code></pre>
+<pre><code>## 2021-06-24 09:07:16.762: got message: 995</code></pre>
+<pre><code>## 2021-06-24 09:07:16.948: got message: 935</code></pre>
+<pre><code>## 2021-06-24 09:07:17.086: got message: 1110</code></pre>
+<pre><code>## 2021-06-24 09:07:17.254: got message: 994</code></pre>
+<pre><code>## 2021-06-24 09:07:17.338: got message: 1020</code></pre>
+<pre><code>## 2021-06-24 09:07:17.437: got message: 960</code></pre>
+<pre><code>## 2021-06-24 09:07:17.488: got message: 1180</code></pre>
+<pre><code>## 2021-06-24 09:07:17.553: got message: 799</code></pre>
+<pre><code>## 2021-06-24 09:07:17.625: got message: 958</code></pre>
+<pre><code>## 2021-06-24 09:07:17.691: got message: 1140</code></pre>
+<pre><code>## 2021-06-24 09:07:17.692: got message: goodbye</code></pre>
 <p>The timestamps in the printed output show when the message was received (with fractional seconds so that this is more obvious since this only takes ~1s to complete).</p>
 <p>The <code>res</code> object contains all the values, including the “goodbye” that was our end-of-stream message:</p>
 <div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
