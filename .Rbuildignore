@@ -2,8 +2,6 @@
 ^\.Rproj\.user$
 ^Makefile$
 ^README.Rmd$
-^.travis.yml$
-^appveyor.yml$
 ^src/hiredis/.*\.[oa]$
 ^ignore$
 ^update_web\.sh$
@@ -11,11 +9,15 @@
 ^redux_.*\.tar\.gz$
 ^TODO\.md$
 ^extra$
-^appveyor\.yml$
 ^windows$
 ^redux_.*\.tar\.gz$
-^vignettes/src$
+^vignettes_src$
 ^\.lintr$
 ^\.valgrind_ignore$
 ^autobrew$
 ^src/redux\.so\.dSYM$
+^\.github$
+^scripts$
+^docs$
+^doc$
+^Meta$

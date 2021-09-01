@@ -1,19 +1,18 @@
 Package: redux
 Title: R Bindings to 'hiredis'
-Version: 1.1.0
-Author: Rich FitzJohn
-Maintainer: Rich FitzJohn <rich.fitzjohn@gmail.com>
+Version: 1.1.2
+Authors@R: c(person("Rich", "FitzJohn", role = c("aut", "cre"),
+    email = "rich.fitzjohn@gmail.com"))
 Description: A 'hiredis' wrapper that includes support for
     transactions, pipelining, blocking subscription, serialisation of
     all keys and values, 'Redis' error handling with R errors.
     Includes an automatically generated 'R6' interface to the full
-    'hiredis' 'API'.  Generated functions are faithful to the
+    'hiredis' API.  Generated functions are faithful to the
     'hiredis' documentation while attempting to match R's argument
     semantics.  Serialisation must be explicitly done by the user, but
     both binary and text-mode serialisation is supported.
 SystemRequirements: hiredis
 License: GPL-2
-LazyData: true
 URL: https://github.com/richfitz/redux
 BugReports: https://github.com/richfitz/redux/issues
 Depends:

@@ -68,8 +68,8 @@ test_that("HINCRBYFLOAT", {
   on.exit(con$DEL(key))
 
   con$HSET(key, "field", 10.50)
-  expect_equal(con$HINCRBYFLOAT(key, "field", 0.1), "10.6")
-  expect_equal(con$HINCRBYFLOAT(key, "field", -5), "5.6")
+  expect_equal(as.numeric(con$HINCRBYFLOAT(key, "field", 0.1)), 10.6)
+  expect_equal(as.numeric(con$HINCRBYFLOAT(key, "field", -5)), 5.6)
   con$HSET(key, "field", "5.0e3")
   expect_equal(con$HINCRBYFLOAT(key, "field", "2.0e2"), "5200")
 })

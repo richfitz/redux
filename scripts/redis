@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+CONTAINER_NAME=rrq_redis
+if [ "$1" = "start" ]; then
+    docker run --rm -d --name=$CONTAINER_NAME -p 127.0.0.1:6379:6379 redis
+elif [ "$1" = "stop" ]; then
+    docker stop $CONTAINER_NAME
+elif [ "$1" = "restart" ]; then
+    docker stop $CONTAINER_NAME || true
+    docker run --rm -d --name=$CONTAINER_NAME -p 127.0.0.1:6379:6379 redis
+else
+    echo "Usage: redis <start|stop|restart>"
+    exit 1
+fi

@@ -42,21 +42,15 @@ check_all:
 clean:
 	rm -f src/*.o src/*.so
 
-vignettes/src/redux.Rmd: vignettes/src/redux.R
-	${RSCRIPT} -e 'library(sowsear); sowsear("$<", output="$@")'
-
-vignettes/redux.Rmd: vignettes/src/redux.Rmd
-	cd vignettes/src && ${RSCRIPT} -e 'knitr::knit("redux.Rmd")'
-	mv vignettes/src/redux.md $@
+vignettes/redux.Rmd: vignettes_src/redux.Rmd
+	cd vignettes_src && ${RSCRIPT} -e 'knitr::knit("redux.Rmd")'
+	mv vignettes_src/redux.md $@
 	sed -i.bak 's/[[:space:]]*$$//' $@
 	rm -f $@.bak
 
-vignettes/src/low_level.Rmd: vignettes/src/low_level.R
-	${RSCRIPT} -e 'library(sowsear); sowsear("$<", output="$@")'
-
-vignettes/low_level.Rmd: vignettes/src/low_level.Rmd
-	cd vignettes/src && ${RSCRIPT} -e 'knitr::knit("low_level.Rmd")'
-	mv vignettes/src/low_level.md $@
+vignettes/low_level.Rmd: vignettes_src/low_level.Rmd
+	cd vignettes_src && ${RSCRIPT} -e 'knitr::knit("low_level.Rmd")'
+	mv vignettes_src/low_level.md $@
 	sed -i.bak 's/[[:space:]]*$$//' $@
 	rm -f $@.bak
 
@@ -67,12 +61,10 @@ vignettes:
 	rm -f vignettes/redux.Rmd vignettes/low_level.Rmd
 	make vignettes_install
 
-staticdocs:
-	@mkdir -p inst/staticdocs
-	Rscript -e "library(methods); staticdocs::build_site()"
-	rm -f vignettes/*.html
-	@rmdir inst/staticdocs
-website: staticdocs
+pkgdown:
+	${RSCRIPT} -e "library(methods); pkgdown::build_site()"
+
+website: pkgdown
 	./update_web.sh
 
 .PHONY: all compile_dll doc clean test install vignettes

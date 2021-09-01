@@ -134,3 +134,11 @@ test_that("pipeline naming", {
   expect_equal(res$b, "1")
   expect_equal(res$c, 1)
 })
+
+
+test_that("store version in the object on query", {
+  con <- test_hiredis_connection()
+  expect_null(con[[".__enclos_env__"]]$private$.version)
+  expect_s3_class(con$version(), "numeric_version")
+  expect_equal(con[[".__enclos_env__"]]$private$.version, con$version())
+})
