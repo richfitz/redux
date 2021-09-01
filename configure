@@ -7,6 +7,7 @@
 
 # Library settings
 PKG_CONFIG_NAME="hiredis"
+PKG_CONFIG_SSL_NAME="hiredis_ssl"
 PKG_DEB_NAME="libhiredis-dev"
 PKG_RPM_NAME="hiredis-devel"
 PKG_BREW_NAME="hiredis"
@@ -18,6 +19,12 @@ PKG_LIBS="-lhiredis"
 if [ $(command -v pkg-config) ]; then
   PKGCONFIG_CFLAGS=$(pkg-config --cflags --silence-errors ${PKG_CONFIG_NAME})
   PKGCONFIG_LIBS=$(pkg-config --libs ${PKG_CONFIG_NAME})
+fi
+
+# Use pkg-config to find hiredis_ssl lib if available
+if [ $(command -v pkg-config) ]; then
+  PKGCONFIG_CFLAGS="${PKGCONFIG_CFLAGS} $(pkg-config --cflags --silence-errors ${PKG_CONFIG_SSL_NAME})"
+  PKGCONFIG_LIBS="${PKGCONFIG_LIBS} $(pkg-config --libs ${PKG_CONFIG_SSL_NAME})"
 fi
 
 # Note that cflags may be empty in case of success

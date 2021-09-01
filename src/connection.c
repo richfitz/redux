@@ -22,6 +22,61 @@ SEXP redux_redis_connect(SEXP host, SEXP port) {
   return extPtr;
 }
 
+SEXP redux_redis_connect_ssl(SEXP host, SEXP port, SEXP CApath, 
+                             SEXP CERTpath, SEXP KEYpath) {
+
+  // hiredis SSL connection context and error var
+  redisSSLContext *redis_ssl_context;
+  redisSSLContextError redis_ssl_error;
+
+  // Initialise OpenSSL
+  redisInitOpenSSL();
+
+  // Set up the SSL connection parameters
+  redis_ssl_context = redisCreateSSLContext(
+    CHAR(STRING_ELT(CApath, 0)),
+    NULL, /* not providing path to trusted certs */
+    CHAR(STRING_ELT(CERTpath, 0)), 
+    CHAR(STRING_ELT(KEYpath, 0)), 
+    CHAR(STRING_ELT(host, 0)),
+    &redis_ssl_error);
+
+  if(redis_ssl_context == NULL || redis_ssl_error != 0) {
+    error("Failed to create SSL context: %s\n",
+      (redis_ssl_error != 0) ? 
+        redisSSLContextGetError(redis_ssl_error) : "Unknown error");
+  }
+
+  // Initiate a connection with redis
+  redisContext *context = redisConnect(CHAR(STRING_ELT(host, 0)),
+                                       INTEGER(port)[0]);
+  if (context == NULL) {
+    error("Creating context failed catastrophically [tcp_ssl]"); // # nocov
+  }
+  if (context->err != 0) {
+    const char * errstr = string_duplicate(context->errstr);
+    redisFree(context);
+    
+    error("Failed to create context: %s", errstr);
+  }
+
+  // Now we have a connection established, we can negotiate the SSL connection
+  if (redisInitiateSSLWithContext(context, redis_ssl_context) != REDIS_OK) {
+        redisFreeSSLContext(redis_ssl_context);
+        if (context->err != 0) {
+          const char * errstr_ssl = string_duplicate(context->errstr);
+          redisFree(context);
+          error("Failed to initialize SSL connection: %s\n", errstr_ssl);
+        }
+        redisFree(context);
+        error("Failed to initialize SSL connection\n");
+  }
+  SEXP extPtr = PROTECT(R_MakeExternalPtr(context, host, R_NilValue));
+  R_RegisterCFinalizer(extPtr, redis_finalize);
+  UNPROTECT(1);
+  return extPtr;
+}
+
 SEXP redux_redis_connect_unix(SEXP path) {
   redisContext *context = redisConnectUnix(CHAR(STRING_ELT(path, 0)));
   if (context == NULL) {
