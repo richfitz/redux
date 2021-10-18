@@ -39,6 +39,27 @@ test_that("BRPOPLPUSH", {
   expect_equal(con$LRANGE(key2, 0, -1), list("three"))
 })
 
+test_that("BLMOVE (mock)", {
+  expect_equal(
+    redis_cmds$BLMOVE("key1", "key2", "RIGHT", "LEFT", 100),
+    list("BLMOVE", "key1", "key2", "RIGHT", "LEFT", 100))
+})
+
+test_that("BLMOVE", {
+  skip_if_cmd_unsupported("BLMOVE")
+  con <- test_hiredis_connection(version = TRUE)
+  key1 <- rand_str()
+  key2 <- rand_str()
+  on.exit(con$DEL(c(key1, key2)))
+
+  con$RPUSH(key1, "one")
+  con$RPUSH(key1, "two")
+  con$RPUSH(key1, "three")
+  expect_equal(con$BLMOVE(key1, key2, "RIGHT", "LEFT", 100), "three")
+  expect_equal(con$LRANGE(key1, 0, -1), list("one", "two"))
+  expect_equal(con$LRANGE(key2, 0, -1), list("three"))
+})
+
 test_that("LINDEX", {
   skip_if_cmd_unsupported("LINDEX")
   con <- test_hiredis_connection()
@@ -87,6 +108,35 @@ test_that("LPOP", {
   con$RPUSH(key, "three")
   expect_equal(con$LPOP(key), "one")
   expect_equal(con$LRANGE(key, 0, -1), list("two", "three"))
+})
+
+test_that("LPOS (mock)", {
+  expect_equal(
+    redis_cmds$LPOS("key", "c"),
+    list("LPOS", "key", "c", NULL, NULL, NULL))
+  expect_equal(
+    redis_cmds$LPOS("key", "c", RANK = 2),
+    list("LPOS", "key", "c", list("RANK", 2), NULL, NULL))
+  expect_equal(
+    redis_cmds$LPOS("key", "c", RANK = 2, COUNT = 2),
+    list("LPOS", "key", "c", list("RANK", 2), list("COUNT", 2), NULL))
+  expect_equal(
+    redis_cmds$LPOS("key", "c", RANK = 2, COUNT = 2),
+    list("LPOS", "key", "c", list("RANK", 2), list("COUNT", 2), NULL))
+})
+
+test_that("LPOS", {
+  skip_if_cmd_unsupported("LPOS")
+  con <- test_hiredis_connection()
+  key <- rand_str()
+  con$RPUSH(key, c("a", "b", "c", 1, 2, 3, "c", "c"))
+  on.exit(con$DEL(key))
+  expect_equal(con$LPOS(key, "c"), 2L)
+  expect_equal(con$LPOS(key, "c", RANK = 2), 6L)
+  expect_equal(con$LPOS(key, "c", RANK = -1), 7L)
+  expect_equal(con$LPOS(key, "c", COUNT = 2), list(2L, 6L))
+  expect_equal(con$LPOS(key, "c", RANK = -1, COUNT = 2), list(7L, 6L))
+  expect_equal(con$LPOS(key, "c", COUNT = 0), list(2L, 6L, 7L))
 })
 
 test_that("LPUSH", {
@@ -221,4 +271,25 @@ test_that("RPUSHX", {
   expect_equal(con$RPUSHX(key2, "world"), 0L)
   expect_equal(con$LRANGE(key1, 0, -1), list("hello", "world"))
   expect_equal(con$LRANGE(key2, 0, -1), list())
+})
+
+test_that("LMOVE (mock)", {
+  expect_equal(
+    redis_cmds$LMOVE("key1", "key2", "RIGHT", "LEFT"),
+    list("LMOVE", "key1", "key2", "RIGHT", "LEFT"))
+})
+
+test_that("LMOVE", {
+  skip_if_cmd_unsupported("LMOVE")
+  con <- test_hiredis_connection(version = TRUE)
+  key1 <- rand_str()
+  key2 <- rand_str()
+  on.exit(con$DEL(c(key1, key2)))
+
+  con$RPUSH(key1, "one")
+  con$RPUSH(key1, "two")
+  con$RPUSH(key1, "three")
+  expect_equal(con$LMOVE(key1, key2, "RIGHT", "LEFT"), "three")
+  expect_equal(con$LRANGE(key1, 0, -1), list("one", "two"))
+  expect_equal(con$LRANGE(key2, 0, -1), list("three"))
 })

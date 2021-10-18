@@ -6,8 +6,8 @@ test_that("GEOADD:prep", {
   y <- c(38.115556, 37.502669)
   nms <- c("Palermo", "Catania")
 
-  expect_equal(redis_cmds$GEOADD(key, x, y, nms),
-               list("GEOADD", key, c(rbind(x, y, nms))))
+  expect_equal(unlist(redis_cmds$GEOADD(key, x, y, nms)),
+               c("GEOADD", key, rbind(x, y, nms)))
 })
 
 test_that("GEOADD:run", {
@@ -29,8 +29,8 @@ test_that("GEOADD:run", {
 test_that("GEOHASH:prep", {
   key <- rand_str()
   nms <- c("Palermo", "Catania")
-  list(redis_cmds$GEOHASH(key, nms),
-       list("GEOHASH", key, nms))
+  expect_equal(redis_cmds$GEOHASH(key, nms),
+               list("GEOHASH", key, nms))
 })
 
 test_that("GEOHASH:run", {

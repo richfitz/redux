@@ -312,3 +312,17 @@ test_that("STRLEN", {
   expect_equal(con$STRLEN(key), 11)
   expect_equal(con$STRLEN("nonexisting"), 0)
 })
+
+test_that("STRALGO (mock)", {
+  expect_equal(
+    redis_cmds$STRALGO("LCS", c("STRINGS", "ohmytext", "mynewtext")),
+    list("STRALGO", "LCS", c("STRINGS", "ohmytext", "mynewtext")))
+})
+
+test_that("STRALGO", {
+  skip_if_cmd_unsupported("STRALGO")
+  con <- test_hiredis_connection()
+  expect_equal(
+    con$STRALGO("LCS", c("STRINGS", "ohmytext", "mynewtext")),
+    "mytext")
+})

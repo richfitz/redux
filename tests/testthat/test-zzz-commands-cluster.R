@@ -5,6 +5,11 @@ test_that("CLUSTER ADDSLOTS", {
                list("CLUSTER", "ADDSLOTS", 1:3))
 })
 
+test_that("CLUSTER BUMPEPOCH", {
+  expect_equal(redis_cmds$CLUSTER_BUMPEPOCH(),
+               list("CLUSTER", "BUMPEPOCH"))
+})
+
 test_that("CLUSTER COUNT-FAILURE-REPORTS", {
   expect_equal(redis_cmds$CLUSTER_COUNT_FAILURE_REPORTS("id"),
                list("CLUSTER", "COUNT-FAILURE-REPORTS", "id"))
@@ -27,6 +32,11 @@ test_that("CLUSTER FAILOVER", {
                list("CLUSTER", "FAILOVER", "FORCE"))
   expect_equal(redis_cmds$CLUSTER_FAILOVER("TAKEOVER"),
                list("CLUSTER", "FAILOVER", "TAKEOVER"))
+})
+
+test_that("CLUSTER FLUSHSLOTS", {
+  expect_equal(redis_cmds$CLUSTER_FLUSHSLOTS(),
+               list("CLUSTER", "FLUSHSLOTS"))
 })
 
 test_that("CLUSTER FORGET", {
@@ -54,9 +64,19 @@ test_that("CLUSTER MEET", {
                list("CLUSTER", "MEET", "B-ip", "B-port"))
 })
 
+test_that("CLUSTER MYID", {
+  expect_equal(redis_cmds$CLUSTER_MYID(),
+               list("CLUSTER", "MYID"))
+})
+
 test_that("CLUSTER NODES", {
   expect_equal(redis_cmds$CLUSTER_NODES(),
                list("CLUSTER", "NODES"))
+})
+
+test_that("CLUSTER REPLICAS", {
+  expect_equal(redis_cmds$CLUSTER_REPLICAS("id"),
+               list("CLUSTER", "REPLICAS", "id"))
 })
 
 test_that("CLUSTER REPLICATE", {
