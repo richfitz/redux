@@ -38,6 +38,9 @@ the Redis object.  (default: \code{NULL}).}
 \code{SELECT}.  Do not use in a redis clustering context.
 (default: \code{NULL}; i.e., don't switch).}
 
+\item{\code{timeout}}{The maximum number of milliseconds to wait for the
+connection to be established.  (default: \code{NULL}; i.e. wait forever).}
+
 }
 
 The way that configuration options are resolved follows the design

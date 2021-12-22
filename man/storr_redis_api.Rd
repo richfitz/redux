@@ -5,8 +5,12 @@
 \alias{driver_redis_api}
 \title{Redis object cache driver}
 \usage{
-storr_redis_api(prefix, con, hash_algorithm = NULL,
-  default_namespace = "objects")
+storr_redis_api(
+  prefix,
+  con,
+  hash_algorithm = NULL,
+  default_namespace = "objects"
+)
 
 driver_redis_api(prefix, con, hash_algorithm = NULL)
 }
