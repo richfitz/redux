@@ -5,10 +5,23 @@ static void redis_finalize(SEXP extPtr);
 char * string_duplicate(const char * x);
 
 // API functions first:
-SEXP redux_redis_connect(SEXP host, SEXP port) {
-  redisContext *context = redisConnect(CHAR(STRING_ELT(host, 0)),
-                                       INTEGER(port)[0]);
-  if (context == NULL) {
+SEXP redux_redis_connect(SEXP host, SEXP port, SEXP timeout) {
+  redisContext *context;
+  if (LENGTH(timeout) == 0)
+  {
+    context = redisConnect(CHAR(STRING_ELT(host, 0)),
+                 INTEGER(port)[0]);
+  }
+  else
+  {
+    int timeout_ms = INTEGER(timeout)[0];
+    struct timeval tvout = {timeout_ms / 1000,
+                            (timeout_ms % 1000) * 1000};
+    context = redisConnectWithTimeout(CHAR(STRING_ELT(host, 0)),
+                                      INTEGER(port)[0], tvout);
+  }
+  if (context == NULL)
+  {
     error("Creating context failed catastrophically [tcp]"); // # nocov
   }
   if (context->err != 0) {
@@ -22,9 +35,21 @@ SEXP redux_redis_connect(SEXP host, SEXP port) {
   return extPtr;
 }
 
-SEXP redux_redis_connect_unix(SEXP path) {
-  redisContext *context = redisConnectUnix(CHAR(STRING_ELT(path, 0)));
-  if (context == NULL) {
+SEXP redux_redis_connect_unix(SEXP path, SEXP timeout) {
+  redisContext *context;
+  if (LENGTH(timeout) == 0)
+  {
+    context = redisConnectUnix(CHAR(STRING_ELT(path, 0)));
+  }
+  else
+  {
+    int timeout_ms = INTEGER(timeout)[0];
+    struct timeval tvout = {timeout_ms / 1000,
+                            (timeout_ms % 1000) * 1000};
+    context = redisConnectUnixWithTimeout(CHAR(STRING_ELT(path, 0)), tvout);
+  }
+  if (context == NULL)
+  {
     error("Creating context failed catastrophically [unix]"); // # nocov
   }
   if (context->err != 0) {

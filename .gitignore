@@ -17,3 +17,6 @@ autobrew
 docs/
 doc
 Meta
+.vscode/
+*.o
+*.so

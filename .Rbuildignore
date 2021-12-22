@@ -21,3 +21,4 @@
 ^docs$
 ^doc$
 ^Meta$
+^\.vscode$
