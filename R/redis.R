@@ -17,11 +17,11 @@ redis_connect <- function(config) {
   ptr
 }
 
-redis_connect_tcp <- function(host, port, timeout) {
+redis_connect_tcp <- function(host, port, timeout = NULL) {
   .Call(Credux_redis_connect, host, as.integer(port), as.integer(timeout))
 }
 
-redis_connect_unix <- function(path, timeout) {
+redis_connect_unix <- function(path, timeout = NULL) {
   .Call(Credux_redis_connect_unix, path, as.integer(timeout))
 }
 
