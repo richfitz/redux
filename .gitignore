@@ -24,3 +24,5 @@ Meta
 *.gcov
 *.gcda
 *.gcno
+/doc/
+/Meta/

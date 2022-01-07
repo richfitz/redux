@@ -1,7 +1,7 @@
 # redux
 
 <!-- badges: start -->
-[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/)
 [![R build status](https://github.com/richfitz/redux/workflows/R-CMD-check/badge.svg)](https://github.com/richfitz/redux/actions)
 [![codecov.io](https://codecov.io/github/richfitz/redux/coverage.svg?branch=master)](https://codecov.io/github/richfitz/redux?branch=master)
 [![](https://www.r-pkg.org/badges/version/redux)](https://cran.r-project.org/package=redux)

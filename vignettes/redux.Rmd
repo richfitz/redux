@@ -1,7 +1,7 @@
 ---
 title: "Using Redis with redux"
 author: "Rich FitzJohn"
-date: "2020-10-30"
+date: "2022-01-07"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using Redis with redux}
@@ -20,7 +20,7 @@ It is possible to build user-friendly applications on top of this,
 for example [`storr`](https://github.com/richfitz/storr) which
 provides a content-addressable object store, and
 [`rrqueue`](https://github.com/traitecoevo/rrqueue) /
-[`rrq`](https://github.com/richfitz/rrq) which implement a scalable
+[`rrq`](https://github.com/mrc-ide/rrq) which implement a scalable
 queuing system.
 
 The main entry point for creating a `redis_api` object is the
@@ -35,7 +35,7 @@ machine (`127.0.0.1`) and port 6379.  To connect to a different
 host, or to specify a password, initial database, or to use a
 socket connection, use the command \code{redis_config}.
 
-The `redis_api` object is an [`R6`](https://github.com/wch/R6)
+The `redis_api` object is an [`R6`](https://github.com/r-lib/R6)
 class with _many_ methods, each corresponding to a different Redis
 command.
 
@@ -62,6 +62,7 @@ r
 ##     reconnect: function
 ##     subscribe: function
 ##     type: function
+##     version: function
 ```
 
 For example, `SET` and `GET`:
@@ -99,7 +100,7 @@ obj
 ```
 
 ```
-##   [1] 42 0a 03 00 00 00 03 00 04 00 00 05 03 00 05 00 00 00 55 54 46 2d 38 ee 00
+##   [1] 42 0a 03 00 00 00 02 01 04 00 00 05 03 00 05 00 00 00 55 54 46 2d 38 ee 00
 ##  [26] 00 00 02 00 00 00 01 00 00 00 09 00 04 00 0e 00 00 00 63 6f 6d 70 61 63 74
 ##  [51] 5f 69 6e 74 73 65 71 02 00 00 00 01 00 00 00 09 00 04 00 04 00 00 00 62 61
 ##  [76] 73 65 02 00 00 00 0d 00 00 00 01 00 00 00 0d 00 00 00 fe 00 00 00 0e 00 00
@@ -115,7 +116,7 @@ str
 ```
 
 ```
-## [1] "A\n3\n262147\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"
+## [1] "A\n3\n262402\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"
 ```
 
 The binary serialisation is faster, smaller, and preserves all the
@@ -157,7 +158,7 @@ r$GET("mylist")
 ```
 
 ```
-##   [1] 42 0a 03 00 00 00 03 00 04 00 00 05 03 00 05 00 00 00 55 54 46 2d 38 ee 00
+##   [1] 42 0a 03 00 00 00 02 01 04 00 00 05 03 00 05 00 00 00 55 54 46 2d 38 ee 00
 ##  [26] 00 00 02 00 00 00 01 00 00 00 09 00 04 00 0e 00 00 00 63 6f 6d 70 61 63 74
 ##  [51] 5f 69 6e 74 73 65 71 02 00 00 00 01 00 00 00 09 00 04 00 04 00 00 00 62 61
 ##  [76] 73 65 02 00 00 00 0d 00 00 00 01 00 00 00 0d 00 00 00 fe 00 00 00 0e 00 00
@@ -188,7 +189,7 @@ r$GET("mylist")
 ```
 
 ```
-## [1] "A\n3\n262147\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"
+## [1] "A\n3\n262402\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"
 ```
 
 ```r
@@ -374,7 +375,7 @@ dat
 
 ```
 ## [[1]]
-## [1] "A\n3\n262147\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"
+## [1] "A\n3\n262402\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"
 ##
 ## [[2]]
 ## [1] "carrot"
@@ -454,8 +455,8 @@ r$pipeline(
 
 here a variable "x" was incremented twice and then deleted.
 
-If you use pipelining you should read the [Redis page on
-it](http://redis.io/topics/pipelining) because there are a few
+If you use pipelining you should read the Redis page on
+it (`http://redis.io/topics/pipelining`) because there are a few
 restrictions and cautions.
 
 Generating very large numbers (or variable numbers) of commands
@@ -590,87 +591,87 @@ res <- r$subscribe("mychannel",
 ```
 
 ```
-## 2020-10-30 13:55:23.449: got message: 1120
+## 2022-01-07 18:13:34.556: got message: 1120
 ```
 
 ```
-## 2020-10-30 13:55:23.513: got message: 1160
+## 2022-01-07 18:13:34.614: got message: 1160
 ```
 
 ```
-## 2020-10-30 13:55:23.550: got message: 963
+## 2022-01-07 18:13:34.657: got message: 963
 ```
 
 ```
-## 2020-10-30 13:55:23.601: got message: 1210
+## 2022-01-07 18:13:34.708: got message: 1210
 ```
 
 ```
-## 2020-10-30 13:55:23.652: got message: 1160
+## 2022-01-07 18:13:34.758: got message: 1160
 ```
 
 ```
-## 2020-10-30 13:55:23.703: got message: 1160
+## 2022-01-07 18:13:34.809: got message: 1160
 ```
 
 ```
-## 2020-10-30 13:55:23.753: got message: 813
+## 2022-01-07 18:13:34.860: got message: 813
 ```
 
 ```
-## 2020-10-30 13:55:23.804: got message: 1230
+## 2022-01-07 18:13:34.910: got message: 1230
 ```
 
 ```
-## 2020-10-30 13:55:23.855: got message: 1370
+## 2022-01-07 18:13:34.961: got message: 1370
 ```
 
 ```
-## 2020-10-30 13:55:23.906: got message: 1140
+## 2022-01-07 18:13:35.011: got message: 1140
 ```
 
 ```
-## 2020-10-30 13:55:23.957: got message: 995
+## 2022-01-07 18:13:35.062: got message: 995
 ```
 
 ```
-## 2020-10-30 13:55:24.008: got message: 935
+## 2022-01-07 18:13:35.113: got message: 935
 ```
 
 ```
-## 2020-10-30 13:55:24.059: got message: 1110
+## 2022-01-07 18:13:35.163: got message: 1110
 ```
 
 ```
-## 2020-10-30 13:55:24.110: got message: 994
+## 2022-01-07 18:13:35.214: got message: 994
 ```
 
 ```
-## 2020-10-30 13:55:24.161: got message: 1020
+## 2022-01-07 18:13:35.265: got message: 1020
 ```
 
 ```
-## 2020-10-30 13:55:24.211: got message: 960
+## 2022-01-07 18:13:35.315: got message: 960
 ```
 
 ```
-## 2020-10-30 13:55:24.262: got message: 1180
+## 2022-01-07 18:13:35.366: got message: 1180
 ```
 
 ```
-## 2020-10-30 13:55:24.313: got message: 799
+## 2022-01-07 18:13:35.416: got message: 799
 ```
 
 ```
-## 2020-10-30 13:55:24.364: got message: 958
+## 2022-01-07 18:13:35.467: got message: 958
 ```
 
 ```
-## 2020-10-30 13:55:24.415: got message: 1140
+## 2022-01-07 18:13:35.518: got message: 1140
 ```
 
 ```
-## 2020-10-30 13:55:24.416: got message: goodbye
+## 2022-01-07 18:13:35.518: got message: goodbye
 ```
 
 
@@ -852,4 +853,4 @@ res
 
 Because the interface `redux` uses is simply a wrapper around the
 Redis API, the main source of documentation is the Redis help
-itself at http://redis.io
+itself at `http://redis.io`
