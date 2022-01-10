@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+      - debug-timeout
   pull_request:
     branches:
       - main
@@ -91,6 +92,9 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       - name: Check
         env:
