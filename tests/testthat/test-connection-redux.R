@@ -11,13 +11,14 @@ test_that("impossible connection", {
                "Failed to create context")
 })
 
-test_that("connection timeout", {
+test_that("connection timeout over tcp returns sensible error", {
   skip_if_no_redis()
-  cfg <- redis_config(host = "example.com", port = 99999, timeout = 1000)
+  cfg <- redis_config(host = "example.com", timeout = 1000)
   t <- system.time(
     expect_error(
       redis_connection(cfg),
-      "Failed to create context: Connection timed out"))
+      "Failed to create context: .*timed out"))
+
   ## These are likely to prove a bit flakey due to the usual issues
   ## with timing.
   expect_lt(t[["elapsed"]], 2)
