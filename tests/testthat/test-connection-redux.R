@@ -14,10 +14,18 @@ test_that("impossible connection", {
 test_that("connection timeout over tcp returns sensible error", {
   skip_if_no_redis()
   cfg <- redis_config(host = "example.com", timeout = 1000)
+  ## The error here *might* say
+  ##
+  ##     Failed to create context: Connection timed out
+  ##
+  ## or similar, but this seems very dependent on (presumably) hiredis
+  ## client versions and platforms.  On windows we only see "unknown
+  ## error" and on mac the string differs slightly.  We don't control
+  ## the exact message so should just report on the part we do control.
   t <- system.time(
     expect_error(
       redis_connection(cfg),
-      "Failed to create context: .*timed out"))
+      "Failed to create context"))
 
   ## These are likely to prove a bit flakey due to the usual issues
   ## with timing.
