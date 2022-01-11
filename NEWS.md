@@ -1,8 +1,13 @@
-## redux 1.1.1
+# redux 1.1.3
+
+* Allow connect timeout
+* Support for windows UCRT builds
+
+# redux 1.1.1
 
 * More relaxed, though technically incorrect, URL parsing that allows undercores in the host name - useful for docker containers (#20).
 
-## redux 1.1.0
+# redux 1.1.0
 
 * Adds storr support (imported from storr itself)
 * Tests are more polite about not leaving behind keys
