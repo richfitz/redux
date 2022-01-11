@@ -5,9 +5,17 @@ static void redis_finalize(SEXP extPtr);
 char * string_duplicate(const char * x);
 
 // API functions first:
-SEXP redux_redis_connect(SEXP host, SEXP port) {
-  redisContext *context = redisConnect(CHAR(STRING_ELT(host, 0)),
-                                       INTEGER(port)[0]);
+SEXP redux_redis_connect(SEXP r_host, SEXP r_port, SEXP r_timeout) {
+  redisContext *context;
+  const char * host = CHAR(STRING_ELT(r_host, 0));
+  const int port = INTEGER(r_port)[0];
+  if (LENGTH(r_timeout) == 0) {
+    context = redisConnect(host, port);
+  } else {
+    int timeout = INTEGER(r_timeout)[0];
+    struct timeval tvout = {timeout / 1000, (timeout % 1000) * 1000};
+    context = redisConnectWithTimeout(host, port, tvout);
+  }
   if (context == NULL) {
     error("Creating context failed catastrophically [tcp]"); // # nocov
   }
@@ -16,14 +24,22 @@ SEXP redux_redis_connect(SEXP host, SEXP port) {
     redisFree(context);
     error("Failed to create context: %s", errstr);
   }
-  SEXP extPtr = PROTECT(R_MakeExternalPtr(context, host, R_NilValue));
+  SEXP extPtr = PROTECT(R_MakeExternalPtr(context, r_host, R_NilValue));
   R_RegisterCFinalizer(extPtr, redis_finalize);
   UNPROTECT(1);
   return extPtr;
 }
 
-SEXP redux_redis_connect_unix(SEXP path) {
-  redisContext *context = redisConnectUnix(CHAR(STRING_ELT(path, 0)));
+SEXP redux_redis_connect_unix(SEXP r_path, SEXP r_timeout) {
+  redisContext *context;
+  const char * path = CHAR(STRING_ELT(r_path, 0));
+  if (LENGTH(r_timeout) == 0) {
+    context = redisConnectUnix(path);
+  } else {
+    int timeout = INTEGER(r_timeout)[0];
+    struct timeval tvout = {timeout / 1000, (timeout % 1000) * 1000};
+    context = redisConnectUnixWithTimeout(path, tvout);
+  }
   if (context == NULL) {
     error("Creating context failed catastrophically [unix]"); // # nocov
   }
@@ -32,7 +48,7 @@ SEXP redux_redis_connect_unix(SEXP path) {
     redisFree(context);
     error("Failed to create context: %s", errstr);
   }
-  SEXP extPtr = PROTECT(R_MakeExternalPtr(context, path, R_NilValue));
+  SEXP extPtr = PROTECT(R_MakeExternalPtr(context, r_path, R_NilValue));
   R_RegisterCFinalizer(extPtr, redis_finalize);
   UNPROTECT(1);
   return extPtr;

@@ -4,8 +4,13 @@
 \alias{from_redis_hash}
 \title{Convert Redis hash}
 \usage{
-from_redis_hash(con, key, fields = NULL, f = as.character,
-  missing = NA_character_)
+from_redis_hash(
+  con,
+  key,
+  fields = NULL,
+  f = as.character,
+  missing = NA_character_
+)
 }
 \arguments{
 \item{con}{A Redis connection object}

@@ -23,6 +23,9 @@
 ##' \code{SELECT}.  Do not use in a redis clustering context.
 ##' (default: \code{NULL}; i.e., don't switch).}
 ##'
+##' \item{\code{timeout}}{The maximum number of milliseconds to wait for the
+##' connection to be established.  (default: \code{NULL}; i.e. wait forever).}
+##'
 ##' }
 ##'
 ##' The way that configuration options are resolved follows the design
@@ -70,7 +73,8 @@ redis_config <- function(..., config = list(...)) {
                 port = as.integer(Sys_getenv("REDIS_PORT", 6379L)),
                 path = NULL,
                 password = NULL,
-                db = NULL)
+                db = NULL,
+                timeout = NULL)
   dots <- list(...)
   if (length(dots) > 0L && !identical(dots, config)) {
     warning("Ignoring dots in favour of config")

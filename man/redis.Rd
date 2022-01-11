@@ -4,7 +4,9 @@
 \name{redis}
 \alias{redis}
 \title{Redis commands object}
-\format{An object of class \code{redis_commands} of length 199.}
+\format{
+An object of class \code{redis_commands} of length 199.
+}
 \usage{
 redis
 }

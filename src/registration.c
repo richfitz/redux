@@ -8,8 +8,8 @@
 #include <Rversion.h>
 
 static const R_CallMethodDef callMethods[] = {
-  {"Credux_redis_connect",       (DL_FUNC) &redux_redis_connect,        2},
-  {"Credux_redis_connect_unix",  (DL_FUNC) &redux_redis_connect_unix,   1},
+  {"Credux_redis_connect",       (DL_FUNC) &redux_redis_connect,        3},
+  {"Credux_redis_connect_unix",  (DL_FUNC) &redux_redis_connect_unix,   2},
 
   {"Credux_redis_command",       (DL_FUNC) &redux_redis_command,        2},
 

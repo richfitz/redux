@@ -4,9 +4,9 @@
 ## from user code; see the functions in connection.R for what to use.
 redis_connect <- function(config) {
   if (config$scheme == "redis") {
-    ptr <- redis_connect_tcp(config$host, config$port)
+    ptr <- redis_connect_tcp(config$host, config$port, config$timeout)
   } else {
-    ptr <- redis_connect_unix(config$path)
+    ptr <- redis_connect_unix(config$path, config$timeout)
   }
   if (!is.null(config$password)) {
     redis_command(ptr, c("AUTH", config$password))
@@ -17,12 +17,12 @@ redis_connect <- function(config) {
   ptr
 }
 
-redis_connect_tcp <- function(host, port) {
-  .Call(Credux_redis_connect, host, as.integer(port))
+redis_connect_tcp <- function(host, port, timeout = NULL) {
+  .Call(Credux_redis_connect, host, as.integer(port), as.integer(timeout))
 }
 
-redis_connect_unix <- function(path) {
-  .Call(Credux_redis_connect_unix, path)
+redis_connect_unix <- function(path, timeout = NULL) {
+  .Call(Credux_redis_connect_unix, path, as.integer(timeout))
 }
 
 redis_command <- function(ptr, command) {
