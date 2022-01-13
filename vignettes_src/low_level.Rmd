@@ -67,7 +67,7 @@ Elements of a list command can be:
 
 ## Pipelining
 
-See [the redis documentation](http://redis.io/topics/pipelining)
+See the redis documentation (`http://redis.io/topics/pipelining`)
 for background information about pipelining.  In short, evaluating
 ``` {r }
 con$command(c("INCR", "X"))
@@ -105,8 +105,8 @@ con$pipeline(list(
 (if these arguments are named, then the output will have the same
 names).
 
-Note the [warnings about
-pipeline](http://redis.io/topics/pipelining#redis-pipelining) in
+Note the warnings about
+pipeline (`http://redis.io/topics/pipelining#redis-pipelining`) in
 the official Redis documentation - sending so many commands (e.g.,
 >10k) memory use on the server can be negatively affected.
 

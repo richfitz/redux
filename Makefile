@@ -1,5 +1,5 @@
 PACKAGE := $(shell grep '^Package:' DESCRIPTION | sed -E 's/^Package:[[:space:]]+//')
-RSCRIPT = Rscript --no-init-file
+RSCRIPT = Rscript
 
 all: compile_dll
 
@@ -55,7 +55,7 @@ vignettes/low_level.Rmd: vignettes_src/low_level.Rmd
 	rm -f $@.bak
 
 vignettes_install: vignettes/redux.Rmd vignettes/low_level.Rmd
-	${RSCRIPT} -e 'library(methods); devtools::build_vignettes()'
+	${RSCRIPT} -e 'library(methods); devtools::build_vignettes(install=FALSE)'
 
 vignettes:
 	rm -f vignettes/redux.Rmd vignettes/low_level.Rmd

@@ -20,3 +20,9 @@ Meta
 .vscode/
 *.o
 *.so
+*.dll
+*.gcov
+*.gcda
+*.gcno
+/doc/
+/Meta/
