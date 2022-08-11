@@ -57,7 +57,7 @@ All the methods are available from this object; for example to set "foo" to "bar
 r$SET("foo", "bar")
 ```
 
-See the package vignette for more information (`vignette("redux")`) or https://richfitz.github.io/redux/vignettes/redux.html
+See the package vignette for more information (`vignette("redux")`) or https://richfitz.github.io/redux/articles/redux.html
 
 ## Testing
 
