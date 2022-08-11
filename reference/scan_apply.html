@@ -31,7 +31,7 @@ other variants, etc."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -70,40 +70,50 @@ other variants, etc.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">scan_apply</span><span class="op">(</span>
-  <span class="va">con</span>,
-  <span class="va">callback</span>,
-  pattern <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>,
-  count <span class="op">=</span> <span class="cn">NULL</span>,
-  type <span class="op">=</span> <span class="st">"SCAN"</span>,
-  key <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span>
-
-<span class="fu">scan_del</span><span class="op">(</span><span class="va">con</span>, <span class="va">pattern</span>, count <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"SCAN"</span>, key <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-
-<span class="fu">scan_find</span><span class="op">(</span><span class="va">con</span>, <span class="va">pattern</span>, count <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"SCAN"</span>, key <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">scan_apply</span><span class="op">(</span></span>
+<span>  <span class="va">con</span>,</span>
+<span>  <span class="va">callback</span>,</span>
+<span>  pattern <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  count <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"SCAN"</span>,</span>
+<span>  key <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">scan_del</span><span class="op">(</span><span class="va">con</span>, <span class="va">pattern</span>, count <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"SCAN"</span>, key <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">scan_find</span><span class="op">(</span><span class="va">con</span>, <span class="va">pattern</span>, count <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"SCAN"</span>, key <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>con</dt>
 <dd><p>A <code>redis_api</code> object</p></dd>
+
+
 <dt>callback</dt>
 <dd><p>Function that takes a character vector of keys and
 does something useful to it.  <code>con$DEL</code> is one option here
 to delete keys that match a pattern.  Unlike R's *apply
 functions, callback is called for its side effects and its
 return values will be ignored.</p></dd>
+
+
 <dt>pattern</dt>
 <dd><p>Optional pattern to use.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments passed through to <code>callback</code>.
 Note that if used, <code>pattern</code> must be provided (at least as
 <code>NULL</code>).</p></dd>
+
+
 <dt>count</dt>
 <dd><p>Optional step size (default is Redis' default which
 is 10)</p></dd>
+
+
 <dt>type</dt>
 <dd><p>Type of SCAN to run.  Options are <code>"SCAN"</code> (the
 default), <code>"HSCAN"</code> (scan through keys of a hash),
@@ -111,8 +121,11 @@ default), <code>"HSCAN"</code> (scan through keys of a hash),
 <code>"ZSCAN"</code> (scan though elements of a sorted set).  If
 <code>type</code> is not <code>"SCAN"</code>, then <code>key</code> must be
 provided.  HSCAN and ZSCAN currently do not work usefully.</p></dd>
+
+
 <dt>key</dt>
 <dd><p>Key to use when running a hash, set or sorted set scan.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -133,7 +146,7 @@ pattern.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

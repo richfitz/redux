@@ -29,7 +29,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -66,15 +66,18 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">redis_config</span><span class="op">(</span><span class="va">...</span>, config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">redis_config</span><span class="op">(</span><span class="va">...</span>, config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>...</dt>
 <dd><p>See Details</p></dd>
+
+
 <dt>config</dt>
 <dd><p>A list of options, to use in place of <code>...</code></p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -130,8 +133,8 @@ used.</p></li>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># default config:</span></span>
-<span class="r-in"><span class="fu">redis_config</span><span class="op">(</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># default config:</span></span></span>
+<span class="r-in"><span><span class="fu">redis_config</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Redis configuration:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - url: redis://127.0.0.1:6379</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - scheme: redis</span>
@@ -141,9 +144,9 @@ used.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - password: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - db: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - timeout: </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># set values</span></span>
-<span class="r-in"><span class="fu">redis_config</span><span class="op">(</span>host <span class="op">=</span> <span class="st">"myhost"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># set values</span></span></span>
+<span class="r-in"><span><span class="fu">redis_config</span><span class="op">(</span>host <span class="op">=</span> <span class="st">"myhost"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Redis configuration:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - url: redis://myhost:6379</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - scheme: redis</span>
@@ -153,9 +156,9 @@ used.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - password: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - db: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - timeout: </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># url settings:</span></span>
-<span class="r-in"><span class="fu">redis_config</span><span class="op">(</span>url <span class="op">=</span> <span class="st">"redis://:p4ssw0rd@myhost:32000/2"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># url settings:</span></span></span>
+<span class="r-in"><span><span class="fu">redis_config</span><span class="op">(</span>url <span class="op">=</span> <span class="st">"redis://:p4ssw0rd@myhost:32000/2"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Redis configuration:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - url: redis://:p4ssw0rd@myhost:32000/2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - scheme: redis</span>
@@ -165,9 +168,9 @@ used.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - password: p4ssw0rd</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - db: 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - timeout: </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># override url settings:</span></span>
-<span class="r-in"><span class="fu">redis_config</span><span class="op">(</span>url <span class="op">=</span> <span class="st">"redis://myhost:32000"</span>, port <span class="op">=</span> <span class="fl">31000</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># override url settings:</span></span></span>
+<span class="r-in"><span><span class="fu">redis_config</span><span class="op">(</span>url <span class="op">=</span> <span class="st">"redis://myhost:32000"</span>, port <span class="op">=</span> <span class="fl">31000</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Redis configuration:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - url: redis://myhost:32000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - scheme: redis</span>
@@ -177,7 +180,7 @@ used.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - password: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - db: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - timeout: </span>
-<span class="r-in"><span class="fu">redis_config</span><span class="op">(</span>url <span class="op">=</span> <span class="st">"redis://myhost:32000"</span>, path <span class="op">=</span> <span class="st">"/tmp/redis.conf"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">redis_config</span><span class="op">(</span>url <span class="op">=</span> <span class="st">"redis://myhost:32000"</span>, path <span class="op">=</span> <span class="st">"/tmp/redis.conf"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Redis configuration:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - url: redis://myhost:32000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - scheme: unix</span>
@@ -201,7 +204,7 @@ used.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

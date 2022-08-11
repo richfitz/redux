@@ -31,7 +31,7 @@ users."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/math
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -70,7 +70,7 @@ users.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">redis_api</span><span class="op">(</span><span class="va">x</span>, version <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">redis_api</span><span class="op">(</span><span class="va">x</span>, version <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -79,11 +79,14 @@ users.</p>
 <dd><p>An object that defines at least the function
 <code>command</code> capable of processing commands in the appropriate
 form.</p></dd>
+
+
 <dt>version</dt>
 <dd><p>Version of the Redis API to generate.  If given as
 a numeric version (or something that can be coerced into one.
 If given as <code>TRUE</code>, then we query the Redis server for its
 version and generate only commands supported by the server.</p></dd>
+
 </dl></div>
 
   </div>
@@ -98,7 +101,7 @@ version and generate only commands supported by the server.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

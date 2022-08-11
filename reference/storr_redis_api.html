@@ -29,7 +29,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -66,14 +66,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">storr_redis_api</span><span class="op">(</span>
-  <span class="va">prefix</span>,
-  <span class="va">con</span>,
-  hash_algorithm <span class="op">=</span> <span class="cn">NULL</span>,
-  default_namespace <span class="op">=</span> <span class="st">"objects"</span>
-<span class="op">)</span>
-
-<span class="fu">driver_redis_api</span><span class="op">(</span><span class="va">prefix</span>, <span class="va">con</span>, hash_algorithm <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">storr_redis_api</span><span class="op">(</span></span>
+<span>  <span class="va">prefix</span>,</span>
+<span>  <span class="va">con</span>,</span>
+<span>  hash_algorithm <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  default_namespace <span class="op">=</span> <span class="st">"objects"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">driver_redis_api</span><span class="op">(</span><span class="va">prefix</span>, <span class="va">con</span>, hash_algorithm <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -83,18 +83,25 @@
 that start with this string.  Probably terminating the string
 with a punctuation character (e.g., ":") will make created
 strings nicer to deal with.</p></dd>
+
+
 <dt>con</dt>
 <dd><p>A <code>redis_api</code> connection object, as created by
 redux.  Alternatively if passing in a <code>redis_config</code>
 object, a list, or <code>NULL</code> this will be passed through to
 <code>hiredis</code> to create a new connection.</p></dd>
+
+
 <dt>hash_algorithm</dt>
 <dd><p>Name of the hash algorithm to use.  Possible
 values are "md5", "sha1", and others supported by
 <code>digest</code>.  If not given, then we will default to
 "md5".</p></dd>
+
+
 <dt>default_namespace</dt>
 <dd><p>Default namespace (see <code>storr</code>).</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -113,7 +120,7 @@ values are "md5", "sha1", and others supported by
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

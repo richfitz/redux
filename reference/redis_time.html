@@ -29,7 +29,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -66,37 +66,40 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">redis_time</span><span class="op">(</span><span class="va">con</span><span class="op">)</span>
-
-<span class="fu">format_redis_time</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-
-<span class="fu">redis_time_to_r</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">redis_time</span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">format_redis_time</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">redis_time_to_r</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>con</dt>
 <dd><p>A Redis connection object</p></dd>
+
+
 <dt>x</dt>
 <dd><p>a list as returned by <code>TIME</code></p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="hiredis.html">redis_available</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># The output of Redis' TIME command is not the *most* useful</span></span>
-<span class="r-in">  <span class="co"># thing in the world:</span></span>
-<span class="r-in">  <span class="va">r</span><span class="op">$</span><span class="fu">TIME</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># We can get a slightly nicer representation like so:</span></span>
-<span class="r-in">  <span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_time</span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># And from that convert to an actual R time:</span></span>
-<span class="r-in">  <span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_time_to_r</span><span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_time</span><span class="op">(</span><span class="va">r</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2022-01-13 16:05:21 UTC"</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="hiredis.html">redis_available</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># The output of Redis' TIME command is not the *most* useful</span></span></span>
+<span class="r-in"><span>  <span class="co"># thing in the world:</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span><span class="op">$</span><span class="fu">TIME</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># We can get a slightly nicer representation like so:</span></span></span>
+<span class="r-in"><span>  <span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_time</span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># And from that convert to an actual R time:</span></span></span>
+<span class="r-in"><span>  <span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_time_to_r</span><span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_time</span><span class="op">(</span><span class="va">r</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2022-08-11 11:25:06 UTC"</span>
 </code></pre></div>
     </div>
   </div>
@@ -111,7 +114,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

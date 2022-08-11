@@ -29,7 +29,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -66,38 +66,41 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">redis_info</span><span class="op">(</span><span class="va">con</span><span class="op">)</span>
-
-<span class="fu">parse_info</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-
-<span class="fu">redis_version</span><span class="op">(</span><span class="va">con</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">redis_info</span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">parse_info</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">redis_version</span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>con</dt>
 <dd><p>A Redis connection</p></dd>
+
+
 <dt>x</dt>
 <dd><p>character string</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="hiredis.html">redis_available</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># Redis server version:</span></span>
-<span class="r-in">  <span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_version</span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span>
-<span class="r-in">  <span class="co"># This is a 'numeric_version' object so you can compute with it</span></span>
-<span class="r-in">  <span class="co"># if you need to check for minimum versions</span></span>
-<span class="r-in">  <span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_version</span><span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric_version.html" class="external-link">numeric_version</a></span><span class="op">(</span><span class="st">"2.1.1"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># Extensive information is given back by the server:</span></span>
-<span class="r-in">  <span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_info</span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># Which is just:</span></span>
-<span class="r-in">  <span class="fu">redux</span><span class="fu">::</span><span class="fu">parse_info</span><span class="op">(</span><span class="va">r</span><span class="op">$</span><span class="fu">INFO</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="hiredis.html">redis_available</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># Redis server version:</span></span></span>
+<span class="r-in"><span>  <span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_version</span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># This is a 'numeric_version' object so you can compute with it</span></span></span>
+<span class="r-in"><span>  <span class="co"># if you need to check for minimum versions</span></span></span>
+<span class="r-in"><span>  <span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_version</span><span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric_version.html" class="external-link">numeric_version</a></span><span class="op">(</span><span class="st">"2.1.1"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># Extensive information is given back by the server:</span></span></span>
+<span class="r-in"><span>  <span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_info</span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># Which is just:</span></span></span>
+<span class="r-in"><span>  <span class="fu">redux</span><span class="fu">::</span><span class="fu">parse_info</span><span class="op">(</span><span class="va">r</span><span class="op">$</span><span class="fu">INFO</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $redis_version</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] ‘4.0.14’</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -108,13 +111,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $redis_build_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a2de6c7a469753e0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "18eb4d87e8c5091a"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $redis_mode</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "standalone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $os</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Darwin 19.6.0 x86_64"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Darwin 20.6.0 x86_64"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $arch_bits</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "64"</span>
@@ -129,16 +132,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "4.2.1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $process_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "7296"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2315"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $run_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "8ebeb50289cb2ff5c41b8f0f9d387d7903760c03"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "3ff574d363e91ab82d6c79dc9160673e158b044a"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $tcp_port</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "6379"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $uptime_in_seconds</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "55"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "65"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $uptime_in_days</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0"</span>
@@ -147,13 +150,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "10"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $lru_clock</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "14699968"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "16049937"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $executable</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Users/runner/hostedtoolcache/redis/4.0.14/x64/bin/redis-server"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config_file</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Users/runner/work/_temp/7KPOQ2/redis.conf"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Users/runner/work/_temp/1Of5sE/redis.conf"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $connected_clients</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2"</span>
@@ -168,25 +171,25 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $used_memory</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1062704"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1061680"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $used_memory_human</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1.01M"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $used_memory_rss</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1691648"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1736704"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $used_memory_rss_human</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1.61M"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1.66M"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $used_memory_peak</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1062704"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1094720"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $used_memory_peak_human</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1.01M"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1.04M"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $used_memory_peak_perc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "100.00%"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "96.98%"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $used_memory_overhead</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1047954"</span>
@@ -195,10 +198,10 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "981376"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $used_memory_dataset</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "14750"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "13726"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $used_memory_dataset_perc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "18.14%"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "17.09%"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $total_system_memory</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "15032385536"</span>
@@ -222,7 +225,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "noeviction"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $mem_fragmentation_ratio</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1.59"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1.64"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $mem_allocator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "libc"</span>
@@ -243,7 +246,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $rdb_last_save_time</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1642089865"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1660217040"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $rdb_last_bgsave_status</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ok"</span>
@@ -294,7 +297,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "704"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $total_net_output_bytes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "8743"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "8740"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $instantaneous_input_kbps</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0.05"</span>
@@ -366,7 +369,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $master_replid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "39b1d94945c49b2570afe4a8908094059417245c"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "7759fa41afafb7ee350f59c408e9ffad8670a98d"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $master_replid2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0000000000000000000000000000000000000000"</span>
@@ -390,7 +393,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $used_cpu_sys</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0.01"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0.02"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $used_cpu_user</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0.01"</span>
@@ -421,7 +424,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

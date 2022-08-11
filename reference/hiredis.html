@@ -30,7 +30,7 @@ Redis commands."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -68,9 +68,9 @@ Redis commands.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">hiredis</span><span class="op">(</span><span class="va">...</span>, version <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-
-<span class="fu">redis_available</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">hiredis</span><span class="op">(</span><span class="va">...</span>, version <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">redis_available</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -82,12 +82,15 @@ Redis commands.</p>
 environment variable <code>REDIS_URL</code>).  For
 <code>redis_available</code>, arguments are passed through to
 <code>hiredis</code>.</p></dd>
+
+
 <dt>version</dt>
 <dd><p>Version of the interface to generate.  If given as
 a string to numeric version, then only commands that exist up to
 that version will be included.  If given as <code>TRUE</code>, then we
 will query the Redis server (with <code>INFO</code>) and extract the
 version number that way.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -109,28 +112,29 @@ and this cannot use R's normal interrupt machinery.  If you want
 to block but retain the ability to interrupt then you will need to
 wrap this in another call that blocks for a shorter period of
 time:</p>
-<div class="sourceCode"><pre><code><span class="va">found</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>
-  <span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span>
-  <span class="va">found</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>
-  <span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">found</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">found</span> <span class="op">&lt;-</span> <span class="va">con</span><span class="op">$</span><span class="fu">BLPOP</span><span class="op">(</span><span class="st">"key"</span>, <span class="fl">1</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.01</span><span class="op">)</span> <span class="co"># needed for R to notice that interrupt has happened</span>
-  <span class="op">}</span></code></pre></div>
+<div class="sourceCode"><pre><code><span></span>
+<span>  <span class="va">found</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span>  <span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">found</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span>  <span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">found</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">found</span> <span class="op">&lt;-</span> <span class="va">con</span><span class="op">$</span><span class="fu">BLPOP</span><span class="op">(</span><span class="st">"key"</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.01</span><span class="op">)</span> <span class="co"># needed for R to notice that interrupt has happened</span></span>
+<span>  <span class="op">}</span></span></code></pre></div>
 
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Only run if a Redis server is running</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_available</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu">hiredis</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">r</span><span class="op">$</span><span class="fu">PING</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">r</span><span class="op">$</span><span class="fu">SET</span><span class="op">(</span><span class="st">"foo"</span>, <span class="st">"bar"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"foo"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># There are lots of methods here:</span></span>
-<span class="r-in">  <span class="va">r</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Only run if a Redis server is running</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu">redis_available</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu">hiredis</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span><span class="op">$</span><span class="fu">PING</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span><span class="op">$</span><span class="fu">SET</span><span class="op">(</span><span class="st">"foo"</span>, <span class="st">"bar"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span><span class="op">$</span><span class="fu">GET</span><span class="op">(</span><span class="st">"foo"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># There are lots of methods here:</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;redis_api&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Redis commands:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     APPEND: function</span>
@@ -356,7 +360,7 @@ time:</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

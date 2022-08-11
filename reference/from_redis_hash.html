@@ -32,7 +32,7 @@ very explicit."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -72,64 +72,73 @@ very explicit.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">from_redis_hash</span><span class="op">(</span>
-  <span class="va">con</span>,
-  <span class="va">key</span>,
-  fields <span class="op">=</span> <span class="cn">NULL</span>,
-  f <span class="op">=</span> <span class="va">as.character</span>,
-  missing <span class="op">=</span> <span class="cn">NA_character_</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">from_redis_hash</span><span class="op">(</span></span>
+<span>  <span class="va">con</span>,</span>
+<span>  <span class="va">key</span>,</span>
+<span>  fields <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  f <span class="op">=</span> <span class="va">as.character</span>,</span>
+<span>  missing <span class="op">=</span> <span class="cn">NA_character_</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>con</dt>
 <dd><p>A Redis connection object</p></dd>
+
+
 <dt>key</dt>
 <dd><p>key of the hash</p></dd>
+
+
 <dt>fields</dt>
 <dd><p>Optional vector of fields (if absent, all fields are
 retrieved via <code>HGETALL</code>.</p></dd>
+
+
 <dt>f</dt>
 <dd><p>Function to apply to the <code>list</code> of values retrieved
 as a single set.  To apply element-wise, this will need to be
 run via something like <code>Vectorize</code>.</p></dd>
+
+
 <dt>missing</dt>
 <dd><p>What to substitute into the returned vector for
 missing elements.  By default an NA will be added.  A
 <code>stop</code> expression is OK and will only be evaluated if
 values are missing.</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="hiredis.html">redis_available</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="co"># Using a random key so we don't overwrite anything in your database:</span></span>
-<span class="r-in">  <span class="va">key</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"redux::"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">letters</span>, <span class="fl">15</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">r</span><span class="op">$</span><span class="fu">HSET</span><span class="op">(</span><span class="va">key</span>, <span class="st">"a"</span>, <span class="st">"apple"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">r</span><span class="op">$</span><span class="fu">HSET</span><span class="op">(</span><span class="va">key</span>, <span class="st">"b"</span>, <span class="st">"banana"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">r</span><span class="op">$</span><span class="fu">HSET</span><span class="op">(</span><span class="va">key</span>, <span class="st">"c"</span>, <span class="st">"carrot"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># Now we have a hash with three elements:</span></span>
-<span class="r-in">  <span class="va">r</span><span class="op">$</span><span class="fu">HGETALL</span><span class="op">(</span><span class="va">key</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># Ew, that's not very nice.  This is nicer:</span></span>
-<span class="r-in">  <span class="fu">redux</span><span class="fu">::</span><span class="fu">from_redis_hash</span><span class="op">(</span><span class="va">r</span>, <span class="va">key</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># If one of the elements was not a string, then that would not</span></span>
-<span class="r-in">  <span class="co"># have worked, but you can always leave as a list:</span></span>
-<span class="r-in">  <span class="fu">redux</span><span class="fu">::</span><span class="fu">from_redis_hash</span><span class="op">(</span><span class="va">r</span>, <span class="va">key</span>, f <span class="op">=</span> <span class="va">identity</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># To get just some elements:</span></span>
-<span class="r-in">  <span class="fu">redux</span><span class="fu">::</span><span class="fu">from_redis_hash</span><span class="op">(</span><span class="va">r</span>, <span class="va">key</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># And if some are not present:</span></span>
-<span class="r-in">  <span class="fu">redux</span><span class="fu">::</span><span class="fu">from_redis_hash</span><span class="op">(</span><span class="va">r</span>, <span class="va">key</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"x"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">  <span class="fu">redux</span><span class="fu">::</span><span class="fu">from_redis_hash</span><span class="op">(</span><span class="va">r</span>, <span class="va">key</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"z"</span><span class="op">)</span>, missing <span class="op">=</span> <span class="st">"zebra"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="va">r</span><span class="op">$</span><span class="fu">DEL</span><span class="op">(</span><span class="va">key</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="hiredis.html">redis_available</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="co"># Using a random key so we don't overwrite anything in your database:</span></span></span>
+<span class="r-in"><span>  <span class="va">key</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"redux::"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">letters</span>, <span class="fl">15</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="hiredis.html">hiredis</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span><span class="op">$</span><span class="fu">HSET</span><span class="op">(</span><span class="va">key</span>, <span class="st">"a"</span>, <span class="st">"apple"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span><span class="op">$</span><span class="fu">HSET</span><span class="op">(</span><span class="va">key</span>, <span class="st">"b"</span>, <span class="st">"banana"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span><span class="op">$</span><span class="fu">HSET</span><span class="op">(</span><span class="va">key</span>, <span class="st">"c"</span>, <span class="st">"carrot"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># Now we have a hash with three elements:</span></span></span>
+<span class="r-in"><span>  <span class="va">r</span><span class="op">$</span><span class="fu">HGETALL</span><span class="op">(</span><span class="va">key</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># Ew, that's not very nice.  This is nicer:</span></span></span>
+<span class="r-in"><span>  <span class="fu">redux</span><span class="fu">::</span><span class="fu">from_redis_hash</span><span class="op">(</span><span class="va">r</span>, <span class="va">key</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># If one of the elements was not a string, then that would not</span></span></span>
+<span class="r-in"><span>  <span class="co"># have worked, but you can always leave as a list:</span></span></span>
+<span class="r-in"><span>  <span class="fu">redux</span><span class="fu">::</span><span class="fu">from_redis_hash</span><span class="op">(</span><span class="va">r</span>, <span class="va">key</span>, f <span class="op">=</span> <span class="va">identity</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># To get just some elements:</span></span></span>
+<span class="r-in"><span>  <span class="fu">redux</span><span class="fu">::</span><span class="fu">from_redis_hash</span><span class="op">(</span><span class="va">r</span>, <span class="va">key</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># And if some are not present:</span></span></span>
+<span class="r-in"><span>  <span class="fu">redux</span><span class="fu">::</span><span class="fu">from_redis_hash</span><span class="op">(</span><span class="va">r</span>, <span class="va">key</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"x"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">redux</span><span class="fu">::</span><span class="fu">from_redis_hash</span><span class="op">(</span><span class="va">r</span>, <span class="va">key</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"z"</span><span class="op">)</span>, missing <span class="op">=</span> <span class="st">"zebra"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="va">r</span><span class="op">$</span><span class="fu">DEL</span><span class="op">(</span><span class="va">key</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 </code></pre></div>
     </div>
@@ -145,7 +154,7 @@ values are missing.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

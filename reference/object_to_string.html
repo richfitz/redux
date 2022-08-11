@@ -33,7 +33,7 @@ Redis (which expects a string)."><!-- mathjax --><script src="https://cdnjs.clou
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -74,38 +74,45 @@ Redis (which expects a string).</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">object_to_string</span><span class="op">(</span><span class="va">obj</span><span class="op">)</span>
-
-<span class="fu">string_to_object</span><span class="op">(</span><span class="va">str</span><span class="op">)</span>
-
-<span class="fu">object_to_bin</span><span class="op">(</span><span class="va">obj</span>, xdr <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="fu">bin_to_object</span><span class="op">(</span><span class="va">bin</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">object_to_string</span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">string_to_object</span><span class="op">(</span><span class="va">str</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">object_to_bin</span><span class="op">(</span><span class="va">obj</span>, xdr <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">bin_to_object</span><span class="op">(</span><span class="va">bin</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>obj</dt>
 <dd><p>An R object to convert into a string</p></dd>
+
+
 <dt>str</dt>
 <dd><p>A string to convert into an R object</p></dd>
+
+
 <dt>xdr</dt>
 <dd><p>Use the big-endian representation?  Unlike,
 <code><a href="https://rdrr.io/r/base/serialize.html" class="external-link">serialize</a></code> this is disabled here by default as it
 is a bit faster (~ 20<!-- %, saving about 1 microsecond of a 5 -->
 microsecond roundtrip for a serialization of 100 doubles)</p></dd>
+
+
 <dt>bin</dt>
 <dd><p>A binary vector to convert back to an R object</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu">object_to_string</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">s</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "A\n3\n262402\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"</span>
-<span class="r-in"><span class="fu">string_to_object</span><span class="op">(</span><span class="va">s</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu">object_to_string</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">s</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "A\n3\n262657\n197888\n5\nUTF-8\n238\n2\n1\n262153\n14\ncompact_intseq\n2\n1\n262153\n4\nbase\n2\n13\n1\n13\n254\n14\n3\n0x1.4p+3\n0x1p+0\n0x1p+0\n254\n"</span>
+<span class="r-in"><span><span class="fu">string_to_object</span><span class="op">(</span><span class="va">s</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1  2  3  4  5  6  7  8  9 10</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu">string_to_object</span><span class="op">(</span><span class="va">s</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu">string_to_object</span><span class="op">(</span><span class="va">s</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 </code></pre></div>
     </div>
@@ -121,7 +128,7 @@ microsecond roundtrip for a serialization of 100 doubles)</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

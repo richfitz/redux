@@ -46,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -84,7 +84,7 @@
       <h1 data-toc-skip>Low level implementation details</h1>
                         <h4 data-toc-skip class="author">Rich FitzJohn</h4>
             
-            <h4 data-toc-skip class="date">2022-01-13</h4>
+            <h4 data-toc-skip class="date">2022-08-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/richfitz/redux/blob/HEAD/vignettes/low_level.Rmd" class="external-link"><code>vignettes/low_level.Rmd</code></a></small>
       <div class="hidden name"><code>low_level.Rmd</code></div>
@@ -96,14 +96,14 @@
 <p>These are some implementation details that may be of interest if developing alternative (non-hiredis based) drivers.</p>
 <p>Create a connection:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/redis_connection.html">redis_connection</a></span><span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/redis_config.html">redis_config</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="va">con</span></code></pre></div>
-<pre><code><span class="co">## &lt;redis_connection[redux]&gt;:</span>
-<span class="co">##   - config() </span>
-<span class="co">##   - reconnect() </span>
-<span class="co">##   - command(cmd) </span>
-<span class="co">##   - pipeline(cmds) </span>
-<span class="co">##   - subscribe(channel, pattern, callback, envir = parent.frame())</span></code></pre>
+<code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/redis_connection.html">redis_connection</a></span><span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/redis_config.html">redis_config</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">con</span></span></code></pre></div>
+<pre><code><span><span class="co">## &lt;redis_connection[redux]&gt;:</span></span>
+<span><span class="co">##   - config() </span></span>
+<span><span class="co">##   - reconnect() </span></span>
+<span><span class="co">##   - command(cmd) </span></span>
+<span><span class="co">##   - pipeline(cmds) </span></span>
+<span><span class="co">##   - subscribe(channel, pattern, callback, envir = parent.frame())</span></span></code></pre>
 <p>See <code><a href="../reference/redis_config.html">?redux::redis_config</a></code> for details on specifying hosts, ports, servers, etc. Importantly, <em>socket connections</em> can be used, which can be considerably faster if you are connecting to a local Redis instance and have socket connections enabled.</p>
 <p>The connection object provides several functions for interfacing with Redis:</p>
 <ul>
@@ -123,16 +123,16 @@
 </h2>
 <p>The simplest command is a character vector, starting with a Redis command, e.g.:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">con</span><span class="op">$</span><span class="fu">command</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SET"</span>, <span class="st">"foo"</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [Redis: OK]</span></code></pre>
+<code class="sourceCode R"><span><span class="va">con</span><span class="op">$</span><span class="fu">command</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SET"</span>, <span class="st">"foo"</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [Redis: OK]</span></span></code></pre>
 <p>However, if we wanted to set <code>foo</code> to be an R object (e.g. <code>1:10</code>), then we need to <em>serialise</em> the object. To do that we use <code>raw</code> vectors and the command would become:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">con</span><span class="op">$</span><span class="fu">command</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"SET"</span>, <span class="st">"foo"</span>, <span class="fu"><a href="https://rdrr.io/r/base/serialize.html" class="external-link">serialize</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [Redis: OK]</span></code></pre>
+<code class="sourceCode R"><span><span class="va">con</span><span class="op">$</span><span class="fu">command</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"SET"</span>, <span class="st">"foo"</span>, <span class="fu"><a href="https://rdrr.io/r/base/serialize.html" class="external-link">serialize</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [Redis: OK]</span></span></code></pre>
 <p>and to retrieve it:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/serialize.html" class="external-link">unserialize</a></span><span class="op">(</span><span class="va">con</span><span class="op">$</span><span class="fu">command</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"foo"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##  [1]  1  2  3  4  5  6  7  8  9 10</span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/serialize.html" class="external-link">unserialize</a></span><span class="op">(</span><span class="va">con</span><span class="op">$</span><span class="fu">command</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"foo"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##  [1]  1  2  3  4  5  6  7  8  9 10</span></span></code></pre>
 <p>Elements of a list command can be:</p>
 <ul>
 <li>Character vectors of any length</li>
@@ -147,11 +147,11 @@
 </h2>
 <p>See the redis documentation (<code>http://redis.io/topics/pipelining</code>) for background information about pipelining. In short, evaluating</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">con</span><span class="op">$</span><span class="fu">command</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"INCR"</span>, <span class="st">"X"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] 1</span></code></pre>
+<code class="sourceCode R"><span><span class="va">con</span><span class="op">$</span><span class="fu">command</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"INCR"</span>, <span class="st">"X"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 1</span></span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">con</span><span class="op">$</span><span class="fu">command</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"INCR"</span>, <span class="st">"X"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] 2</span></code></pre>
+<code class="sourceCode R"><span><span class="va">con</span><span class="op">$</span><span class="fu">command</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"INCR"</span>, <span class="st">"X"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 2</span></span></code></pre>
 <p>will result in two round trips:</p>
 <pre><code>Client: INCR X
 Server: 1
@@ -164,15 +164,15 @@ Server: 1
 Server: 2</code></pre>
 <p>To do this, the <code>pipeline</code> function in the redis object accepts multiple Redis commands as a list:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">con</span><span class="op">$</span><span class="fu">pipeline</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"INCR"</span>, <span class="st">"X"</span><span class="op">)</span>,
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"INCR"</span>, <span class="st">"X"</span><span class="op">)</span>
-<span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [[1]]</span>
-<span class="co">## [1] 3</span>
-<span class="co">## </span>
-<span class="co">## [[2]]</span>
-<span class="co">## [1] 4</span></code></pre>
+<code class="sourceCode R"><span><span class="va">con</span><span class="op">$</span><span class="fu">pipeline</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"INCR"</span>, <span class="st">"X"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"INCR"</span>, <span class="st">"X"</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [[1]]</span></span>
+<span><span class="co">## [1] 3</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## [[2]]</span></span>
+<span><span class="co">## [1] 4</span></span></code></pre>
 <p>(if these arguments are named, then the output will have the same names).</p>
 <p>Note the warnings about pipeline (<code>http://redis.io/topics/pipelining#redis-pipelining</code>) in the official Redis documentation - sending so many commands (e.g., &gt;10k) memory use on the server can be negatively affected.</p>
 </div>
@@ -194,26 +194,26 @@ Server: 2</code></pre>
 <p>Because the <code>subscribe</code> function is blocking and returns nothing, so all data collection needs to happen as a side-effect of the callback function.</p>
 <p>Here’s an example that will collect values until it has 10 entries:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">callback</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">local</a></span><span class="op">(</span><span class="op">{</span>
-  <span class="va">i</span> <span class="op">&lt;-</span> <span class="fl">1L</span>
-  <span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">10L</span><span class="op">)</span>
-  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">vals</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">value</span><span class="op">)</span>
-    <span class="va">i</span> <span class="op">&lt;&lt;-</span> <span class="va">i</span> <span class="op">+</span> <span class="fl">1L</span>
-    <span class="va">i</span> <span class="op">&gt;</span> <span class="fl">10L</span>
-  <span class="op">}</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">callback</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">local</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="va">i</span> <span class="op">&lt;-</span> <span class="fl">1L</span></span>
+<span>  <span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">10L</span><span class="op">)</span></span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">vals</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">value</span><span class="op">)</span></span>
+<span>    <span class="va">i</span> <span class="op">&lt;&lt;-</span> <span class="va">i</span> <span class="op">+</span> <span class="fl">1L</span></span>
+<span>    <span class="va">i</span> <span class="op">&gt;</span> <span class="fl">10L</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>which, given a valid publisher would look like:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">con</span><span class="op">$</span><span class="fu">subscribe</span><span class="op">(</span><span class="st">"foo"</span>, <span class="cn">FALSE</span>, <span class="va">callback</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">con</span><span class="op">$</span><span class="fu">subscribe</span><span class="op">(</span><span class="st">"foo"</span>, <span class="cn">FALSE</span>, <span class="va">callback</span><span class="op">)</span></span></code></pre></div>
 <p>This will sit there forever unless something publishes on channel <code>foo</code>. In a second instance you can run:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/redis_connection.html">redis_connection</a></span><span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/redis_config.html">redis_config</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="va">con</span><span class="op">$</span><span class="fu">command</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PUBLISH"</span>, <span class="st">"foo"</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/redis_connection.html">redis_connection</a></span><span class="op">(</span><span class="fu">redux</span><span class="fu">::</span><span class="fu"><a href="../reference/redis_config.html">redis_config</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="va">con</span><span class="op">$</span><span class="fu">command</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PUBLISH"</span>, <span class="st">"foo"</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>which will return 10 values of 1 and 1 value of 0 (being the number of clients subscribed to the <code>foo</code> channel).</p>
 <p>Back in the client R instance, the subscriber has detached, and</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="va">callback</span><span class="op">)</span><span class="op">$</span><span class="va">vals</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="va">callback</span><span class="op">)</span><span class="op">$</span><span class="va">vals</span></span></code></pre></div>
 <p>will be a vector of 10 random numbers!</p>
 </div>
   </div>
@@ -235,7 +235,7 @@ Server: 2</code></pre>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
