@@ -279,7 +279,7 @@ SEXP reply_error(redisReply* reply, bool error_throw) {
     memcpy(msg, reply->str, reply->len);
     msg[reply->len] = '\0';
     freeReplyObject(reply);
-    error(msg);
+    error("%s", msg);
     return ret;
   } else { // pass error back as object
     SEXP ret = PROTECT(mkString(reply->str));
