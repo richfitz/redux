@@ -138,8 +138,8 @@ test_that("PEXPIREAT", {
   on.exit(con$DEL(key))
 
   con$SET(key, "Hello")
-  t <- as.integer(con$TIME()[[1]])
-  expect_equal(con$EXPIREAT(key, t + 1000000000), 1)
+  t <- as.numeric(con$TIME()[[1]]) * 1000
+  expect_equal(con$PEXPIREAT(key, t + 1000000000), 1)
   expect_gt(con$TTL(key), 0)
   expect_gt(con$PTTL(key), 0)
 })
