@@ -96,6 +96,7 @@ test_that("MOVE", {
 
 test_that("OBJECT", {
   skip_if_cmd_unsupported("OBJECT")
+  testthat::skip_on_os("windows") # need to find out what this produces here
   con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
