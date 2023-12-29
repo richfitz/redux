@@ -1,6 +1,11 @@
 # -*- makefile -*-
-PKG_CPPFLAGS=-I../windows/hiredis-1.0.0/include/hiredis -DSTRICT_R_HEADERS
-PKG_LIBS=-L../windows/hiredis-1.0.0/lib${R_ARCH}${CRT} -lhiredis -lws2_32
+PKG_CPPFLAGS=-I../windows/hiredis/include/hiredis -DSTRICT_R_HEADERS
+
+ifeq ($(R_COMPILED_BY),gcc 8.3.0)
+LEGACY_ARCH=$(R_ARCH) # Enables 32-bit support in R 4.1
+endif
+
+PKG_LIBS=-L../windows/hiredis/lib$(LEGACY_ARCH) -lhiredis -lws2_32
 
 all: clean winlibs
 
