@@ -72,8 +72,8 @@ redis_connection <- function(config = redis_config()) {
         invisible()
       },
 
-      command = function(cmd) {
-        redis_command(ptr, cmd)
+      command = function(cmd, as = NULL) {
+        redis_command(ptr, cmd, as)
       },
 
       pipeline = function(cmds) {

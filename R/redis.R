@@ -25,8 +25,8 @@ redis_connect_unix <- function(path, timeout = NULL) {
   .Call(Credux_redis_connect_unix, path, as.integer(timeout))
 }
 
-redis_command <- function(ptr, command) {
-  .Call(Credux_redis_command, ptr, command)
+redis_command <- function(ptr, command, as = NULL) {
+  .Call(Credux_redis_command, ptr, command, as)
 }
 
 redis_pipeline <- function(ptr, list) {

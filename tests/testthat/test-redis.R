@@ -176,3 +176,30 @@ test_that("pointer commands are safe", {
   expect_error(redis_command(ptr_null, "PING"),
                "Context is not connected")
 })
+
+
+test_that("can get raw strings back if asked", {
+  skip_if_no_redis()
+  ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
+  key <- rand_str()
+  value <- rand_str()
+
+  expect_equal(redis_command(ptr, list("SET", key, value)),
+               redis_status("OK"))
+
+  expect_equal(redis_command(ptr, list("GET", key), "auto"),
+               value)
+  expect_equal(redis_command(ptr, list("GET", key), "raw"),
+               charToRaw(value))
+
+  expect_error(redis_command(ptr, list("GET", key), "other"),
+               "Invalid option for 'as'")
+  expect_error(redis_command(ptr, list("GET", key), TRUE),
+               "Invalid option for 'as'")
+  expect_error(redis_command(ptr, list("GET", key), letters),
+               "Invalid option for 'as'")
+  expect_error(redis_command(ptr, list("GET", key), character()),
+               "Invalid option for 'as'")
+
+  expect_equal(redis_command(ptr, c("DEL", key)), 1L)
+})

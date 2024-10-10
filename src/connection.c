@@ -54,8 +54,10 @@ SEXP redux_redis_connect_unix(SEXP r_path, SEXP r_timeout) {
   return extPtr;
 }
 
-SEXP redux_redis_command(SEXP extPtr, SEXP cmd) {
+SEXP redux_redis_command(SEXP extPtr, SEXP cmd, SEXP r_as) {
   redisContext *context = redis_get_context(extPtr, true);
+
+  reply_string_as as = r_reply_string_as(r_as);
 
   cmd = PROTECT(redis_check_command(cmd));
   const char **argv = NULL;
@@ -63,7 +65,7 @@ SEXP redux_redis_command(SEXP extPtr, SEXP cmd) {
   const size_t argc = sexp_to_redis(cmd, &argv, &argvlen);
 
   redisReply *reply = redisCommandArgv(context, argc, argv, argvlen);
-  SEXP ret = PROTECT(redis_reply_to_sexp(reply, true));
+  SEXP ret = PROTECT(redis_reply_to_sexp(reply, true, as));
   freeReplyObject(reply);
   UNPROTECT(2);
   return ret;
@@ -94,7 +96,7 @@ SEXP redux_redis_pipeline(SEXP extPtr, SEXP list) {
   SEXP ret = PROTECT(allocVector(VECSXP, nc));
   for (size_t i = 0; i < nc; ++i) {
     redisGetReply(context, (void*)&reply);
-    SET_VECTOR_ELT(ret, i, redis_reply_to_sexp(reply, false));
+    SET_VECTOR_ELT(ret, i, redis_reply_to_sexp(reply, false, AS_AUTO));
     freeReplyObject(reply);
   }
   UNPROTECT(2);
