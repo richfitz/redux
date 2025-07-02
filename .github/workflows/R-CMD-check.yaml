@@ -53,6 +53,11 @@ jobs:
         run: |
           choco install memurai-developer
 
+      - name: "[macOS] system dependencies"
+        if: runner.os == 'macOS'
+        run: |
+          brew install hiredis
+
       - name: Move real vignettes
         if: runner.os != 'windows'
         run: |
