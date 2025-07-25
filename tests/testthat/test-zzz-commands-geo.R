@@ -35,6 +35,7 @@ test_that("GEOHASH:prep", {
 
 test_that("GEOHASH:run", {
   skip_if_cmd_unsupported("GEOHASH")
+  skip_on_os("mac")
   con <- test_hiredis_connection()
   key <- rand_str()
   on.exit(con$DEL(key))
