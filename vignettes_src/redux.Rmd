@@ -340,6 +340,55 @@ that was our end-of-stream message:
 unlist(res)
 ```
 
+# Using commands that are not yet supported
+
+The command set of `redux` is complete as of version 4.0 of redis, which is now quite old.  We will expand this soon, but you can use any new command by writing a simple wrapper in R.
+
+To demonstrate this, we look at the command for `HSET`, using the `redis` object that can be used for pipelining, because this does all the actual work of assembling commands
+
+```{r}
+redis$HSET
+```
+
+The definition here
+
+* checks that `key`, `field` and `value` are scalars (counting a `raw` vector as length1)
+* builds a command by constructing a list of strings (the literal `HSET` followed by `key`, `field` and `value`)
+* passes that to redis via `command()`
+
+```{r}
+redis$HSET("mykey", "myfield", "myvalue")
+```
+
+On a real redis server then:
+
+```{r}
+r <- redux::hiredis()
+r$HSET("mykey", "myfield", "myvalue")
+r$HGET("mykey", "myfield")
+```
+
+We can do this manually using `r$command()` and passing a list:
+
+```{r}
+r$command(list("HSET", "mykey", "myfield", "myvalue2"))
+```
+
+We can see this has worked by fetching our value
+
+```{r}
+r$HGET("mykey", "myfield")
+```
+
+or, by analogy to the above
+
+
+```{r}
+r$command(list("HGET", "mykey", "myfield"))
+```
+
+With this approach, you can use any new command, even before we release a new version.
+
 # Potential applications
 
 Because `redux` exposes all of Redis, you can roll your own data
