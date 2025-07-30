@@ -30,6 +30,16 @@ There is no need to explicitly close the redis connection.  It
 will be closed automatically when the connection goes out of scope
 and is garbage collected.
 }
+\section{Arbitrary commands with \code{command()}}{
+##' Redis releases new commands frequently, or it's possible that the
+wrapper created by redux is too inflexible for your use case.  In
+this situation you can use the \code{command()} method to send
+arbitrary commands to the server and either use these unsupported
+commands, or fundamentally change how they work.
+
+See \code{\link[=redis_connection]{redis_connection()}} for details on how to use this.
+}
+
 \section{Warning}{
 Some commands will block.  This includes \code{BRPOP} (and other
 list commands beginning with \code{B}).  Once these commands have

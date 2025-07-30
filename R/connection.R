@@ -17,8 +17,7 @@
 ##'   been closed, through serialisation/deserialisation or through
 ##'   loss of internet connection.
 ##'
-##' * `command(cmd)`: Run a Redis command.  The format of this command
-##'   will be documented elsewhere.
+##' * `command(cmd)`: Run a Redis command.  See below for the format.
 ##'
 ##' * `pipeline(cmds)`: Run a pipeline of Redis commands.
 ##'
@@ -29,6 +28,43 @@
 ##'   apply to each received message, returning `TRUE` when
 ##'   subscription should stop, and `envir` is the environment in
 ##'   which to evaluate `callback`.  See below.
+##'
+##' # Arbitrary commands with `command()`
+##'
+##' Redis releases new commands frequently, or it's possible that the
+##' wrapper created by redux is too inflexible for your use case.  In
+##' this situation you can use the `command()` method to send
+##' arbitrary commands to the server and either use these unsupported
+##' commands, or fundamentally change how they work.
+##'
+##' The `command` function takes a single unnamed argument, being a
+##' list of commands.  The first element of this will always be the
+##' name of a redis command (an uppercase string, such as `HMSET` or
+##' `AUTH`) and subsequent arguments will be strings, raw vectors or
+##' `NULL`.  Strings and raw vectors are passed as-is, while `NULL`
+##' values are skipped over.
+##'
+##' **Spaces within strings are not interpreted as command
+##' separators**.  So you cannot pass, for example
+##'
+##' ```
+##' r$command(list("SET", "a b"))
+##' ```
+##'
+##' and have redis interpret this as two arguments to `SET`.  You must
+##' pass each argument as an element within the list
+##'
+##' ```
+##' r$command(list("SET", "a", "b"))
+##' ```
+##'
+##' Raw vectors can be useful for passing in serialised R objects, you
+##' can use [object_to_bin()] and [bin_to_object()] to simplify this
+##' process.
+##'
+##' ```
+##' r$command(list("SET", "a", object_to_bin(mtcars)))
+##' ```
 ##'
 ##' # Subscriptions
 ##'

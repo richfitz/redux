@@ -5,6 +5,16 @@
 ##' will be closed automatically when the connection goes out of scope
 ##' and is garbage collected.
 ##'
+##' # Arbitrary commands with `command()`
+##'
+##' ##' Redis releases new commands frequently, or it's possible that the
+##' wrapper created by redux is too inflexible for your use case.  In
+##' this situation you can use the `command()` method to send
+##' arbitrary commands to the server and either use these unsupported
+##' commands, or fundamentally change how they work.
+##'
+##' See [redis_connection()] for details on how to use this.
+##'
 ##' # Warning
 ##'
 ##' Some commands will block.  This includes `BRPOP` (and other

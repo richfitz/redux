@@ -29,8 +29,7 @@ The returned list has elements, all of which are functions:
 \item \code{reconnect()}: Attempt reconnection of a connection that has
 been closed, through serialisation/deserialisation or through
 loss of internet connection.
-\item \code{command(cmd)}: Run a Redis command.  The format of this command
-will be documented elsewhere.
+\item \code{command(cmd)}: Run a Redis command.  See below for the format.
 \item \code{pipeline(cmds)}: Run a pipeline of Redis commands.
 \item \code{subscribe(channel, pattern, callback, envir)}: Subscribe to a
 channel or pattern specifying channels.  Here, \code{channel} must be
@@ -41,6 +40,40 @@ subscription should stop, and \code{envir} is the environment in
 which to evaluate \code{callback}.  See below.
 }
 }
+\section{Arbitrary commands with \code{command()}}{
+Redis releases new commands frequently, or it's possible that the
+wrapper created by redux is too inflexible for your use case.  In
+this situation you can use the \code{command()} method to send
+arbitrary commands to the server and either use these unsupported
+commands, or fundamentally change how they work.
+
+The \code{command} function takes a single unnamed argument, being a
+list of commands.  The first element of this will always be the
+name of a redis command (an uppercase string, such as \code{HMSET} or
+\code{AUTH}) and subsequent arguments will be strings, raw vectors or
+\code{NULL}.  Strings and raw vectors are passed as-is, while \code{NULL}
+values are skipped over.
+
+\strong{Spaces within strings are not interpreted as command
+separators}.  So you cannot pass, for example
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{r$command(list("SET", "a b"))
+}\if{html}{\out{</div>}}
+
+and have redis interpret this as two arguments to \code{SET}.  You must
+pass each argument as an element within the list
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{r$command(list("SET", "a", "b"))
+}\if{html}{\out{</div>}}
+
+Raw vectors can be useful for passing in serialised R objects, you
+can use \code{\link[=object_to_bin]{object_to_bin()}} and \code{\link[=bin_to_object]{bin_to_object()}} to simplify this
+process.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{r$command(list("SET", "a", object_to_bin(mtcars)))
+}\if{html}{\out{</div>}}
+}
+
 \section{Subscriptions}{
 The callback function must take a single argument; this will be
 the received message with named elements \code{type} (which will be
