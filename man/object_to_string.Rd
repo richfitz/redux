@@ -21,18 +21,17 @@ bin_to_object(bin)
 \item{str}{A string to convert into an R object}
 
 \item{xdr}{Use the big-endian representation?  Unlike,
-\code{\link{serialize}} this is disabled here by default as it
-is a bit faster (~ 20%, saving about 1 microsecond of a 5
-microsecond roundtrip for a serialization of 100 doubles)}
+\code{\link[=serialize]{serialize()}} this is disabled here by default as it is a bit
+faster (~ 20\%, saving about 1 microsecond of a 5 microsecond
+roundtrip for a serialization of 100 doubles)}
 
 \item{bin}{A binary vector to convert back to an R object}
 }
 \description{
 Serialise/deserialise an R object into a string.  This is a very
-thin wrapper around the existing R functions
-\code{\link{serialize}} and \code{\link{rawToChar}}.  This is
-useful to encode arbitrary R objects as string to then save in
-Redis (which expects a string).
+thin wrapper around the existing R functions \code{\link[=serialize]{serialize()}} and
+\code{\link[=rawToChar]{rawToChar()}}.  This is useful to encode arbitrary R objects as
+string to then save in Redis (which expects a string).
 }
 \examples{
 s <- object_to_string(1:10)

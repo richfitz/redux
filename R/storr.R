@@ -6,17 +6,17 @@
 ##'   with a punctuation character (e.g., ":") will make created
 ##'   strings nicer to deal with.
 ##'
-##' @param con A \code{redis_api} connection object, as created by
-##'   redux.  Alternatively if passing in a \code{redis_config}
-##'   object, a list, or \code{NULL} this will be passed through to
-##'   \code{hiredis} to create a new connection.
+##' @param con A `redis_api` connection object, as created by
+##'   redux.  Alternatively if passing in a `redis_config`
+##'   object, a list, or `NULL` this will be passed through to
+##'   `hiredis` to create a new connection.
 ##'
 ##' @param hash_algorithm Name of the hash algorithm to use.  Possible
 ##'   values are "md5", "sha1", and others supported by
-##'   \code{digest}.  If not given, then we will default to
+##'   `digest`.  If not given, then we will default to
 ##'   "md5".
 ##'
-##' @param default_namespace Default namespace (see \code{\link{storr}}).
+##' @param default_namespace Default namespace (see [storr::storr]).
 ##' @export
 ##' @author Rich FitzJohn
 storr_redis_api <- function(prefix, con, hash_algorithm = NULL,

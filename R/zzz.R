@@ -1,12 +1,16 @@
-##' Primarily used for pipelining, the \code{redis} object produces
-##' commands the same way that the main \code{\link{redis_api}}
-##' objects do.  If passed in as arguments to the \code{pipeline}
+##' Primarily used for pipelining, the `redis` object produces
+##' commands the same way that the main [redis_api()]
+##' objects do.  If passed in as arguments to the `pipeline`
 ##' method (where supported) these commands will then be pipelined.
-##' See the \code{redux} package for an example.
+##'
 ##' @title Redis commands object
+##'
 ##' @export
+##'
 ##' @importFrom stats setNames
+##'
 ##' @importFrom utils URLdecode capture.output modifyList
+##'
 ##' @examples
 ##' # This object creates commands in the format expected by the
 ##' # lower-level redis connection object:

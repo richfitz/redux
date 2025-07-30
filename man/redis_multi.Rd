@@ -2,7 +2,7 @@
 % Please edit documentation in R/redis_tools.R
 \name{redis_multi}
 \alias{redis_multi}
-\title{Helper for Redis MULTI}
+\title{Helper for Redis \code{MULTI}}
 \usage{
 redis_multi(con, expr)
 }

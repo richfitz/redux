@@ -30,7 +30,7 @@ values are "md5", "sha1", and others supported by
 \code{digest}.  If not given, then we will default to
 "md5".}
 
-\item{default_namespace}{Default namespace (see \code{\link{storr}}).}
+\item{default_namespace}{Default namespace (see \link[storr:storr]{storr::storr}).}
 }
 \description{
 Redis object cache driver
