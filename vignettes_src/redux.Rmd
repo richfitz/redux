@@ -12,7 +12,7 @@ vignette: >
 ``` {r echo = FALSE,results = "hide"}
 library(methods)
 knitr::opts_chunk$set(error = FALSE)
-redux::hiredis()$DEL(c("mykey", "mylist", "mylist2", "rlist"))
+redux::hiredis()$DEL(c("mykey", "mylist", "mylist2", "myhash", "rlist"))
 set.seed(1)
 ```
 
@@ -357,34 +357,34 @@ The definition here
 * passes that to redis via `command()`
 
 ```{r}
-redis$HSET("mykey", "myfield", "myvalue")
+redis$HSET("myhash", "myfield", "myvalue")
 ```
 
 On a real redis server then:
 
 ```{r}
 r <- redux::hiredis()
-r$HSET("mykey", "myfield", "myvalue")
-r$HGET("mykey", "myfield")
+r$HSET("myhash", "myfield", "myvalue")
+r$HGET("myhash", "myfield")
 ```
 
 We can do this manually using `r$command()` and passing a list:
 
 ```{r}
-r$command(list("HSET", "mykey", "myfield", "myvalue2"))
+r$command(list("HSET", "myhash", "myfield", "myvalue2"))
 ```
 
 We can see this has worked by fetching our value
 
 ```{r}
-r$HGET("mykey", "myfield")
+r$HGET("myhash", "myfield")
 ```
 
 or, by analogy to the above
 
 
 ```{r}
-r$command(list("HGET", "mykey", "myfield"))
+r$command(list("HGET", "myhash", "myfield"))
 ```
 
 With this approach, you can use any new command, even before we release a new version.
