@@ -1,5 +1,3 @@
-context("interface")
-
 ## Multiple args OK:
 test_that("MSET / MGET / DEL", {
   r <- test_hiredis_connection()

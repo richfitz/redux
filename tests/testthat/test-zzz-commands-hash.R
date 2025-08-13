@@ -1,5 +1,3 @@
-context("commands - hash")
-
 test_that("HDEL", {
   skip_if_cmd_unsupported("HDEL")
   con <- test_hiredis_connection()

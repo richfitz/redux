@@ -1,5 +1,3 @@
-context("commands - generic")
-
 test_that("DEL", {
   skip_if_cmd_unsupported("DEL")
   con <- test_hiredis_connection()

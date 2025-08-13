@@ -1,5 +1,3 @@
-context("tools")
-
 ## Pretty simple tests here; just aiming not to fail.
 test_that("parse_info", {
   con <- test_hiredis_connection()

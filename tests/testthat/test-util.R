@@ -1,5 +1,3 @@
-context("util")
-
 test_that("assertions work", {
   expect_error(assert_scalar(NULL), "must be a scalar")
   expect_error(assert_scalar(numeric(0)), "must be a scalar")

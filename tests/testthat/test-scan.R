@@ -1,5 +1,3 @@
-context("scan")
-
 test_that("scan", {
   con <- test_hiredis_connection()
   prefix <- rand_str(prefix = "scan:")

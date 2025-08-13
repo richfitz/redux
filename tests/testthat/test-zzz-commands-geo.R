@@ -1,5 +1,3 @@
-context("commands - geo")
-
 test_that("GEOADD:prep", {
   key <- rand_str()
   x <- c(13.361389, 15.087269)

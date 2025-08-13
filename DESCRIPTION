@@ -24,8 +24,9 @@ Suggests:
     knitr,
     rmarkdown,
     sys,
-    testthat
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
+Config/testthat/edition: 3

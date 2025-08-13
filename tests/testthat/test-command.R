@@ -1,5 +1,3 @@
-context("cmd_command")
-
 test_that("cmd_command", {
   expect_null(cmd_command("foo", NULL, FALSE))
   expect_equal(cmd_command("foo", 1, FALSE), list("foo", 1))

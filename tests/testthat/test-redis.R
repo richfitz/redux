@@ -1,5 +1,3 @@
-context("hiredis")
-
 test_that("connection", {
   skip_if_no_redis()
   ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)

@@ -1,5 +1,3 @@
-context("connection, redux")
-
 test_that("impossible connection", {
   skip_if_no_redis()
   expect_error(redis_connection(redis_config(port = 99999)),

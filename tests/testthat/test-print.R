@@ -1,5 +1,3 @@
-context("print")
-
 test_that("redis_commands", {
   str <- capture_output(print(redis))
   expect_match(str, "redis_commands")

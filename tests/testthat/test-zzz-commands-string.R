@@ -1,5 +1,3 @@
-context("commands - string")
-
 test_that("APPEND", {
   skip_if_cmd_unsupported("APPEND")
   con <- test_hiredis_connection()

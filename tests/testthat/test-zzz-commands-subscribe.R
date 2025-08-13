@@ -1,5 +1,3 @@
-context("commands - cluster")
-
 test_that("PSUBSCRIBE", {
   expect_error(redis_cmds$PSUBSCRIBE("pat*"),
                "Do not use PSUBSCRIBE")

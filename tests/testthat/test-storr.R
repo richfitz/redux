@@ -1,5 +1,3 @@
-context("storr")
-
 test_that("redis_api", {
   con <- test_hiredis_connection()
   storr::test_driver(function(dr = NULL, ...)

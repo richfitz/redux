@@ -1,5 +1,3 @@
-context("commands - sorted set")
-
 test_that("ZADD", {
   skip_if_cmd_unsupported("ZADD")
   con <- test_hiredis_connection()

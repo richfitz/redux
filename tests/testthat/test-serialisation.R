@@ -1,5 +1,3 @@
-context("serialisation")
-
 test_that("string serialisation is transitive", {
   f <- function(x, identical = TRUE) {
     y <- string_to_object(object_to_string(x))

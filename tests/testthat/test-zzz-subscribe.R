@@ -3,8 +3,6 @@
 ## firing off the publisher instance.  So I only want to run these if
 ## everything else seems OK.
 
-context("subscription")
-
 test_that("low level", {
   ch <- "foo"
   dat <- start_publisher(ch)

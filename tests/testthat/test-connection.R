@@ -1,5 +1,3 @@
-context("connection")
-
 test_that("redis_connection", {
   skip_if_no_redis()
   con <- redis_connection()

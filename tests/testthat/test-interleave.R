@@ -1,5 +1,3 @@
-context("cmd_interleave")
-
 test_that("cmd_interleave", {
   ## Basic cases:
   expect_equal(cmd_interleave("a", "b"), c("a", "b"))

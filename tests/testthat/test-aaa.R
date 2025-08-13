@@ -1,5 +1,3 @@
-context("redux (basic test)")
-
 test_that("use", {
   r <- test_hiredis_connection()
   expect_equal(r$PING(), redis_status("PONG"))

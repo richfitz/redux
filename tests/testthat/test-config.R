@@ -1,5 +1,3 @@
-context("config")
-
 ## Url splitting (why isn't this in base R? It doesn't seem worth
 ## adding a whole dependency for)
 test_that("url parse", {

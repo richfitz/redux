@@ -1,5 +1,3 @@
-context("commands - list")
-
 test_that("BLPOP", {
   skip_if_cmd_unsupported("BLPOP")
   con <- test_hiredis_connection()

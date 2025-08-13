@@ -1,5 +1,3 @@
-context("conversions")
-
 ## Mostly regression tests for the conversions.  This will grow as I
 ## identify bugs and should act to stop them reappearing.
 test_that("difficult conversions", {
