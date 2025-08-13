@@ -1,5 +1,5 @@
 test_that("Redis commands", {
-  expect_is(redis, "redis_commands")
+  expect_s3_class(redis, "redis_commands")
   expect_error(redis$new <- 1, "locked environment")
   expect_identical(redis$PING(), list("PING", NULL))
 })

@@ -95,7 +95,7 @@ test_that("serialisation", {
   on.exit(r$DEL(key))
   expect_equal(r$SET(key, object_to_bin(1:10)), redis_status("OK"))
 
-  expect_is(r$GET(key), "raw")
+  expect_type(r$GET(key), "raw")
   expect_equal(bin_to_object(r$GET(key)), 1:10)
 
   ## And vectorised:

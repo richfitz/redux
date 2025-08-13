@@ -109,7 +109,7 @@ test_that("SMEMBERS", {
   con$SADD(key, "hello")
   con$SADD(key, "world")
   res <- con$SMEMBERS(key)
-  expect_is(res, "list")
+  expect_type(res, "list")
   expect_equal(sort(vcapply(res, identity)), sort(c("hello", "world")))
 })
 

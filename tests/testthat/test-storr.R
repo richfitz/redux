@@ -8,7 +8,7 @@ test_that("storr_redis_api", {
   con <- test_hiredis_connection()
   st <- storr_redis_api(rand_str(), con)
   on.exit(st$destroy())
-  expect_is(st, "storr")
+  expect_s3_class(st, "storr")
   expect_equal(st$driver$type(), "redis_api/redux")
 })
 

@@ -235,7 +235,7 @@ test_that("PSETEX", {
   on.exit(con$DEL(key))
 
   con$PSETEX(key, 1000, "Hello")
-  expect_is(con$PTTL(key), "integer")
+  expect_type(con$PTTL(key), "integer")
   expect_equal(con$GET(key), "Hello")
 })
 
@@ -269,7 +269,7 @@ test_that("SETEX", {
   on.exit(con$DEL(key))
 
   con$SETEX(key, 10, "hello")
-  expect_is(con$TTL(key), "integer")
+  expect_type(con$TTL(key), "integer")
   expect_equal(con$GET(key), "hello")
 })
 

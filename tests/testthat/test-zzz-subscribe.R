@@ -142,7 +142,7 @@ test_that("flood and recover", {
               silent = TRUE)
   res2 <- .Call(redux:::Credux_redis_unsubscribe, ptr, ch, pattern)
 
-  expect_is(res1, "try-error")
+  expect_s3_class(res1, "try-error")
   expect_equivalent(res2, list("unsubscribe", ch, 0L))
   expect_gt(attr(res2, "n_discarded"), 0)
 

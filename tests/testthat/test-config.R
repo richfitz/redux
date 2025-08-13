@@ -99,7 +99,7 @@ test_that("host environment variable", {
   on.exit(sys_resetenv(oo))
   obj <- redis_config()
   expect_equal(obj$host, "myhost")
-  expect_is(obj$port, "integer")
+  expect_type(obj$port, "integer")
 
   obj <- redis_config(host = "other")
   expect_equal(obj$host, "other")
@@ -128,7 +128,7 @@ test_that("port environment variable", {
 
 test_that("redis_config", {
   cfg <- redis_config()
-  expect_is(cfg, "redis_config")
+  expect_s3_class(cfg, "redis_config")
   expect_equal(redis_config(cfg), cfg)
   expect_equal(redis_config(config = cfg), cfg)
   expect_warning(cfg2 <- redis_config(host = "foo", config = cfg),
