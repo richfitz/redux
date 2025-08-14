@@ -101,7 +101,8 @@ test_that("OBJECT", {
 
   con$LPUSH(key, "Hello world")
   expect_equal(con$OBJECT("refcount", key), 1)
-  expect_true(con$OBJECT("encoding", key) %in% c("quicklist", "ziplist"))
+  expect_true(
+    con$OBJECT("encoding", key) %in% c("quicklist", "ziplist", "listpack"))
   expect_type(con$OBJECT("idletime", key), "integer")
 })
 
