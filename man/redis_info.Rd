@@ -4,7 +4,7 @@
 \alias{redis_info}
 \alias{parse_info}
 \alias{redis_version}
-\title{Parse Redis INFO}
+\title{Parse Redis \code{INFO}}
 \usage{
 redis_info(con)
 
@@ -21,19 +21,19 @@ redis_version(con)
 Parse and return Redis \code{INFO} data.
 }
 \examples{
-if (redux::redis_available()) {
-  r <- redux::hiredis()
+\dontshow{if (redux::redis_available()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+r <- redux::hiredis()
 
-  # Redis server version:
-  redux::redis_version(r)
-  # This is a 'numeric_version' object so you can compute with it
-  # if you need to check for minimum versions
-  redux::redis_version(r) >= numeric_version("2.1.1")
+# Redis server version:
+redux::redis_version(r)
+# This is a 'numeric_version' object so you can compute with it
+# if you need to check for minimum versions
+redux::redis_version(r) >= numeric_version("2.1.1")
 
-  # Extensive information is given back by the server:
-  redux::redis_info(r)
+# Extensive information is given back by the server:
+redux::redis_info(r)
 
-  # Which is just:
-  redux::parse_info(r$INFO())
-}
+# Which is just:
+redux::parse_info(r$INFO())
+\dontshow{\}) # examplesIf}
 }

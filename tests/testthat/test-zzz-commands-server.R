@@ -1,5 +1,3 @@
-context("commands - server")
-
 ## Tested on the server
 test_that("CLIENT KILL", {
   expect_equal(redis_cmds$CLIENT_KILL(ID = "12", SKIPME = "yes"),

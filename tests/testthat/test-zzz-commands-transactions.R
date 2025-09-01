@@ -1,5 +1,3 @@
-context("commands - transactions")
-
 test_that("DISCARD", {
   expect_equal(redis_cmds$DISCARD(), list("DISCARD"))
 })

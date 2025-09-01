@@ -1,5 +1,3 @@
-context("commands - hyperloglog")
-
 test_that("PFADD", {
   skip_if_cmd_unsupported("PFADD")
   con <- test_hiredis_connection()

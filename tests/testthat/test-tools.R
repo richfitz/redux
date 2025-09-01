@@ -1,13 +1,11 @@
-context("tools")
-
 ## Pretty simple tests here; just aiming not to fail.
 test_that("parse_info", {
   con <- test_hiredis_connection()
   skip_if_no_info(con)
   info <- redis_info(con)
-  expect_is(info, "list")
+  expect_type(info, "list")
   dat <- con$INFO()
-  expect_is(parse_info(dat), "list")
+  expect_type(parse_info(dat), "list")
   expect_equal(redis_version(con), info$redis_version)
 })
 
@@ -43,7 +41,7 @@ test_that("redis_multi", {
     stop("abort")
   }), silent = TRUE)
   expect_equal(con$GET(id), "2")
-  expect_is(err, "try-error")
+  expect_s3_class(err, "try-error")
 
   expect_error(con$EXEC(), "ERR EXEC without MULTI")
 })
@@ -80,8 +78,8 @@ test_that("redis_time", {
   con <- test_hiredis_connection()
   skip_if_no_time(con)
 
-  expect_is(redis_time(con), "character")
-  expect_is(redis_time_to_r(redis_time(con)), "POSIXt")
+  expect_type(redis_time(con), "character")
+  expect_s3_class(redis_time_to_r(redis_time(con)), "POSIXt")
 })
 
 ## This is just a really simple test that this works at all:
@@ -107,9 +105,9 @@ test_that("scripts", {
 test_that("parse_client_info", {
   str <- 'id=3 addr=127.0.0.1:56110 fd=6 name= age=0 idle=0 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=32768 obl=0 oll=0 omem=0 events=r cmd=client\n'
   dat <- parse_client_info(str)
-  expect_is(dat, "list")
+  expect_type(dat, "list")
   expect_equal(length(dat), 1)
-  expect_is(dat[[1]], "character")
+  expect_type(dat[[1]], "character")
   expect_equal(dat[[1]][["id"]], "3")
 
   expect_equal(parse_client_info(""), list())

@@ -3,8 +3,6 @@
 ## firing off the publisher instance.  So I only want to run these if
 ## everything else seems OK.
 
-context("subscription")
-
 test_that("low level", {
   ch <- "foo"
   dat <- start_publisher(ch)
@@ -144,8 +142,8 @@ test_that("flood and recover", {
               silent = TRUE)
   res2 <- .Call(redux:::Credux_redis_unsubscribe, ptr, ch, pattern)
 
-  expect_is(res1, "try-error")
-  expect_equivalent(res2, list("unsubscribe", ch, 0L))
+  expect_s3_class(res1, "try-error")
+  expect_equal(res2, list("unsubscribe", ch, 0L), ignore_attr = TRUE)
   expect_gt(attr(res2, "n_discarded"), 0)
 
   ## This one is important:

@@ -4,7 +4,7 @@
 \alias{scan_apply}
 \alias{scan_del}
 \alias{scan_find}
-\title{Iterate over keys using SCAN}
+\title{Iterate over keys using \code{SCAN}}
 \usage{
 scan_apply(
   con,
@@ -21,11 +21,11 @@ scan_del(con, pattern, count = NULL, type = "SCAN", key = NULL)
 scan_find(con, pattern, count = NULL, type = "SCAN", key = NULL)
 }
 \arguments{
-\item{con}{A \code{redis_api} object}
+\item{con}{A \link{redis_api} object}
 
 \item{callback}{Function that takes a character vector of keys and
 does something useful to it.  \code{con$DEL} is one option here
-to delete keys that match a pattern.  Unlike R's *apply
+to delete keys that match a pattern.  Unlike R's \verb{*apply}
 functions, callback is called for its side effects and its
 return values will be ignored.}
 
@@ -38,22 +38,20 @@ Note that if used, \code{pattern} must be provided (at least as
 \item{count}{Optional step size (default is Redis' default which
 is 10)}
 
-\item{type}{Type of SCAN to run.  Options are \code{"SCAN"} (the
-default), \code{"HSCAN"} (scan through keys of a hash),
-\code{"SSCAN"} (scan through elements of a set) and
-\code{"ZSCAN"} (scan though elements of a sorted set).  If
-\code{type} is not \code{"SCAN"}, then \code{key} must be
-provided.  HSCAN and ZSCAN currently do not work usefully.}
+\item{type}{Type of \code{SCAN} to run.  Options are \code{"SCAN"} (the
+default), \code{"HSCAN"} (scan through keys of a hash), \code{"SSCAN"}
+(scan through elements of a set) and \code{"ZSCAN"} (scan though
+elements of a sorted set).  If \code{type} is not \code{"SCAN"}, then
+\code{key} must be provided.  \code{HSCAN} and \code{ZSCAN} currently do not
+work usefully.}
 
 \item{key}{Key to use when running a hash, set or sorted set scan.}
 }
 \description{
-Support for iterating with \code{SCAN}.  Note that this will
-generalise soon to support collecting output, \code{SSCAN} and
-other variants, etc.
+Support for iterating with \code{SCAN}.  Note that this generalises to
+support collecting output, \code{SSCAN} and other variants, etc.
 }
 \details{
-The functions \code{scan_del} and \code{scan_find} are example
-functions that delete and find all keys corresponding to a given
-pattern.
+The functions \code{scan_del} and \code{scan_find} are example functions
+that delete and find all keys corresponding to a given pattern.
 }

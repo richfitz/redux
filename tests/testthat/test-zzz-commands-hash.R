@@ -1,5 +1,3 @@
-context("commands - hash")
-
 test_that("HDEL", {
   skip_if_cmd_unsupported("HDEL")
   con <- test_hiredis_connection()
@@ -42,7 +40,7 @@ test_that("HGETALL", {
   expect_equal(con$HSET(key, "field1", "Hello"), 1)
   expect_equal(con$HSET(key, "field2", "World"), 1)
   dat <- con$HGETALL(key)
-  expect_is(dat, "list")
+  expect_type(dat, "list")
   expect_equal(length(dat), 4L)
   dat <- matrix(vcapply(dat, identity), 2)
   i <- match(c("field1", "field2"), dat[1, ])

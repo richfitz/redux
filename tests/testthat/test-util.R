@@ -1,5 +1,3 @@
-context("util")
-
 test_that("assertions work", {
   expect_error(assert_scalar(NULL), "must be a scalar")
   expect_error(assert_scalar(numeric(0)), "must be a scalar")
@@ -56,7 +54,7 @@ test_that("hiredis_function", {
   expect_error(hiredis_function("foo", list(a = identity), required = TRUE),
                "Interface function foo required")
   f <- hiredis_function("foo", structure(list(), type = "bar"), FALSE)
-  expect_is(f, "function")
+  expect_true(is.function(f))
   expect_error(f(), "foo is not supported with the bar interface")
 })
 

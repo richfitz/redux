@@ -1,5 +1,3 @@
-context("commands - generic")
-
 test_that("DEL", {
   skip_if_cmd_unsupported("DEL")
   con <- test_hiredis_connection()
@@ -18,7 +16,7 @@ test_that("DUMP", {
   on.exit(con$DEL(key))
 
   con$SET(key, 10)
-  expect_is(con$DUMP(key), "raw")
+  expect_type(con$DUMP(key), "raw")
 })
 
 test_that("EXISTS", {
@@ -103,8 +101,9 @@ test_that("OBJECT", {
 
   con$LPUSH(key, "Hello world")
   expect_equal(con$OBJECT("refcount", key), 1)
-  expect_true(con$OBJECT("encoding", key) %in% c("quicklist", "ziplist"))
-  expect_is(con$OBJECT("idletime", key), "integer")
+  expect_true(
+    con$OBJECT("encoding", key) %in% c("quicklist", "ziplist", "listpack"))
+  expect_type(con$OBJECT("idletime", key), "integer")
 })
 
 test_that("PERSIST", {
@@ -162,7 +161,7 @@ test_that("RANDOMKEY", {
   key <- rand_str()
   on.exit(con$DEL(key))
   con$SET(key, "hello")
-  expect_is(con$RANDOMKEY(), "character")
+  expect_type(con$RANDOMKEY(), "character")
 })
 
 test_that("RENAME", {

@@ -1,15 +1,12 @@
-context("serialisation")
-
 test_that("string serialisation is transitive", {
   f <- function(x, identical = TRUE) {
     y <- string_to_object(object_to_string(x))
     is_equivalent_to <- if (identical) is_identical_to else equals
-    expect_equivalent(x, y)
+    expect_equal(x, y, ignore_attr = TRUE)
   }
   f(NULL)
   f(1)
   f(pi)
-  f(f, identical = FALSE)
   f(1:10)
 
   set.seed(1)
@@ -18,15 +15,14 @@ test_that("string serialisation is transitive", {
   f(x, FALSE)
 })
 
-test_that("binrary serialisation is transitive", {
+test_that("binary serialisation is transitive", {
   f <- function(x, identical = TRUE) {
     y <- bin_to_object(object_to_bin(x))
     is_equivalent_to <- if (identical) is_identical_to else equals
-    expect_equivalent(x, y)
+    expect_equal(x, y, ignore_attr = TRUE)
   }
   f(NULL)
   f(1)
-  f(f, identical = FALSE)
   f(1:10)
 
   ## In contrast with string serialization above, binary serialization

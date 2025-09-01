@@ -1,5 +1,3 @@
-context("commands - set")
-
 test_that("SADD", {
   skip_if_cmd_unsupported("SADD")
   con <- test_hiredis_connection()
@@ -111,7 +109,7 @@ test_that("SMEMBERS", {
   con$SADD(key, "hello")
   con$SADD(key, "world")
   res <- con$SMEMBERS(key)
-  expect_is(res, "list")
+  expect_type(res, "list")
   expect_equal(sort(vcapply(res, identity)), sort(c("hello", "world")))
 })
 

@@ -12,10 +12,9 @@ redis
 }
 \description{
 Primarily used for pipelining, the \code{redis} object produces
-commands the same way that the main \code{\link{redis_api}}
+commands the same way that the main \code{\link[=redis_api]{redis_api()}}
 objects do.  If passed in as arguments to the \code{pipeline}
 method (where supported) these commands will then be pipelined.
-See the \code{redux} package for an example.
 }
 \examples{
 # This object creates commands in the format expected by the

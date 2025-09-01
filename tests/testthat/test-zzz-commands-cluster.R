@@ -1,5 +1,3 @@
-context("commands - cluster")
-
 test_that("CLUSTER ADDSLOTS", {
   expect_equal(redis_cmds$CLUSTER_ADDSLOTS(1:3),
                list("CLUSTER", "ADDSLOTS", 1:3))

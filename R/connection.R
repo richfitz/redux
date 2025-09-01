@@ -1,7 +1,7 @@
 ##' Create a Redis connection.  This function is designed to be used
 ##' in other packages, and not directly by end-users.  However, it is
-##' possible and safe to use.  See the \code{\link{hiredis}} package
-##' for the user friendly interface.
+##' possible and safe to use.  See the [hiredis()] function for the
+##' user friendly interface.
 ##'
 ##' This function creates a list of functions, appropriately bound to
 ##' a pointer to a Redis connection.  This is designed for package
@@ -11,53 +11,89 @@
 ##'
 ##' The returned list has elements, all of which are functions:
 ##'
-##' \describe{
-##' \item{\code{config()}}{The configuration information}
+##' * `config()`: The configuration information
 ##'
-##' \item{\code{reconnect()}}{Attempt reconnection of a connection
-##' that has been closed, through serialisation/deserialisation or
-##' through loss of internet connection.}
+##' * `reconnect()`: Attempt reconnection of a connection that has
+##'   been closed, through serialisation/deserialisation or through
+##'   loss of internet connection.
 ##'
-##' \item{command(cmd)}{Run a Redis command.  The format of this
-##' command will be documented elsewhere.}
+##' * `command(cmd)`: Run a Redis command.  See below for the format.
 ##'
-##' \item{pipeline(cmds)}{Run a pipeline of Redis commands.}
+##' * `pipeline(cmds)`: Run a pipeline of Redis commands.
 ##'
-##' \item{subscribe(channel, pattern, callback, envir)}{Subscribe to a
-##' channel or pattern specifying channels.  Here, \code{channel} must
-##' be a character vector, \code{pattern} a logical indicating if
-##' \code{channel} should be interpreted as a pattern, \code{callback}
-##' is a function to apply to each received message, returning
-##' \code{TRUE} when subscription should stop, and \code{envir} is the
-##' environment in which to evaluate \code{callback}.  See below.}
+##' * `subscribe(channel, pattern, callback, envir)`: Subscribe to a
+##'   channel or pattern specifying channels.  Here, `channel` must be
+##'   a character vector, `pattern` a logical indicating if `channel`
+##'   should be interpreted as a pattern, `callback` is a function to
+##'   apply to each received message, returning `TRUE` when
+##'   subscription should stop, and `envir` is the environment in
+##'   which to evaluate `callback`.  See below.
 ##'
-##' }
+##' # Arbitrary commands with `command()`
 ##'
-##' @section Subscriptions:
+##' Redis releases new commands frequently, or it's possible that the
+##' wrapper created by redux is too inflexible for your use case.  In
+##' this situation you can use the `command()` method to send
+##' arbitrary commands to the server and either use these unsupported
+##' commands, or fundamentally change how they work.
 ##'
-##'   The callback function must take a single argument; this will be
-##'   the received message with named elements \code{type} (which will
-##'   be message), \code{channel} (the name of the channel) and
-##'   \code{value} (the message contents).  If \code{pattern} was
-##'   \code{TRUE}, then an additional element \code{pattern} will be
-##'   present (see the Redis docs).  The callback must return
-##'   \code{TRUE} or \code{FALSE}; this indicates if the client should
-##'   continue quit (i.e., \code{TRUE} means return control to R,
-##'   \code{FALSE} means keep going).
+##' The `command` function takes a single unnamed argument, being a
+##' list of commands.  The first element of this will always be the
+##' name of a redis command (an uppercase string, such as `HMSET` or
+##' `AUTH`) and subsequent arguments will be strings, raw vectors or
+##' `NULL`.  Strings and raw vectors are passed as-is, while `NULL`
+##' values are skipped over.
 ##'
-##'   Because the \code{subscribe} function is blocking and returns
-##'   nothing, so all data collection needs to happen as a side-effect
-##'   of the callback function.
+##' **Spaces within strings are not interpreted as command
+##' separators**.  So you cannot pass, for example
 ##'
-##'   There is currently no way of interrupting the client while it is
-##'   waiting for a message.
+##' ```
+##' r$command(list("SET", "a b"))
+##' ```
+##'
+##' and have redis interpret this as two arguments to `SET`.  You must
+##' pass each argument as an element within the list
+##'
+##' ```
+##' r$command(list("SET", "a", "b"))
+##' ```
+##'
+##' Raw vectors can be useful for passing in serialised R objects, you
+##' can use [object_to_bin()] and [bin_to_object()] to simplify this
+##' process.
+##'
+##' ```
+##' r$command(list("SET", "a", object_to_bin(mtcars)))
+##' ```
+##'
+##' # Subscriptions
+##'
+##' The callback function must take a single argument; this will be
+##' the received message with named elements `type` (which will be
+##' message), `channel` (the name of the channel) and `value` (the
+##' message contents).  If `pattern` was `TRUE`, then an additional
+##' element `pattern` will be present (see the Redis docs).  The
+##' callback must return `TRUE` or `FALSE`; this indicates if the
+##' client should continue quit (i.e., `TRUE` means return control to
+##' R, `FALSE` means keep going).
+##'
+##' Because the `subscribe` function is blocking and returns nothing,
+##' so all data collection needs to happen as a side-effect of the
+##' callback function.
+##'
+##' There is currently no way of interrupting the client while it is
+##' aiting for a message.
 ##'
 ##' @title Create a Redis connection
+##'
 ##' @param config Configuration parameters as generated by
-##'   \code{\link{redis_config}}
+##'   [redis_config()]
+##'
 ##' @useDynLib redux, .registration = TRUE
 ##' @export
-##'
+##' @examplesIf redux::redis_available()
+##' con <- redis_connection()
+##' con$command(list("PING"))
 redis_connection <- function(config = redis_config()) {
   config <- redis_config(config)
   ptr <- redis_connect(config)

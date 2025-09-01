@@ -1,10 +1,8 @@
-context("hiredis")
-
 test_that("connection", {
   skip_if_no_redis()
   ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
   ## Dangerous raw pointer:
-  expect_is(ptr, "externalptr")
+  expect_type(ptr, "externalptr")
   ## Check for no crash:
   rm(ptr)
   gc()
@@ -15,7 +13,7 @@ test_that("simple commands", {
   ptr <- redis_connect_tcp(REDIS_HOST, REDIS_PORT)
 
   ans <- redis_command(ptr, list("PING"))
-  expect_is(ans, "redis_status")
+  expect_s3_class(ans, "redis_status")
   expect_output(print(ans), "[Redis: PONG]", fixed = TRUE)
   expect_identical(as.character(ans), "PONG")
 
@@ -107,7 +105,7 @@ test_that("Pipelining", {
   cmd <- list(c("HGET", key, "a"), c("INCR", key))
   y <- redis_pipeline(ptr, cmd)
   expect_equal(length(x), 2)
-  expect_is(y[[1]], "redis_error")
+  expect_s3_class(y[[1]], "redis_error")
   expect_match(y[[1]], "^WRONGTYPE")
   ## This still ran:
   expect_identical(y[[2]], 2L)
@@ -122,7 +120,7 @@ test_that("Binary data", {
   expect_equal(redis_command(ptr, list("SET", key, data)),
                redis_status("OK"))
   x <- redis_command(ptr, list("GET", key))
-  expect_is(x, "raw")
+  expect_type(x, "raw")
   expect_equal(x, data)
 
   key2 <- rand_str(prefix = "redux_")

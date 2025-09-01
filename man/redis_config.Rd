@@ -16,48 +16,32 @@ Create a set of valid Redis configuration options.
 }
 \details{
 Valid arguments here are:
-
-\describe{
-
-\item{\code{url}}{The URL for the Redis server.  See examples.
-(default: Look up environment variable \code{REDIS_URL} or
-\code{NULL}).}
-
-\item{\code{host}}{The hostname of the Redis server. (default:
-\code{127.0.0.1}).}
-
-\item{\code{port}}{The port of the Redis server. (default: 6379).}
-
-\item{\code{path}}{The path for a Unix socket if connecting that way.}
-
-\item{\code{password}}{The Redis password (for use with
-\code{AUTH}).  This will be stored in \emph{plain text} as part of
-the Redis object.  (default: \code{NULL}).}
-
-\item{\code{db}}{The Redis database number to use (for use with
-\code{SELECT}.  Do not use in a redis clustering context.
-(default: \code{NULL}; i.e., don't switch).}
-
-\item{\code{timeout}}{The maximum number of milliseconds to wait for the
-connection to be established.  (default: \code{NULL}; i.e. wait forever).}
-
+\itemize{
+\item \code{url}: The URL for the Redis server.  See examples.  (default:
+Look up environment variable \code{REDIS_URL} or \code{NULL}).
+\item \code{host}: The hostname of the Redis server. (default: `127.0.0.1).
+\item \code{port}: The port of the Redis server. (default: 6379).
+\item \code{path}: The path for a Unix socket if connecting that way.
+\item \code{password}: The Redis password (for use with \code{AUTH}).  This will
+be stored in \emph{plain text} as part of the Redis object.
+(default: \code{NULL}).
+\item \code{db}: The Redis database number to use (for use with \code{SELECT}.
+Do not use in a redis clustering context.  (default: \code{NULL};
+i.e., don't switch).
+\item \code{timeout}: The maximum number of milliseconds to wait for the
+connection to be established.  (default: \code{NULL}; i.e. wait
+forever).
 }
 
 The way that configuration options are resolved follows the design
 for redis-rb very closely.
-
 \enumerate{
-
-\item{First, look up (and parse if found) the \code{REDIS_URL}
-environment variable and override defaults with that.}
-
-\item{Any arguments given (\code{host}, \code{port},
-\code{password}, \code{db}) override values inferred from the url
-or defaults.}
-
-\item{If \code{path} is given, that overrides the
-\code{host}/\code{port} settings and a socket connection will be
-used.}
+\item First, look up (and parse if found) the \code{REDIS_URL} environment
+variable and override defaults with that.
+\item Any arguments given (\code{host}, \code{port}, \code{password}, \code{db}) override
+values inferred from the url or defaults.
+\item If \code{path} is given, that overrides the \code{host}/\code{port} settings
+and a socket connection will be used.
 }
 }
 \examples{

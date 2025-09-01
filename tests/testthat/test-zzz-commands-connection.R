@@ -1,5 +1,3 @@
-context("commands - connection")
-
 test_that("AUTH", {
   pw <- rand_str()
   expect_equal(redis_cmds$AUTH(pw), list("AUTH", pw))

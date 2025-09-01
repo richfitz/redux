@@ -5,12 +5,12 @@
 ##' @title Create a Redis API object
 ##'
 ##' @param x An object that defines at least the function
-##'   \code{command} capable of processing commands in the appropriate
+##'   `command` capable of processing commands in the appropriate
 ##'   form.
 ##'  
 ##' @param version Version of the Redis API to generate.  If given as
 ##'   a numeric version (or something that can be coerced into one.
-##'   If given as \code{TRUE}, then we query the Redis server for its
+##'   If given as `TRUE`, then we query the Redis server for its
 ##'   version and generate only commands supported by the server.
 ##'
 ##' @importFrom R6 R6Class

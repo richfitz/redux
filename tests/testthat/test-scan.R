@@ -1,5 +1,3 @@
-context("scan")
-
 test_that("scan", {
   con <- test_hiredis_connection()
   prefix <- rand_str(prefix = "scan:")
@@ -35,7 +33,7 @@ test_that("HSCAN", {
   con$HMSET(key, a, x)
 
   res <- scan_find(con, "a*", type = "HSCAN", key = key)
-  expect_is(res, "matrix")
+  expect_true(is.matrix(res))
   expect_equal(colnames(res), c("field", "value"))
 
   v <- grep("^a", a, value = TRUE)

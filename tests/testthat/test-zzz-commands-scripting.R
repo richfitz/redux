@@ -1,5 +1,3 @@
-context("commands - scripting")
-
 test_that("EVAL", {
   skip_if_cmd_unsupported("EVAL")
   con <- test_hiredis_connection()

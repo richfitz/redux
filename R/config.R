@@ -2,49 +2,43 @@
 ##'
 ##' Valid arguments here are:
 ##'
-##' \describe{
+##' * `url`: The URL for the Redis server.  See examples.  (default:
+##'   Look up environment variable `REDIS_URL` or `NULL`).
 ##'
-##' \item{\code{url}}{The URL for the Redis server.  See examples.
-##' (default: Look up environment variable \code{REDIS_URL} or
-##' \code{NULL}).}
+##' * `host`: The hostname of the Redis server. (default: `127.0.0.1).
 ##'
-##' \item{\code{host}}{The hostname of the Redis server. (default:
-##' \code{127.0.0.1}).}
+##' * `port`: The port of the Redis server. (default: 6379).
 ##'
-##' \item{\code{port}}{The port of the Redis server. (default: 6379).}
+##' * `path`: The path for a Unix socket if connecting that way.
 ##'
-##' \item{\code{path}}{The path for a Unix socket if connecting that way.}
+##' * `password`: The Redis password (for use with `AUTH`).  This will
+##'   be stored in *plain text* as part of the Redis object.
+##'   (default: `NULL`).
 ##'
-##' \item{\code{password}}{The Redis password (for use with
-##' \code{AUTH}).  This will be stored in \emph{plain text} as part of
-##' the Redis object.  (default: \code{NULL}).}
+##' * `db`: The Redis database number to use (for use with `SELECT`.
+##'   Do not use in a redis clustering context.  (default: `NULL`;
+##'   i.e., don't switch).
 ##'
-##' \item{\code{db}}{The Redis database number to use (for use with
-##' \code{SELECT}.  Do not use in a redis clustering context.
-##' (default: \code{NULL}; i.e., don't switch).}
-##'
-##' \item{\code{timeout}}{The maximum number of milliseconds to wait for the
-##' connection to be established.  (default: \code{NULL}; i.e. wait forever).}
-##'
-##' }
+##' * `timeout`: The maximum number of milliseconds to wait for the
+##'   connection to be established.  (default: `NULL`; i.e. wait
+##'   forever).
 ##'
 ##' The way that configuration options are resolved follows the design
 ##' for redis-rb very closely.
 ##'
-##' \enumerate{
+##' 1. First, look up (and parse if found) the `REDIS_URL` environment
+##'    variable and override defaults with that.
 ##'
-##' \item{First, look up (and parse if found) the \code{REDIS_URL}
-##' environment variable and override defaults with that.}
+##' 2. Any arguments given (`host`, `port`, `password`, `db`) override
+##'    values inferred from the url or defaults.
 ##'
-##' \item{Any arguments given (\code{host}, \code{port},
-##' \code{password}, \code{db}) override values inferred from the url
-##' or defaults.}
+##' 3. If `path` is given, that overrides the `host`/`port` settings
+##'    and a socket connection will be used.
 ##'
-##' \item{If \code{path} is given, that overrides the
-##' \code{host}/\code{port} settings and a socket connection will be
-##' used.}
-##' }
-##'
+##' @title Redis configuration
+##' @param ... See Details
+##' @param config A list of options, to use in place of `...`
+##' @export
 ##' @examples
 ##' # default config:
 ##' redis_config()
@@ -58,10 +52,6 @@
 ##' # override url settings:
 ##' redis_config(url = "redis://myhost:32000", port = 31000)
 ##' redis_config(url = "redis://myhost:32000", path = "/tmp/redis.conf")
-##' @title Redis configuration
-##' @param ... See Details
-##' @param config A list of options, to use in place of \code{...}
-##' @export
 redis_config <- function(..., config = list(...)) {
   ## TODO: consider allowing case where where:
   ##   1 arg and is unnamed character (assume host)

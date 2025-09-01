@@ -1,5 +1,3 @@
-context("conversions")
-
 ## Mostly regression tests for the conversions.  This will grow as I
 ## identify bugs and should act to stop them reappearing.
 test_that("difficult conversions", {
@@ -37,10 +35,10 @@ test_that("raw detection", {
   ## The serialisation header might not be enough:
   d <- c(serialize(NULL, NULL)[1:2], as.raw(1:5))
   con$SET("key", d)
-  expect_is(con$GET("key"), "character")
+  expect_type(con$GET("key"), "character")
   d <- c(serialize(NULL, NULL, xdr = FALSE)[1:2], as.raw(1:5))
   con$SET("key", d)
-  expect_is(con$GET("key"), "character")
+  expect_type(con$GET("key"), "character")
 })
 
 ## Redis stores integers as strings, so make sure that TRUE/FALSE

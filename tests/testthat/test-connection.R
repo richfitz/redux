@@ -1,5 +1,3 @@
-context("connection")
-
 test_that("redis_connection", {
   skip_if_no_redis()
   con <- redis_connection()
@@ -14,7 +12,7 @@ test_that("redis_connection", {
   expect_equal(con$command("PING"), redis_status("PONG"))
 
   ## Very trivial tests of the other methods:
-  expect_is(con$config(), "redis_config")
+  expect_s3_class(con$config(), "redis_config")
   expect_equal(con$pipeline(list("PING", "PING")),
                rep(list(redis_status("PONG")), 2))
 })
