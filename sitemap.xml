@@ -1,0 +1,24 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://richfitz.github.io/redux/404.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/articles/index.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/articles/redux.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/authors.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/index.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/news/index.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/from_redis_hash.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/hiredis.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/index.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/object_to_string.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/parse_redis_url.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/redis.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/redis_api.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/redis_config.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/redis_connection.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/redis_info.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/redis_multi.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/redis_scripts.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/redis_time.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/scan_apply.html</loc></url>
+<url><loc>https://richfitz.github.io/redux/reference/storr_redis_api.html</loc></url>
+</urlset>
+
