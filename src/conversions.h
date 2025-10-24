@@ -3,13 +3,21 @@
 #include <hiredis.h>
 #include <stdbool.h>
 
+typedef enum {
+  AS_AUTO,
+  AS_RAW
+} reply_string_as;
+
+reply_string_as r_reply_string_as(SEXP as);
+
 /* whole reply */
-SEXP redis_reply_to_sexp(redisReply* reply, bool error_throw);
+SEXP redis_reply_to_sexp(redisReply* reply, bool error_throw,
+                         reply_string_as as);
 
 /* possible bits of a reply */
-SEXP raw_string_to_sexp(const char* s, size_t len);
+SEXP raw_string_to_sexp(const char* s, size_t len, reply_string_as as);
 SEXP status_to_sexp(const char* s);
-SEXP array_to_sexp(redisReply* reply, bool error_throw);
+SEXP array_to_sexp(redisReply* reply, bool error_throw, reply_string_as as);
 SEXP reply_error(redisReply* reply, bool error_throw);
 
 /* detection */

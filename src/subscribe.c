@@ -8,7 +8,7 @@ SEXP redux_redis_subscribe(SEXP extPtr, SEXP channel, SEXP pattern,
   SET_VECTOR_ELT(cmd, 0, mkString(p ? "PSUBSCRIBE" : "SUBSCRIBE"));
   SET_VECTOR_ELT(cmd, 1, channel);
   cmd = PROTECT(redis_check_command(cmd));
-  SEXP ret = PROTECT(redux_redis_command(extPtr, cmd));
+  SEXP ret = PROTECT(redux_redis_command(extPtr, cmd, R_NilValue));
 
   redux_redis_subscribe_loop(redis_get_context(extPtr, true),
                              p, callback, envir);
@@ -39,7 +39,7 @@ void redux_redis_subscribe_loop(redisContext* context, int pattern,
   while (keep_going) {
     R_CheckUserInterrupt();
     redisGetReply(context, (void*)&reply);
-    SEXP x = PROTECT(redis_reply_to_sexp(reply, false));
+    SEXP x = PROTECT(redis_reply_to_sexp(reply, false, AS_AUTO));
     setAttrib(x, R_NamesSymbol, nms);
     SETCADR(call, x);
     freeReplyObject(reply);
@@ -90,7 +90,7 @@ SEXP redux_redis_unsubscribe(SEXP extPtr, SEXP channel, SEXP pattern) {
     n_discarded++;
     redisGetReply(context, (void*)&reply);
   }
-  SEXP ret = PROTECT(redis_reply_to_sexp(reply, true));
+  SEXP ret = PROTECT(redis_reply_to_sexp(reply, true, AS_AUTO));
   freeReplyObject(reply);
   if (n_discarded > 0) {
     SEXP key = PROTECT(mkString("n_discarded"));

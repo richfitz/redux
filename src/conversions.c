@@ -1,6 +1,24 @@
 #include "conversions.h"
 
-SEXP redis_reply_to_sexp(redisReply* reply, bool error_throw) {
+reply_string_as r_reply_string_as(SEXP r_as) {
+  if (r_as == R_NilValue) {
+    return AS_AUTO;
+  }
+
+  if (TYPEOF(r_as) == STRSXP && length(r_as) == 1) {
+    if (strcmp(CHAR(STRING_ELT(r_as, 0)), "raw") == 0) {
+      return AS_RAW;
+    } else if (strcmp(CHAR(STRING_ELT(r_as, 0)), "auto") == 0) {
+      return AS_AUTO;
+    }
+  }
+
+  Rf_error("Invalid option for 'as'");
+  return AS_AUTO; // #nocov
+}
+
+SEXP redis_reply_to_sexp(redisReply* reply, bool error_throw,
+                         reply_string_as as) {
   if (reply == NULL) {
     error("Failure communicating with the Redis server");
   }
@@ -8,7 +26,7 @@ SEXP redis_reply_to_sexp(redisReply* reply, bool error_throw) {
   case REDIS_REPLY_STATUS:
     return status_to_sexp(reply->str);
   case REDIS_REPLY_STRING:
-    return raw_string_to_sexp(reply->str, reply->len);
+    return raw_string_to_sexp(reply->str, reply->len, as);
   case REDIS_REPLY_INTEGER:
     return (reply->integer < INT_MAX ?
             ScalarInteger(reply->integer) :
@@ -16,7 +34,7 @@ SEXP redis_reply_to_sexp(redisReply* reply, bool error_throw) {
   case REDIS_REPLY_NIL:
     return R_NilValue;
   case REDIS_REPLY_ARRAY:
-    return array_to_sexp(reply, error_throw);
+    return array_to_sexp(reply, error_throw, as);
   case REDIS_REPLY_ERROR:
     return reply_error(reply, error_throw);
   default:
@@ -225,7 +243,7 @@ bool is_raw_string(const char* str, size_t len) {
   return false;
 }
 
-SEXP raw_string_to_sexp(const char* str, size_t len) {
+SEXP raw_string_to_sexp(const char* str, size_t len, reply_string_as as) {
   // There are different approaches here to detecting a raw string; we
   // can test for presence of a nul byte, but that involves a
   // traversal of _every_ string.  It really should be corect though
@@ -234,7 +252,7 @@ SEXP raw_string_to_sexp(const char* str, size_t len) {
   // The strategy here is to check for a serialised object, then
   // assume a string, but fall back on re-encoding as RAW (with an
   // extra copy) if a nul byte is found
-  bool is_raw = is_raw_string(str, len);
+  bool is_raw = as == AS_RAW || is_raw_string(str, len);
   SEXP ret;
   if (is_raw) {
     ret = PROTECT(allocVector(RAWSXP, len));
@@ -261,12 +279,12 @@ SEXP status_to_sexp(const char* str) {
   return ret;
 }
 
-SEXP array_to_sexp(redisReply* reply, bool error_throw) {
+SEXP array_to_sexp(redisReply* reply, bool error_throw, reply_string_as as) {
   SEXP ret = PROTECT(allocVector(VECSXP, reply->elements));
   size_t i;
   for (i = 0; i < reply->elements; ++i) {
     SET_VECTOR_ELT(ret, i,
-                   redis_reply_to_sexp(reply->element[i], error_throw));
+                   redis_reply_to_sexp(reply->element[i], error_throw, as));
   }
   UNPROTECT(1);
   return ret;
